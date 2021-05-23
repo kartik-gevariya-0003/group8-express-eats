@@ -19,6 +19,9 @@ function App() {
                 <tr>
                     <td>Mansi Gevariya (B00875618)</td>
                 </tr>
+                <tr>
+                    <td>Rotesh Chhabra (B00881776)</td>
+                </tr>
                 </tbody>
             </table>
         </div>
