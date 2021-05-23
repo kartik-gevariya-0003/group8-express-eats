@@ -25,6 +25,9 @@ function App() {
                 <tr>
                      <td>Karishma Suresh Lalwani(B00869732)</td>
                 </tr>
+                <tr>
+                     <td>Tasneem Yusuf Porbanderwala(B00873256)</td>
+                </tr>
                 </tbody>
             </table>
         </div>
