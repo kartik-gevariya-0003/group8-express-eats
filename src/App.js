@@ -11,6 +11,8 @@ function App() {
         <tbody>
           <tr>
             <td>Kartik Gevariya (B00875617)</td>
+          </tr>
+          <tr>
             <td>Rotesh Chhabra (B00881776)</td>
           </tr>
         </tbody>
