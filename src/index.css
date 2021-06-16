@@ -11,3 +11,12 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
+
+.navbar {
+  background-color: #4e301b !important;
+}
+
+.navbar-nav a:hover, .navbar-nav a:hover {
+  text-decoration: underline;
+  text-underline-offset: 5px;
+}

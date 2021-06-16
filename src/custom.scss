@@ -1,0 +1,24 @@
+//Background color for the body tag
+$body-bg: #f3f3dc;
+
+//Colors
+$primary: #DAA860;
+$success: #8d9b6a;
+$secondary: #8a9ea7;
+$warning: #cb7816;
+$danger: #ba2311;
+
+//Navbar
+$navbar-dark-color: #f3f3dc;
+$navbar-dark-hover-color: rgba(243, 243, 220, 0.75);
+
+
+//Alerts
+$alert-bg-level: -10;
+$alert-color-level: 0;
+$alert-border-level: 0;
+
+$input-group-addon-bg: $primary;
+
+
+@import "../node_modules/bootstrap/scss/bootstrap";

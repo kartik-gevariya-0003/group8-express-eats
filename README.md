@@ -18,7 +18,7 @@
 
 ### Installing
 
-- Change current working directory to `tutorial2` repository root folder
+- Change current working directory to `group8-express-eats` repository root folder
 - Execute `npm install` to install dependencies
 - Execute `npm start` to start front-end server
 
