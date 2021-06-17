@@ -84,11 +84,19 @@ class ManufacturingOrders extends Component {
     this.setState({openOrders, preppingOrders, packagedOrders})
   }
 
+  goToCreateManufacturingOrder(event) {
+    this.props.history.push('/manufacturing-order/create')
+  }
+
   render() {
     return (
       <Container fluid={"sm"}>
         <Row className="mt-3">
           <Col sm={8}>
+            <Button size={"sm"} variant="success" className={"float-left"}
+                    onClick={this.goToCreateManufacturingOrder.bind(this)}>
+              Create a Manufacturing Order
+            </Button>
           </Col>
           <Col sm={4}>
             <InputGroup>
