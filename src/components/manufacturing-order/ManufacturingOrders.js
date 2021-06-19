@@ -1,5 +1,5 @@
 import {Component} from "react";
-import {Button, Card, Col, Container, FormControl, InputGroup, Row, Table} from "react-bootstrap";
+import {Button, Card, Col, FormControl, InputGroup, Row, Table} from "react-bootstrap";
 import {faSearch} from "@fortawesome/free-solid-svg-icons";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 
@@ -90,8 +90,8 @@ class ManufacturingOrders extends Component {
 
   render() {
     return (
-      <Container fluid={"sm"}>
-        <Row className="mt-3">
+      <section>
+        <Row className="m-3">
           <Col sm={8}>
             <Button size={"sm"} variant="success" className={"float-left"}
                     onClick={this.goToCreateManufacturingOrder.bind(this)}>
@@ -111,7 +111,7 @@ class ManufacturingOrders extends Component {
             </InputGroup>
           </Col>
         </Row>
-        <Row className="mt-4">
+        <Row className="m-3">
           <Col sm={4}>
             <Card>
               <Card.Body>
@@ -203,7 +203,7 @@ class ManufacturingOrders extends Component {
             </Card>
           </Col>
         </Row>
-      </Container>
+      </section>
     )
   }
 }
