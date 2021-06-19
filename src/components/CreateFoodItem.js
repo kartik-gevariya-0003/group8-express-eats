@@ -174,6 +174,7 @@ function CreateFoodItem() {
                               </td>
                               <td>
                                 <Form.Control
+                                  className="text-centre"
                                   type="text"
                                   value="10"
                                   disabled
@@ -227,10 +228,10 @@ function CreateFoodItem() {
 
                 <br></br>
                 <Row className={"text-left"}>
-                  <Col sm={2} className={"text-left"}>
+                  <Col sm={2}>
                     <Form.Label>Manufacturers Cost *</Form.Label>
                   </Col>
-                  <Col sm={4} className={"text-left"}>
+                  <Col sm={4}>
                     <InputGroup>
                       <InputGroup.Prepend>
                         <InputGroup.Text>
@@ -257,13 +258,11 @@ function CreateFoodItem() {
                 </Row>
 
                 <br></br>
-                <Row>
-                  <Col md={{ span: 2, offset: 6 }}>
-                    <Form.Label style={{ align: "right" }}>
-                      Total Cost
-                    </Form.Label>
+                <Row className="text-left">
+                  <Col sm={2}>
+                    <Form.Label>Total Cost</Form.Label>
                   </Col>
-                  <Col sm={{ span: 3 }}>
+                  <Col sm={4}>
                     <InputGroup>
                       <InputGroup.Prepend>
                         <InputGroup.Text>
