@@ -9,16 +9,15 @@ class Header extends Component {
     super(props);
     this.state = {
       headerLinks: [
-        {id: 'home', link: '/home', name: 'Home'},
+        {id: 'Dashboard', link: '/dashboard', name: 'Dashboard'},
         {id: 'vendors', link: '/vendors', name: 'Vendors'},
         {id: 'raw-materials', link: '/raw-materials', name: 'Raw Materials'},
         {id: 'food-items', link: '/food-items', name: 'Food Items'},
         {id: 'purchase-orders', link: '/purchase-orders', name: 'Purchase Orders'},
         {id: 'manufacturing-orders', link: '/manufacturing-orders', name: 'Manufacturing Orders'},
-        {id: 'sales-orders', link: '/sales-orders', name: 'Sales Orders'},
         {id: 'inventory', link: '/inventory', name: 'Inventory'},
       ],
-      activeLink: ''
+      activeLink: window.location
     }
   }
 
@@ -30,7 +29,7 @@ class Header extends Component {
     const navDropDownTitle = (<FontAwesomeIcon size={"2x"} icon={faUserCircle} className={"secondary"}/>)
     return (
       <Navbar bg="dark" expand="lg" variant={"dark"} sticky={"top"}>
-        <Navbar.Brand href="/" className={"mr-5"}>
+        <Navbar.Brand href="/home" className={"mr-5"}>
           <Image
               src={"/logo.png"}
               width="70"
@@ -52,7 +51,7 @@ class Header extends Component {
             {
               this.state.headerLinks.map(headerLink => {
                 return <Nav.Link href={headerLink.link} key={headerLink.id}
-                                 className={this.state.activeLink === headerLink.id ? 'active' : ''}
+                                 className={this.state.activeLink.pathname === headerLink.link ? 'active' : ''}
                                  onClick={this.handleLinkClick.bind(this, headerLink)}>
                   {headerLink.name}
                 </Nav.Link>
