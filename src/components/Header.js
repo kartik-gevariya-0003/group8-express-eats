@@ -1,5 +1,5 @@
 import {Component} from "react";
-import {Nav, Navbar, NavDropdown} from "react-bootstrap";
+import {Image, Nav, Navbar, NavDropdown} from "react-bootstrap";
 import {faUserCircle} from "@fortawesome/free-solid-svg-icons";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 
@@ -30,7 +30,21 @@ class Header extends Component {
     const navDropDownTitle = (<FontAwesomeIcon size={"2x"} icon={faUserCircle} className={"secondary"}/>)
     return (
       <Navbar bg="dark" expand="lg" variant={"dark"} sticky={"top"}>
-        <Navbar.Brand>
+        <Navbar.Brand href="/" className={"mr-5"}>
+          <Image
+              src={"/logo.png"}
+              width="70"
+              height="40"
+              className="d-inline-block align-top"
+              alt="Express Eats"
+          />
+          <Image
+              src={"/logo_name.png"}
+              width="100"
+              height="30"
+              className="d-inline-block ml-2"
+              alt="Express Eats"
+          />
         </Navbar.Brand>
         <Navbar.Toggle aria-controls="basic-navbar-nav"/>
         <Navbar.Collapse id="basic-navbar-nav">
