@@ -1,0 +1,25 @@
+.po-raw-material-list {
+    height: auto;
+    max-height: 430px;
+    overflow: scroll;
+    border: 1px solid rgba(0, 0, 0, 0.125);
+}
+
+.po-selected-raw-material-list {
+    height: auto;
+    max-height: 330px;
+    overflow: scroll;
+    border: 1px solid rgba(0, 0, 0, 0.125);
+}
+
+.select-option-city {
+    color: #666666;
+}
+
+.height-100 {
+    height: 100%;
+}
+
+.po-list-header {
+    background: #DED1BD;
+}

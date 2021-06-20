@@ -11,6 +11,7 @@ $danger: #ba2311;
 //Navbar
 $navbar-dark-color: #f3f3dc;
 $navbar-dark-hover-color: rgba(243, 243, 220, 0.75);
+$navbar-dark-active-color: rgba(243, 243, 220, 0.75);
 
 
 //Alerts
@@ -19,7 +20,8 @@ $alert-color-level: 0;
 $alert-border-level: 0;
 
 //Input Group
-$input-group-addon-bg: $primary;
+$input-group-addon-bg: $warning;
+$input-group-addon-color: $body-bg;
 
 
 @import "../node_modules/bootstrap/scss/bootstrap";
