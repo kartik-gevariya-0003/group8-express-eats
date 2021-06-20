@@ -15,7 +15,7 @@ export default class Confirmation extends Component {
             <Image
               className="mt-3 confirmation-image"
               src={"/confirmation.gif"}
-              alt="Order Created Successfully"
+              alt="Action Successful"
             />
             <br />
             <Link to={confirmation.redirect}>
