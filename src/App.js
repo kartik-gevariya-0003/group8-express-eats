@@ -7,6 +7,8 @@ import CreateManufacturingOrder from "./components/manufacturing-order/CreateMan
 import PurchaseOrders from "./components/purchase-order/PurchaseOrders";
 import CreatePurchaseOrder from "./components/purchase-order/CreatePurchaseOrder";
 import Confirmation from "./components/confirmation/Confirmation";
+import Vendor from "./components/vendor/Vendor";
+import CreateVendor from "./components/vendor/CreateVendor";
 import Dashboard from "./components/dashboard/Dashboard";
 import LogoHeader from "./components/headers/LogoHeader";
 import Home from "./components/home/Home";
@@ -70,6 +72,10 @@ function App() {
           path="/inventory/add-food-item-inventory"
           component={AddFoodItemInventory}
         />
+          <Route exact path="/vendors" component={Vendor} />
+          <Route exact path="/vendors/create" component={CreateVendor} />
+          <Route exact path="/vendor/confirmation" component={Confirmation} />
+
       </Switch>
     </div>
   );
