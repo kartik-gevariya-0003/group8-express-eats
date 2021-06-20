@@ -7,11 +7,6 @@ import PlainHeaderComponent from "../PlainHeaderComponent";
 import {Col, Image, Row} from "react-bootstrap";
 
 class Home extends PlainHeaderComponent {
-
-    constructor(props) {
-        super(props);
-    }
-
     render() {
         return (
             <section>

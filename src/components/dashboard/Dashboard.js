@@ -1,6 +1,16 @@
-import {Component} from "react";
 import {Button, ButtonGroup, ButtonToolbar, Card, Col, Row, Table} from "react-bootstrap";
-import {ResponsiveContainer, LineChart, CartesianGrid, XAxis, YAxis, Tooltip, Legend, Line, PieChart, Pie} from "recharts";
+import {
+  CartesianGrid,
+  Legend,
+  Line,
+  LineChart,
+  Pie,
+  PieChart,
+  ResponsiveContainer,
+  Tooltip,
+  XAxis,
+  YAxis
+} from "recharts";
 import ApplicationContainer from "../ApplicationContainer";
 
 class Dashboard extends ApplicationContainer {
@@ -41,16 +51,20 @@ class Dashboard extends ApplicationContainer {
             <section>
               <Card>
                 <Card.Body>
-                  <Card.Title><section>Total Expenditure</section>
-                    <section className="mt-3 text-danger"><span>$33,534.34</span></section></Card.Title>
+                  <Card.Title>
+                    <section>Total Expenditure</section>
+                    <section className="mt-3 text-danger"><span>$33,534.34</span></section>
+                  </Card.Title>
                 </Card.Body>
               </Card>
             </section>
             <section className="mt-3">
               <Card>
                 <Card.Body>
-                  <Card.Title><section>Raw Materials in Inventory</section>
-                    <section className="mt-3 text-secondary"><span>1,932</span></section></Card.Title>
+                  <Card.Title>
+                    <section>Raw Materials in Inventory</section>
+                    <section className="mt-3 text-secondary"><span>1,932</span></section>
+                  </Card.Title>
                 </Card.Body>
               </Card>
             </section>
@@ -69,8 +83,10 @@ class Dashboard extends ApplicationContainer {
             <section className="mt-3">
               <Card>
                 <Card.Body>
-                  <Card.Title><section>Total Food Items Inventory</section>
-                    <section className="mt-3 text-secondary"><span>7,214</span></section></Card.Title>
+                  <Card.Title>
+                    <section>Total Food Items Inventory</section>
+                    <section className="mt-3 text-secondary"><span>7,214</span></section>
+                  </Card.Title>
                 </Card.Body>
               </Card>
             </section>
@@ -83,10 +99,10 @@ class Dashboard extends ApplicationContainer {
                 </Card.Title>
                 <Table responsive bordered>
                   <thead>
-                    <tr>
-                      <th>Raw Material</th>
-                      <th>Quantity in inventory</th>
-                    </tr>
+                  <tr>
+                    <th>Raw Material</th>
+                    <th>Quantity in inventory</th>
+                  </tr>
                   </thead>
                   <tbody>
                   {
@@ -117,7 +133,8 @@ class Dashboard extends ApplicationContainer {
                         <ButtonToolbar aria-label="Toolbar with button groups" className="float-right">
                           <ButtonGroup className="mr-2" aria-label="First group">
                             {this.chartOptions.map(chartOption => {
-                              return <Button variant={chartOption === this.state.selectedLineChartOption ? 'secondary' : 'outline-secondary'}>{chartOption}</Button>
+                              return <Button
+                                variant={chartOption === this.state.selectedLineChartOption ? 'secondary' : 'outline-secondary'}>{chartOption}</Button>
                             })}
                           </ButtonGroup>
                         </ButtonToolbar>
@@ -131,9 +148,9 @@ class Dashboard extends ApplicationContainer {
                         <XAxis dataKey={"name"}/>
                         <YAxis/>
                         <Tooltip/>
-                        <Legend />
-                        <Line name="Purchased" type="monotone" dataKey="pv" stroke="#909E84" />
-                        <Line name="Used" type="monotone" dataKey="uv" stroke="#BB8644" />
+                        <Legend/>
+                        <Line name="Purchased" type="monotone" dataKey="pv" stroke="#909E84"/>
+                        <Line name="Used" type="monotone" dataKey="uv" stroke="#BB8644"/>
                       </LineChart>
                     </ResponsiveContainer>
                   </section>
@@ -154,7 +171,8 @@ class Dashboard extends ApplicationContainer {
                         <ButtonToolbar aria-label="Toolbar with button groups" className="float-right">
                           <ButtonGroup className="mr-2" aria-label="First group">
                             {this.chartOptions.map(chartOption => {
-                              return <Button variant={chartOption === this.state.selectedPieChartOption ? 'secondary' : 'outline-secondary'}>{chartOption}</Button>
+                              return <Button
+                                variant={chartOption === this.state.selectedPieChartOption ? 'secondary' : 'outline-secondary'}>{chartOption}</Button>
                             })}
                           </ButtonGroup>
                         </ButtonToolbar>
@@ -177,4 +195,5 @@ class Dashboard extends ApplicationContainer {
     )
   }
 }
+
 export default Dashboard
