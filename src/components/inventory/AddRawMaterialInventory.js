@@ -1,6 +1,6 @@
-import React, { useState } from "react";
-import { Card, Col, Container, Row, Button, Form } from "react-bootstrap";
-import { useHistory } from "react-router-dom";
+import React, {useState} from "react";
+import {Button, Card, Col, Container, Form, Row} from "react-bootstrap";
+import {useHistory} from "react-router-dom";
 
 function AddRawMaterialInventory() {
   const history = useHistory();
@@ -65,7 +65,7 @@ function AddRawMaterialInventory() {
                       type="text"
                     ></Form.Control>
                     {rawMaterialNameError ? (
-                      <Form.Text style={{ color: "red" }}>
+                      <Form.Text style={{color: "red"}}>
                         {rawMaterialNameError}
                       </Form.Text>
                     ) : (
@@ -87,7 +87,7 @@ function AddRawMaterialInventory() {
                       type="text"
                     ></Form.Control>
                     {quantityError ? (
-                      <Form.Text style={{ color: "red" }}>
+                      <Form.Text style={{color: "red"}}>
                         {quantityError}
                       </Form.Text>
                     ) : (

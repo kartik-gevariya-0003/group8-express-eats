@@ -1,6 +1,6 @@
-import React, { useState } from "react";
-import { Card, Col, Container, Row, Button, Form } from "react-bootstrap";
-import { useHistory } from "react-router-dom";
+import React, {useState} from "react";
+import {Button, Card, Col, Container, Form, Row} from "react-bootstrap";
+import {useHistory} from "react-router-dom";
 
 function AddFoodItemInventory() {
   const history = useHistory();
@@ -62,9 +62,9 @@ function AddFoodItemInventory() {
                         setfoodItem(e.target.value);
                       }}
                       type="text"
-                    ></Form.Control>
+                    />
                     {foodItemNameError ? (
-                      <Form.Text style={{ color: "red" }}>
+                      <Form.Text style={{color: "red"}}>
                         {foodItemNameError}
                       </Form.Text>
                     ) : (
@@ -84,9 +84,9 @@ function AddFoodItemInventory() {
                         setquantity(e.target.value);
                       }}
                       type="text"
-                    ></Form.Control>
+                    />
                     {quantityError ? (
-                      <Form.Text style={{ color: "red" }}>
+                      <Form.Text style={{color: "red"}}>
                         {quantityError}
                       </Form.Text>
                     ) : (

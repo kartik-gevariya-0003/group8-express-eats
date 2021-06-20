@@ -1,41 +1,33 @@
-import React, { useState } from "react";
-import {
-  Card,
-  Col,
-  Row,
-  Button,
-  Table,
-  InputGroup,
-  FormControl,
-} from "react-bootstrap";
-import { useHistory } from "react-router-dom";
-import { faSearch } from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import React, {useState} from "react";
+import {Button, Card, Col, FormControl, InputGroup, Row, Table,} from "react-bootstrap";
+import {useHistory} from "react-router-dom";
+import {faSearch} from "@fortawesome/free-solid-svg-icons";
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 
 function Inventory() {
   const originalRawMaterialList = [
-    { rawMaterial: "Milk", quantity: "10" },
-    { rawMaterial: "Sugar", quantity: "2" },
-    { rawMaterial: "Apple", quantity: "5" },
-    { rawMaterial: "Salt", quantity: "20" },
+    {rawMaterial: "Milk", quantity: "10"},
+    {rawMaterial: "Sugar", quantity: "2"},
+    {rawMaterial: "Apple", quantity: "5"},
+    {rawMaterial: "Salt", quantity: "20"},
   ];
   const [originalFoodItems, setoriginalFoodItems] = useState([
-    { foodItem: "Sandwich", quantity: "1" },
-    { foodItem: "Strawberry Tart", quantity: "10" },
-    { foodItem: "Chocolate Cake", quantity: "2" },
-    { foodItem: "Spinach Quiche", quantity: "20" },
+    {foodItem: "Sandwich", quantity: "1"},
+    {foodItem: "Strawberry Tart", quantity: "10"},
+    {foodItem: "Chocolate Cake", quantity: "2"},
+    {foodItem: "Spinach Quiche", quantity: "20"},
   ]);
   const [rawMaterialList, setrawMaterialList] = useState([
-    { rawMaterial: "Milk", quantity: "10" },
-    { rawMaterial: "Sugar", quantity: "2" },
-    { rawMaterial: "Apple", quantity: "5" },
-    { rawMaterial: "Salt", quantity: "20" },
+    {rawMaterial: "Milk", quantity: "10"},
+    {rawMaterial: "Sugar", quantity: "2"},
+    {rawMaterial: "Apple", quantity: "5"},
+    {rawMaterial: "Salt", quantity: "20"},
   ]);
   const [foodItems, setfoodItems] = useState([
-    { foodItem: "Sandwich", quantity: "1" },
-    { foodItem: "Strawberry Tart", quantity: "10" },
-    { foodItem: "Chocolate Cake", quantity: "2" },
-    { foodItem: "Spinach Quiche", quantity: "20" },
+    {foodItem: "Sandwich", quantity: "1"},
+    {foodItem: "Strawberry Tart", quantity: "10"},
+    {foodItem: "Chocolate Cake", quantity: "2"},
+    {foodItem: "Spinach Quiche", quantity: "20"},
   ]);
   const history = useHistory();
   const goToAddRawMaterialInventory = () => {
@@ -95,7 +87,7 @@ function Inventory() {
             />
             <InputGroup.Append>
               <InputGroup.Text>
-                <FontAwesomeIcon icon={faSearch} />
+                <FontAwesomeIcon icon={faSearch}/>
               </InputGroup.Text>
             </InputGroup.Append>
           </InputGroup>
@@ -122,7 +114,7 @@ function Inventory() {
             />
             <InputGroup.Append>
               <InputGroup.Text>
-                <FontAwesomeIcon icon={faSearch} />
+                <FontAwesomeIcon icon={faSearch}/>
               </InputGroup.Text>
             </InputGroup.Append>
           </InputGroup>
@@ -136,18 +128,18 @@ function Inventory() {
               {rawMaterialList.length > 0 ? (
                 <Table hover responsive="sm">
                   <thead>
-                    <tr>
-                      <th>Raw Material</th>
-                      <th>Quantity</th>
-                    </tr>
+                  <tr>
+                    <th className="text-left">Raw Material</th>
+                    <th>Quantity</th>
+                  </tr>
                   </thead>
                   <tbody>
-                    {rawMaterialList.map((item) => (
-                      <tr key={item.rawMaterial}>
-                        <td>{item.rawMaterial}</td>
-                        <td>{item.quantity}</td>
-                      </tr>
-                    ))}
+                  {rawMaterialList.map((item) => (
+                    <tr key={item.rawMaterial}>
+                      <td className="text-left">{item.rawMaterial}</td>
+                      <td>{item.quantity}</td>
+                    </tr>
+                  ))}
                   </tbody>
                 </Table>
               ) : (
@@ -165,18 +157,18 @@ function Inventory() {
               {foodItems.length > 0 ? (
                 <Table hover responsive="sm">
                   <thead>
-                    <tr>
-                      <th>Food Items</th>
-                      <th>Quantity</th>
-                    </tr>
+                  <tr>
+                    <th className="text-left">Food Items</th>
+                    <th>Quantity</th>
+                  </tr>
                   </thead>
                   <tbody>
-                    {foodItems.map((item) => (
-                      <tr key={item.rawMaterial}>
-                        <td>{item.foodItem}</td>
-                        <td>{item.quantity}</td>
-                      </tr>
-                    ))}
+                  {foodItems.map((item) => (
+                    <tr key={item.rawMaterial}>
+                      <td className="text-left">{item.foodItem}</td>
+                      <td>{item.quantity}</td>
+                    </tr>
+                  ))}
                   </tbody>
                 </Table>
               ) : (
