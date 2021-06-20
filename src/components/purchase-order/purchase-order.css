@@ -1,14 +1,14 @@
 .po-raw-material-list {
     height: auto;
     max-height: 430px;
-    overflow: scroll;
+    overflow: auto;
     border: 1px solid rgba(0, 0, 0, 0.125);
 }
 
 .po-selected-raw-material-list {
     height: auto;
     max-height: 330px;
-    overflow: scroll;
+    overflow: auto;
     border: 1px solid rgba(0, 0, 0, 0.125);
 }
 
