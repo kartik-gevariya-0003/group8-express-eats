@@ -60,7 +60,7 @@ class Header extends Component {
                                  onClick={this.handleLinkClick.bind(this, headerLink)}>
                   {headerLink.name}
                 </Nav.Link>
-              
+
             })}
           </Nav>
         </Navbar.Collapse>

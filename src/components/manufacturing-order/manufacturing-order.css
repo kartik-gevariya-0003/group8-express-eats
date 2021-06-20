@@ -1,0 +1,13 @@
+.mo-food-items-list {
+    height: auto;
+    max-height: 430px;
+    overflow-y: auto;
+    border: 1px solid rgba(0, 0, 0, 0.125);
+}
+
+.mo-selected-food-item-list {
+    height: auto;
+    max-height: 330px;
+    overflow-y: auto;
+    border: 1px solid rgba(0, 0, 0, 0.125);
+}
