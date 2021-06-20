@@ -134,12 +134,10 @@ function CreateVendor() {
               <Row className={"mt-5"}>
                 <Col sm={12}>
                   <Form onSubmit={submitHandler}>
-                    <Form.Group className="mb-3" controlId="formBasicEmail">
+                    <Form.Group className="mb-3">
                       <Row>
-                        <Col sm={3}>
+                        <Col sm={6}>
                           <Form.Label>Vendor Name</Form.Label>
-                        </Col>
-                        <Col sm={5}>
                           <Form.Control
                             type="text"
                             name="vendorName"
@@ -149,45 +147,14 @@ function CreateVendor() {
                               errorVendorName.length > 0 ? "is-invalid" : ""
                             }
                           />
-                        </Col>
-                        <Col sm={4}>
                           {errorVendorName.length > 0 && (
-                            <p className={"error-message"}>{errorVendorName}</p>
+                            <Form.Control.Feedback type={"invalid"}>
+                              {errorVendorName}
+                            </Form.Control.Feedback>
                           )}
                         </Col>
-                      </Row>
-                    </Form.Group>
-
-                    <Form.Group className="mb-3">
-                      <Row>
-                        <Col sm={3}>
-                          <Form.Label>Address</Form.Label>
-                        </Col>
-                        <Col sm={5}>
-                          <Form.Control
-                            type="text"
-                            name="address"
-                            value={values.address}
-                            onChange={onChangeHandler}
-                            className={
-                              errorAddress.length > 0 ? "is-invalid" : ""
-                            }
-                          />
-                        </Col>
-                        <Col sm={4}>
-                          {errorAddress.length > 0 && (
-                            <p className={"error-message"}>{errorAddress}</p>
-                          )}
-                        </Col>
-                      </Row>
-                    </Form.Group>
-
-                    <Form.Group className="mb-3">
-                      <Row>
-                        <Col sm={3}>
+                        <Col sm={6}>
                           <Form.Label>Contact Person Name</Form.Label>
-                        </Col>
-                        <Col sm={5}>
                           <Form.Control
                             type="text"
                             name="contactPersonName"
@@ -199,12 +166,10 @@ function CreateVendor() {
                                 : ""
                             }
                           />
-                        </Col>
-                        <Col sm={4}>
                           {errorContactPersonName.length > 0 && (
-                            <p className={"error-message"}>
+                            <Form.Control.Feedback type={"invalid"}>
                               {errorContactPersonName}
-                            </p>
+                            </Form.Control.Feedback>
                           )}
                         </Col>
                       </Row>
@@ -212,10 +177,30 @@ function CreateVendor() {
 
                     <Form.Group className="mb-3">
                       <Row>
-                        <Col sm={3}>
-                          <Form.Label>Email</Form.Label>
+                        <Col sm={12}>
+                          <Form.Label>Address</Form.Label>
+                          <Form.Control
+                            type="text"
+                            name="address"
+                            value={values.address}
+                            onChange={onChangeHandler}
+                            className={
+                              errorAddress.length > 0 ? "is-invalid" : ""
+                            }
+                          />
+                          {errorAddress.length > 0 && (
+                            <Form.Control.Feedback type={"invalid"}>
+                              {errorAddress}
+                            </Form.Control.Feedback>
+                          )}
                         </Col>
-                        <Col sm={5}>
+                      </Row>
+                    </Form.Group>
+
+                    <Form.Group className="mb-3">
+                      <Row>
+                        <Col sm={6}>
+                          <Form.Label>Email</Form.Label>
                           <Form.Control
                             type="email"
                             name="email"
@@ -225,21 +210,15 @@ function CreateVendor() {
                               errorEmail.length > 0 ? "is-invalid" : ""
                             }
                           />
-                        </Col>
-                        <Col sm={4}>
+
                           {errorEmail.length > 0 && (
-                            <p className={"error-message"}>{errorEmail}</p>
+                            <Form.Control.Feedback type={"invalid"}>
+                              {errorEmail}
+                            </Form.Control.Feedback>
                           )}
                         </Col>
-                      </Row>
-                    </Form.Group>
-
-                    <Form.Group className="mb-3">
-                      <Row>
-                        <Col sm={3}>
+                        <Col sm={6}>
                           <Form.Label>Contact Number</Form.Label>
-                        </Col>
-                        <Col sm={5}>
                           <Form.Control
                             type="number"
                             name="contactNumber"
@@ -249,24 +228,23 @@ function CreateVendor() {
                               errorContactNumber.length > 0 ? "is-invalid" : ""
                             }
                           />
-                        </Col>
-                        <Col sm={4}>
                           {errorContactNumber.length > 0 && (
-                            <p className={"error-message"}>
+                            <FormControl.Feedback type={"invalid"}>
                               {errorContactNumber}
-                            </p>
+                            </FormControl.Feedback>
                           )}
                         </Col>
                       </Row>
                     </Form.Group>
                     <Form.Group className="mb-3">
                       <Row className={"m-5"}>
-                        <Col sm={3}>
+                        <Col sm={4}></Col>
+                        <Col sm={2}>
                           <Button variant="success" type="submit">
                             Submit
                           </Button>
                         </Col>
-                        <Col sm={3}>
+                        <Col sm={2}>
                           <Button variant="secondary" onClick={cancelHandler}>
                             Cancel
                           </Button>
