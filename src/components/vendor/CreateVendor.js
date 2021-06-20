@@ -128,9 +128,7 @@ function CreateVendor() {
         <Col sm={8}>
           <Card>
             <Card.Body className={"text-left"}>
-              <Card.Title className={"text-left"}>
-                <strong>Add New Vendor</strong>
-              </Card.Title>
+              <Card.Title className={"text-left"}>Add New Vendor</Card.Title>
               <Row className={"mt-5"}>
                 <Col sm={12}>
                   <Form onSubmit={submitHandler}>
@@ -236,15 +234,18 @@ function CreateVendor() {
                         </Col>
                       </Row>
                     </Form.Group>
-                    <Form.Group className="mb-3">
-                      <Row className={"m-5"}>
-                        <Col sm={4}></Col>
-                        <Col sm={2}>
-                          <Button variant="success" type="submit">
+                    <Form.Group className={"mt-5 mb-3"}>
+                      <Row>
+                        <Col sm={6} className={"text-right"}>
+                          <Button
+                            className={"submit-btn"}
+                            variant="success"
+                            type="submit"
+                          >
                             Submit
                           </Button>
                         </Col>
-                        <Col sm={2}>
+                        <Col sm={6} className={"submit-btn"}>
                           <Button variant="secondary" onClick={cancelHandler}>
                             Cancel
                           </Button>

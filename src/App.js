@@ -6,7 +6,7 @@ import ManufacturingOrders from "./components/manufacturing-order/ManufacturingO
 import CreateManufacturingOrder from "./components/manufacturing-order/CreateManufacturingOrder";
 import PurchaseOrders from "./components/purchase-order/PurchaseOrders";
 import CreatePurchaseOrder from "./components/purchase-order/CreatePurchaseOrder";
-import Confirmation from "./components/Confirmation/Confirmation";
+import Confirmation from "./components/confirmation/Confirmation";
 import Vendor from "./components/vendor/Vendor";
 import CreateVendor from "./components/vendor/CreateVendor";
 import Dashboard from "./components/dashboard/Dashboard";
