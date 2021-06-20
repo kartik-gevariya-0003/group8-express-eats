@@ -20,11 +20,8 @@ Route.propTypes = {
 };
 
 function App() {
-    const isLogoHeader = window.location.pathname === '/' || window.location.pathname === '/home' || window.location.pathname === '/login' || window.location.pathname === '/register';
     return (
       <div className="App">
-          {!isLogoHeader && <Header/>}
-          {isLogoHeader && <LogoHeader/>}
           <Switch>
               <Route exact path='/dashboard' component={Dashboard}/>
               <Route exact path='/manufacturing-orders' component={ManufacturingOrders}/>
