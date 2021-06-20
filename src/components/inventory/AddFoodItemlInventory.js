@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import { Card, Col, Container, Row, Button, Form } from "react-bootstrap";
 import { useHistory } from "react-router-dom";
-import { toast } from "react-toastify";
 
 function AddFoodItemInventory() {
   const history = useHistory();
@@ -21,8 +20,14 @@ function AddFoodItemInventory() {
     let numericRegEx = new RegExp("^[0-9]*$");
     if (foodItem && quantity) {
       if (alphabetRegex.test(foodItem) && numericRegEx.test(quantity)) {
-        toast.success("Food Item Added successfully!");
-        history.push("/inventory");
+        history.push({
+          pathname: "/inventory/confirmation",
+          confirmation: {
+            message: foodItem + " Added Successfully",
+            redirect: "/inventory",
+            button: "GO TO INVENTORY",
+          },
+        });
       }
     }
     if (!alphabetRegex.test(foodItem)) {

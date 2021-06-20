@@ -1,10 +1,30 @@
 import React, { useState } from "react";
-import { Card, Col, Container, Row, Button, Table } from "react-bootstrap";
+import {
+  Card,
+  Col,
+  Row,
+  Button,
+  Table,
+  InputGroup,
+  FormControl,
+} from "react-bootstrap";
 import { useHistory } from "react-router-dom";
-import { ToastContainer } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
+import { faSearch } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 function Inventory() {
+  const originalRawMaterialList = [
+    { rawMaterial: "Milk", quantity: "10" },
+    { rawMaterial: "Sugar", quantity: "2" },
+    { rawMaterial: "Apple", quantity: "5" },
+    { rawMaterial: "Salt", quantity: "20" },
+  ];
+  const [originalFoodItems, setoriginalFoodItems] = useState([
+    { foodItem: "Sandwich", quantity: "1" },
+    { foodItem: "Strawberry Tart", quantity: "10" },
+    { foodItem: "Chocolate Cake", quantity: "2" },
+    { foodItem: "Spinach Quiche", quantity: "20" },
+  ]);
   const [rawMaterialList, setrawMaterialList] = useState([
     { rawMaterial: "Milk", quantity: "10" },
     { rawMaterial: "Sugar", quantity: "2" },
@@ -24,42 +44,91 @@ function Inventory() {
   const goToAddFoodItemInventory = () => {
     history.push("/inventory/add-food-item-inventory");
   };
+
+  const searchRawMaterial = (value) => {
+    let thisrawMaterialList = originalRawMaterialList;
+    if (value) {
+      thisrawMaterialList = thisrawMaterialList.filter((item) =>
+        item.rawMaterial.includes(value)
+      );
+    }
+    setrawMaterialList(thisrawMaterialList);
+  };
+
+  const searchFoodItem = (value) => {
+    let thisfoodItems = originalFoodItems;
+    if (value) {
+      thisfoodItems = thisfoodItems.filter((item) =>
+        item.foodItem.includes(value)
+      );
+    }
+    setfoodItems(thisfoodItems);
+  };
+
   return (
-    <Container fluid={"sm"}>
-      <ToastContainer
-        position="top-center"
-        autoClose={false}
-        hideProgressBar
-        newestOnTop={false}
-        closeOnClick
-        rtl={false}
-        pauseOnFocusLoss
-        draggable
-        pauseOnHover
-      />
-      <Row className="mt-3">
-        <Col sm={6}>
+    <section>
+      <Row className="m-3">
+        <Col className={"text-left"}>
+          <h2>Inventory</h2>
+        </Col>
+      </Row>
+      <Row className="m-3">
+        <Col sm={3}>
           <Button
-            size={"sm"}
-            variant="primary"
+            variant="success"
             className={"float-left"}
             onClick={goToAddRawMaterialInventory}
           >
             Add Raw Materials to Inventory
           </Button>
         </Col>
-        <Col sm={6}>
+        <Col sm={3}>
+          <InputGroup>
+            <FormControl
+              placeholder="Search"
+              aria-label="Search"
+              aria-describedby="search-control"
+              className={"float-right"}
+              onChange={(e) => {
+                searchRawMaterial(e.target.value);
+              }}
+            />
+            <InputGroup.Append>
+              <InputGroup.Text>
+                <FontAwesomeIcon icon={faSearch} />
+              </InputGroup.Text>
+            </InputGroup.Append>
+          </InputGroup>
+        </Col>
+        <Col sm={3}>
           <Button
-            size={"sm"}
-            variant="primary"
+            variant="success"
             className={"float-left"}
             onClick={goToAddFoodItemInventory}
           >
             Add Food Items to Inventory
           </Button>
         </Col>
+        <Col sm={3}>
+          <InputGroup>
+            <FormControl
+              placeholder="Search"
+              aria-label="Search"
+              aria-describedby="search-control"
+              className={"float-right"}
+              onChange={(e) => {
+                searchFoodItem(e.target.value);
+              }}
+            />
+            <InputGroup.Append>
+              <InputGroup.Text>
+                <FontAwesomeIcon icon={faSearch} />
+              </InputGroup.Text>
+            </InputGroup.Append>
+          </InputGroup>
+        </Col>
       </Row>
-      <Row className="mt-3">
+      <Row className="m-3">
         <Col sm={6}>
           <Card>
             <Card.Body>
@@ -119,7 +188,7 @@ function Inventory() {
           </Card>
         </Col>
       </Row>
-    </Container>
+    </section>
   );
 }
 
