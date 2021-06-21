@@ -1,19 +1,9 @@
 import "./food-item.css";
-import React, { Component } from "react";
+import React, {Component} from "react";
 import Header from "../headers/Header";
-import {
-  Button,
-  Card,
-  Col,
-  Form,
-  FormControl,
-  InputGroup,
-  ListGroup,
-  Modal,
-  Row,
-} from "react-bootstrap";
-import { faSearch, faTrashAlt } from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import {Button, Card, Col, Form, FormControl, InputGroup, ListGroup, Modal, Row,} from "react-bootstrap";
+import {faSearch, faTrashAlt} from "@fortawesome/free-solid-svg-icons";
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 
 const rawMaterials = [
   {
@@ -30,7 +20,7 @@ const rawMaterials = [
     category: "Meat, poultry, fish, and eggs",
     quantity: 2,
   },
-  { id: 3, name: "Mayonnaise", unitPrice: 4.5, category: "Oils", quantity: 10 },
+  {id: 3, name: "Mayonnaise", unitPrice: 4.5, category: "Oils", quantity: 10},
   {
     id: 4,
     name: "Tomato",
@@ -118,7 +108,7 @@ export default class EditFoodItem extends Component {
 
   filterRawMaterial = (e) => {
     e.preventDefault();
-    const { value } = e.target;
+    const {value} = e.target;
 
     this.setState({
       rawMaterials: rawMaterials.filter((rawMaterial) =>
@@ -130,7 +120,7 @@ export default class EditFoodItem extends Component {
   onSubmit = (e) => {
     e.preventDefault();
 
-    let isError = { ...this.state.isError };
+    let isError = {...this.state.isError};
 
     this.validator("foodItemName", this.state.foodItem.foodItemName, isError);
     this.validator(
@@ -168,7 +158,7 @@ export default class EditFoodItem extends Component {
   };
 
   onFoodItemNameChange = (e) => {
-    let state = { ...this.state };
+    let state = {...this.state};
 
     state.foodItem.foodItemName = e.target.value;
 
@@ -181,7 +171,7 @@ export default class EditFoodItem extends Component {
   };
 
   onManufacturerCostChange = (cost) => {
-    let state = { ...this.state };
+    let state = {...this.state};
 
     state.foodItem.manufacturerCost = cost;
     let totalCost = 0;
@@ -191,7 +181,7 @@ export default class EditFoodItem extends Component {
       state.isError
     );
     if (state.foodItem.selectedRawMaterials.length > 0) {
-      state.foodItem.selectedRawMaterials.map((rawMaterial) => {
+      state.foodItem.selectedRawMaterials.forEach((rawMaterial) => {
         totalCost += rawMaterial.unitPrice * rawMaterial.quantity;
       });
     }
@@ -238,7 +228,7 @@ export default class EditFoodItem extends Component {
   };
 
   addRawMaterial = (rawMaterial) => {
-    let state = { ...this.state };
+    let state = {...this.state};
 
     state.rawMaterialQuantityModal.selectedRawMaterial = rawMaterial;
 
@@ -248,7 +238,7 @@ export default class EditFoodItem extends Component {
   };
 
   deleteRawMaterial = (rawMaterial) => {
-    let state = { ...this.state };
+    let state = {...this.state};
 
     state.foodItem.selectedRawMaterials =
       state.foodItem.selectedRawMaterials.filter(
@@ -267,7 +257,7 @@ export default class EditFoodItem extends Component {
   };
 
   closeModal = () => {
-    let state = { ...this.state };
+    let state = {...this.state};
 
     state.rawMaterialQuantityModal.show = false;
 
@@ -277,7 +267,7 @@ export default class EditFoodItem extends Component {
   addRawMaterialToFoodItem = (e) => {
     e.preventDefault();
 
-    let state = { ...this.state };
+    let state = {...this.state};
 
     if (state.rawMaterialQuantityModal.selectedRawMaterialQuantity > 0) {
       state.rawMaterialQuantityModal.selectedRawMaterial["quantity"] =
@@ -307,8 +297,8 @@ export default class EditFoodItem extends Component {
 
   rawMaterialQuantityChangeListener = (e) => {
     e.preventDefault();
-    const { name, value } = e.target;
-    let state = { ...this.state };
+    const {name, value} = e.target;
+    let state = {...this.state};
     state.rawMaterialQuantityModal.selectedRawMaterialQuantity = value;
 
     this.validator(name, value, state.isError);
@@ -317,7 +307,7 @@ export default class EditFoodItem extends Component {
   };
 
   showModal = () => {
-    let state = { ...this.state };
+    let state = {...this.state};
 
     state.rawMaterialQuantityModal.show = true;
 
@@ -325,11 +315,11 @@ export default class EditFoodItem extends Component {
   };
 
   render() {
-    const { isError } = this.state;
+    const {isError} = this.state;
 
     return (
       <section>
-        <Header />
+        <Header/>
         <Row className={"m-3"}>
           <Col sm={5}>
             <Card>
@@ -340,59 +330,59 @@ export default class EditFoodItem extends Component {
                   {this.state.foodItem.foodItemName}
                 </Card.Text>
                 {this.state.foodItem.selectedRawMaterials &&
-                  this.state.foodItem.selectedRawMaterials.length > 0 && (
-                    <section className={"mt-5"}>
-                      <strong>Selected Raw Materials</strong>
-                      <ListGroup
-                        className={"mt-3 po-selected-raw-material-list"}
-                      >
-                        {this.state.foodItem.selectedRawMaterials.map(
-                          (rawMaterial) => (
-                            <ListGroup.Item key={rawMaterial.id}>
-                              <Row>
-                                <Col sm={4} className={"pl-3 text-left"}>
-                                  <h6>
-                                    <span>{rawMaterial.name}</span>
-                                    <br />
-                                    <span>
+                this.state.foodItem.selectedRawMaterials.length > 0 && (
+                  <section className={"mt-5"}>
+                    <strong>Selected Raw Materials</strong>
+                    <ListGroup
+                      className={"mt-3 po-selected-raw-material-list"}
+                    >
+                      {this.state.foodItem.selectedRawMaterials.map(
+                        (rawMaterial) => (
+                          <ListGroup.Item key={rawMaterial.id}>
+                            <Row>
+                              <Col sm={4} className={"pl-3 text-left"}>
+                                <h6>
+                                  <span>{rawMaterial.name}</span>
+                                  <br/>
+                                  <span>
                                       <small>{rawMaterial.category}</small>
                                     </span>
-                                  </h6>
-                                </Col>
-                                <Col sm={4} className={"pl-3"}>
-                                  <h6>
+                                </h6>
+                              </Col>
+                              <Col sm={4} className={"pl-3"}>
+                                <h6>
                                     <span>
                                       <strong>Quantity</strong>
                                     </span>
-                                    <br />
-                                    <span>{rawMaterial.quantity}</span>
-                                  </h6>
-                                </Col>
-                                <Col sm={3}>
-                                  <h6>
+                                  <br/>
+                                  <span>{rawMaterial.quantity}</span>
+                                </h6>
+                              </Col>
+                              <Col sm={3}>
+                                <h6>
                                     <span>
                                       <strong>Unit Price</strong>
                                     </span>
-                                    <br />
-                                    <span>${rawMaterial.unitPrice}</span>
-                                  </h6>
-                                </Col>
-                                <Col sm={1}>
-                                  <FontAwesomeIcon
-                                    icon={faTrashAlt}
-                                    color={"#ba2311"}
-                                    onClick={() =>
-                                      this.deleteRawMaterial(rawMaterial)
-                                    }
-                                  />
-                                </Col>
-                              </Row>
-                            </ListGroup.Item>
-                          )
-                        )}
-                      </ListGroup>
-                    </section>
-                  )}
+                                  <br/>
+                                  <span>${rawMaterial.unitPrice}</span>
+                                </h6>
+                              </Col>
+                              <Col sm={1}>
+                                <FontAwesomeIcon
+                                  icon={faTrashAlt}
+                                  color={"#ba2311"}
+                                  onClick={() =>
+                                    this.deleteRawMaterial(rawMaterial)
+                                  }
+                                />
+                              </Col>
+                            </Row>
+                          </ListGroup.Item>
+                        )
+                      )}
+                    </ListGroup>
+                  </section>
+                )}
                 <Card.Text className="mt-5">
                   <strong>Total Cost :</strong>{" "}
                   {new Intl.NumberFormat("en-US", {
@@ -401,7 +391,7 @@ export default class EditFoodItem extends Component {
                   }).format(this.state.foodItem.totalCost)}
                 </Card.Text>
                 <Button
-                  variant={"success"}
+                  variant={"primary"}
                   className="mt-3"
                   onClick={this.onSubmit}
                   block
@@ -458,7 +448,7 @@ export default class EditFoodItem extends Component {
                             />
                             <InputGroup.Append>
                               <InputGroup.Text>
-                                <FontAwesomeIcon icon={faSearch} />
+                                <FontAwesomeIcon icon={faSearch}/>
                               </InputGroup.Text>
                             </InputGroup.Append>
                           </InputGroup>
@@ -477,7 +467,7 @@ export default class EditFoodItem extends Component {
                               <Col sm={5} className={"pl-3"}>
                                 <h6>
                                   <span>{rawMaterial.name}</span>
-                                  <br />
+                                  <br/>
                                   <span>
                                     <small>{rawMaterial.category}</small>
                                   </span>

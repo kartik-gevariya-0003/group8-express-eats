@@ -3,7 +3,6 @@ import {Component} from "react";
 import {Image, Nav, Navbar, NavDropdown} from "react-bootstrap";
 import {faUserCircle} from "@fortawesome/free-solid-svg-icons";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {Link} from "react-router-dom";
 
 class Header extends Component {
   constructor(props) {
@@ -23,7 +22,7 @@ class Header extends Component {
   }
 
   handleLinkClick(item, event) {
-    this.setState({ activeLink: item.id });
+    this.setState({activeLink: item.id});
   }
 
   render() {
@@ -38,11 +37,11 @@ class Header extends Component {
       <Navbar bg="dark" expand="lg" variant={"dark"} sticky={"top"}>
         <Navbar.Brand href="/home" className={"mr-5"}>
           <Image
-              src={"/logo.png"}
-              width="70"
-              height="40"
-              className="d-inline-block align-top"
-              alt="Express Eats"
+            src={"/logo.png"}
+            width="70"
+            height="40"
+            className="d-inline-block align-top"
+            alt="Express Eats"
           />
           <span className={"ml-2 logo-name-small"}>Express Eats</span>
         </Navbar.Brand>
@@ -57,7 +56,7 @@ class Header extends Component {
                   {headerLink.name}
                 </Nav.Link>
 
-            })}
+              })}
           </Nav>
         </Navbar.Collapse>
         <Navbar.Collapse className="justify-content-end">
@@ -68,7 +67,7 @@ class Header extends Component {
               alignRight
             >
               <NavDropdown.Item>Profile</NavDropdown.Item>
-              <NavDropdown.Divider />
+              <NavDropdown.Divider/>
               <NavDropdown.Item href={"/login"}>Log out</NavDropdown.Item>
             </NavDropdown>
           </Nav>
@@ -77,4 +76,5 @@ class Header extends Component {
     );
   }
 }
+
 export default Header;

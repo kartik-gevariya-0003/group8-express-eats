@@ -1,18 +1,8 @@
-import React, { useState } from "react";
-import {
-  Button,
-  Card,
-  Col,
-  Form,
-  FormControl,
-  InputGroup,
-  ListGroup,
-  Modal,
-  Row,
-} from "react-bootstrap";
-import { useHistory } from "react-router-dom";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faSearch, faTrashAlt, faPen } from "@fortawesome/free-solid-svg-icons";
+import React, {useState} from "react";
+import {Button, Card, Col, Form, FormControl, InputGroup, ListGroup, Modal, Row,} from "react-bootstrap";
+import {useHistory} from "react-router-dom";
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import {faPen, faSearch, faTrashAlt} from "@fortawesome/free-solid-svg-icons";
 import Header from "../headers/Header";
 
 let vendorDetails = [
@@ -65,7 +55,7 @@ function Vendor() {
 
   const filterVendors = (e) => {
     e.preventDefault();
-    const { value } = e.target;
+    const {value} = e.target;
     setVendor(
       vendorDetails.filter((vendor) =>
         vendor.vendorName.toLowerCase().includes(value.toLowerCase())
@@ -90,7 +80,7 @@ function Vendor() {
   };
 
   const deleteVendorConfirmation = (deleteVendor) => {
-    let state = { ...deleteModal };
+    let state = {...deleteModal};
     state.vendorName = deleteVendor.vendorName;
 
     console.log(state);
@@ -123,7 +113,7 @@ function Vendor() {
   return (
     <>
       <section>
-        <Header />
+        <Header/>
         <Row className="m-3">
           <Col className={"text-left"}>
             <h2>Vendors</h2>
@@ -146,7 +136,7 @@ function Vendor() {
                 />
                 <InputGroup.Append>
                   <InputGroup.Text>
-                    <FontAwesomeIcon icon={faSearch} />
+                    <FontAwesomeIcon icon={faSearch}/>
                   </InputGroup.Text>
                 </InputGroup.Append>
               </InputGroup>
@@ -181,7 +171,7 @@ function Vendor() {
                           </span>
                         </h5>
                       </Col>
-                      <Col sm={3} className={"pl-3 text-left"}>
+                      <Col sm={2} className={"pl-3 text-left"}>
                         <h5>
                           <span>
                             <strong>Email</strong>
@@ -195,7 +185,7 @@ function Vendor() {
                           </span>
                         </h5>
                       </Col>
-                      <Col sm={1} className={"pl-3 text-left"}>
+                      <Col sm={2} className={"pl-3 text-left"}>
                         <h5>
                           <span>
                             <strong>Action</strong>
@@ -224,7 +214,7 @@ function Vendor() {
                                 <span>{vendor.address}</span>
                               </h6>
                             </Col>
-                            <Col sm={3} className={"pl-3 text-left"}>
+                            <Col sm={2} className={"pl-3 text-left"}>
                               <h6>
                                 <span>{vendor.email}</span>
                               </h6>
@@ -234,7 +224,7 @@ function Vendor() {
                                 <span>{vendor.contactNumber}</span>
                               </h6>
                             </Col>
-                            <Col sm={1} className={"pl-3 text-left"}>
+                            <Col sm={2} className={"pl-3 text-left"}>
                               <FontAwesomeIcon
                                 icon={faPen}
                                 color={"#035384AA"}

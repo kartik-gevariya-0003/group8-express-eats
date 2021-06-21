@@ -1,4 +1,4 @@
-import React, {Component} from "react";
+import React from "react";
 import {Link} from "react-router-dom";
 import {Button, Image} from "react-bootstrap";
 import ApplicationContainer from "../ApplicationContainer";
@@ -6,7 +6,6 @@ import ApplicationContainer from "../ApplicationContainer";
 export default class Confirmation extends ApplicationContainer {
   render() {
     const {confirmation} = this.props.location;
-
     return (
       <section>
         {super.render()}

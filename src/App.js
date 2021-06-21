@@ -1,5 +1,5 @@
 import "./App.css";
-import { Route, Switch } from "react-router-dom";
+import {Route, Switch} from "react-router-dom";
 import * as PropTypes from "prop-types";
 import FoodItems from "./components/food-item/FoodItems";
 import AddFoodItem from "./components/food-item/AddFoodItem";
@@ -19,6 +19,9 @@ import Inventory from "./components/inventory/Inventory";
 import AddRawMaterialInventory from "./components/inventory/AddRawMaterialInventory";
 import AddFoodItemInventory from "./components/inventory/AddFoodItemlInventory";
 import EditFoodItem from "./components/food-item/EditFoodItem";
+import RawMaterials from "./components/raw-material/RawMaterials";
+import AddRawMaterial from "./components/raw-material/AddRawMaterial";
+import UpdateRawMaterial from "./components/raw-material/UpdateRawMaterial";
 import Register from "./components/register/Register";
 
 Route.propTypes = {
@@ -31,11 +34,11 @@ function App() {
   return (
     <div className="App">
       <Switch>
-        <Route exact path="/" component={Main} />
-        <Route exact path="/login" component={Login} />
-        <Route exact path="/register" component={Register} />
-        <Route exact path="/home" component={Home} />
-        <Route exact path="/dashboard" component={Dashboard} />
+        <Route exact path="/" component={Main}/>
+        <Route exact path="/login" component={Login}/>
+        <Route exact path="/register" component={Register}/>
+        <Route exact path="/home" component={Home}/>
+        <Route exact path="/dashboard" component={Dashboard}/>
         <Route
           exact
           path="/manufacturing-orders"
@@ -46,7 +49,7 @@ function App() {
           path="/manufacturing-order/create"
           component={CreateManufacturingOrder}
         />
-        <Route exact path="/purchase-orders" component={PurchaseOrders} />
+        <Route exact path="/purchase-orders" component={PurchaseOrders}/>
         <Route
           exact
           path="/purchase-order/create"
@@ -57,12 +60,12 @@ function App() {
           path="/purchase-order/confirmation"
           component={Confirmation}
         />
-        <Route exact path="/food-item/confirmation" component={Confirmation} />
-        <Route exact path="/food-items" component={FoodItems} />
-        <Route exact path="/food-items/create" component={AddFoodItem} />
+        <Route exact path="/food-item/confirmation" component={Confirmation}/>
+        <Route exact path="/food-items" component={FoodItems}/>
+        <Route exact path="/food-items/create" component={AddFoodItem}/>
 
-        <Route exact path="/inventory/confirmation" component={Confirmation} />
-        <Route exact path="/inventory" component={Inventory} />
+        <Route exact path="/inventory/confirmation" component={Confirmation}/>
+        <Route exact path="/inventory" component={Inventory}/>
         <Route
           exact
           path="/inventory/add-raw-material-inventory"
@@ -73,11 +76,14 @@ function App() {
           path="/inventory/add-food-item-inventory"
           component={AddFoodItemInventory}
         />
-        <Route exact path="/edit-food-item" component={EditFoodItem} />
-        <Route exact path="/vendors" component={Vendor} />
-        <Route exact path="/vendors/create" component={CreateVendor} />
-        <Route exact path="/vendor/confirmation" component={Confirmation} />
-        <Route exact path="/vendor/edit" component={EditVendor} />
+        <Route exact path="/edit-food-item" component={EditFoodItem}/>
+        <Route exact path="/vendors" component={Vendor}/>
+        <Route exact path="/vendors/create" component={CreateVendor}/>
+        <Route exact path="/vendor/confirmation" component={Confirmation}/>
+        <Route exact path="/vendor/edit" component={EditVendor}/>
+        <Route exact path='/raw-materials' component={RawMaterials}/>
+        <Route exact path='/raw-material/add' component={AddRawMaterial}/>
+        <Route exact path='/raw-material/update' component={UpdateRawMaterial}/>
       </Switch>
     </div>
   );

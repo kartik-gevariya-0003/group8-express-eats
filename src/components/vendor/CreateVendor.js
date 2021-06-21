@@ -1,15 +1,8 @@
-import React, { useState } from "react";
-import { useHistory } from "react-router-dom";
+import React, {useState} from "react";
+import {useHistory} from "react-router-dom";
 import "./create-vendor.css";
 
-import {
-  Button,
-  Card,
-  Col,
-  Form,
-  FormControl,
-  Row,
-} from "react-bootstrap";
+import {Button, Card, Col, Form, FormControl, Row,} from "react-bootstrap";
 import Header from "../headers/Header";
 
 function CreateVendor() {
