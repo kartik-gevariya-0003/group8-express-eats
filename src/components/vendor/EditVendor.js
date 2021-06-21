@@ -238,14 +238,14 @@ function CreateVendor() {
                                                 <Col sm={6} className={"text-right"}>
                                                     <Button
                                                         className={"submit-btn"}
-                                                        variant="success"
+                                                        variant="primary"
                                                         type="submit"
                                                     >
                                                         Submit
                                                     </Button>
                                                 </Col>
                                                 <Col sm={6} className={"submit-btn"}>
-                                                    <Button variant="secondary" onClick={cancelHandler}>
+                                                    <Button variant="danger" onClick={cancelHandler}>
                                                         Cancel
                                                     </Button>
                                                 </Col>

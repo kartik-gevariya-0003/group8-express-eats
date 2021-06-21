@@ -144,7 +144,7 @@ export default class PurchaseOrders extends ApplicationContainer {
         </Row>
         <Row className="m-3">
           <Col sm={8} className={"text-left"}>
-            <Button variant={"success"} onClick={this.createPurchaseOrder}>Create Purchase Order</Button>
+            <Button variant={"primary"} onClick={this.createPurchaseOrder}>Create Purchase Order</Button>
           </Col>
           <Col sm={4}>
             <Form.Group>
@@ -243,9 +243,9 @@ export default class PurchaseOrders extends ApplicationContainer {
                                   </h6>
                                 </Col>
                                 <Col sm={3}>
-                                  <Button variant={"primary"} className={"mr-5"}
+                                  <Button variant={"warning"} className={"mr-5"}
                                           onClick={() => this.placePurchaseOrder(order)}>Place Order</Button>
-                                  <FontAwesomeIcon icon={faTrashAlt} color={"#ba2311"}
+                                  <FontAwesomeIcon icon={faTrashAlt} color={"#BC3347CC"}
                                                    onClick={() => this.deletePurchaseOrder(order)}/>
                                 </Col>
                               </Row>
@@ -439,7 +439,7 @@ export default class PurchaseOrders extends ApplicationContainer {
                                   </h6>
                                 </Col>
                                 <Col sm={3}>
-                                  <Button variant={"warning"} className={"mr-5"}
+                                  <Button variant={"danger"} className={"mr-5"}
                                           onClick={() => this.archivePurchaseOrder(order)}>Archive Order</Button>
                                 </Col>
                               </Row>

@@ -69,7 +69,7 @@ function Inventory() {
       <Row className="m-3">
         <Col sm={3}>
           <Button
-            variant="success"
+            variant="primary"
             className={"float-left"}
             onClick={goToAddRawMaterialInventory}
           >
@@ -96,7 +96,7 @@ function Inventory() {
         </Col>
         <Col sm={3}>
           <Button
-            variant="success"
+            variant="primary"
             className={"float-left"}
             onClick={goToAddFoodItemInventory}
           >

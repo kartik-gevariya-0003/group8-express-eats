@@ -23,13 +23,16 @@ import EditFoodItem from "./components/food-item/EditFoodItem";
 Route.propTypes = {
   component: PropTypes.any,
   path: PropTypes.string,
-  exact: PropTypes.bool,
+  exact: PropTypes.bool
 };
 
 function App() {
   return (
     <div className="App">
       <Switch>
+        <Route exact path="/" component={Main} />
+        <Route exact path="/login" component={Login} />
+        <Route exact path="/home" component={Home} />
         <Route exact path="/dashboard" component={Dashboard} />
         <Route
           exact
@@ -53,9 +56,6 @@ function App() {
           component={Confirmation}
         />
         <Route exact path="/food-item/confirmation" component={Confirmation} />
-        <Route exact path="/home" component={Home} />
-        <Route exact path="/login" component={Login} />
-        <Route exact path="/" component={Main} />
         <Route exact path="/food-items" component={FoodItems} />
         <Route exact path="/food-items/create" component={AddFoodItem} />
 

@@ -131,7 +131,7 @@ function Vendor() {
         </Row>
         <Row className="m-3">
           <Col sm={8} className={"text-left"}>
-            <Button variant={"success"} onClick={createVendor}>
+            <Button variant={"primary"} onClick={createVendor}>
               Add New Vendor
             </Button>
           </Col>
@@ -237,13 +237,13 @@ function Vendor() {
                             <Col sm={1} className={"pl-3 text-left"}>
                               <FontAwesomeIcon
                                 icon={faPen}
-                                color={"#8a9ea7"}
+                                color={"#035384AA"}
                                 className={"mr-5"}
                                 onClick={() => editVendor(vendor)}
                               />
                               <FontAwesomeIcon
                                 icon={faTrashAlt}
-                                color={"#ba2311"}
+                                color={"#BC3347CC"}
                                 onClick={() => deleteVendorConfirmation(vendor)}
                               />
                             </Col>

@@ -1,12 +1,12 @@
 //Background color for the body tag
-$body-bg: #f3f3dc;
+$body-bg: rgba(4, 75, 91, 0.1);
 
 //Colors
-$primary: #DAA860;
-$success: #8d9b6a;
-$secondary: #8a9ea7;
-$warning: #cb7816;
-$danger: #ba2311;
+$primary: #119696;
+$success: #4EA1D3;
+$secondary: #035384AA;
+$warning: #4EA1D3;
+$danger: #BC3347CC;
 $info: #119696;
 
 //Navbar
@@ -21,8 +21,8 @@ $alert-color-level: 0;
 $alert-border-level: 0;
 
 //Input Group
-$input-group-addon-bg: $warning;
-$input-group-addon-color: $body-bg;
+$input-group-addon-bg: $primary;
+$input-group-addon-color: #FFFFFF;
 
 
 @import "../node_modules/bootstrap/scss/bootstrap";
