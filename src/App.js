@@ -1,6 +1,8 @@
 import "./App.css";
 import { Route, Switch } from "react-router-dom";
 import * as PropTypes from "prop-types";
+import FoodItems from "./components/food-item/FoodItems";
+import AddFoodItem from "./components/food-item/AddFoodItem";
 import ManufacturingOrders from "./components/manufacturing-order/ManufacturingOrders";
 import CreateManufacturingOrder from "./components/manufacturing-order/CreateManufacturingOrder";
 import PurchaseOrders from "./components/purchase-order/PurchaseOrders";
@@ -18,9 +20,9 @@ import AddRawMaterialInventory from "./components/inventory/AddRawMaterialInvent
 import AddFoodItemInventory from "./components/inventory/AddFoodItemlInventory";
 
 Route.propTypes = {
-    component: PropTypes.any,
-    path: PropTypes.string,
-    exact: PropTypes.bool
+  component: PropTypes.any,
+  path: PropTypes.string,
+  exact: PropTypes.bool,
 };
 
 function App() {
@@ -49,10 +51,14 @@ function App() {
           path="/purchase-order/confirmation"
           component={Confirmation}
         />
-        <Route exact path="/inventory/confirmation" component={Confirmation} />
+        <Route exact path="/food-item/confirmation" component={Confirmation} />
         <Route exact path="/home" component={Home} />
         <Route exact path="/login" component={Login} />
         <Route exact path="/" component={Main} />
+        <Route exact path="/food-items" component={FoodItems} />
+        <Route exact path="/food-items/create" component={AddFoodItem} />
+
+        <Route exact path="/inventory/confirmation" component={Confirmation} />
         <Route exact path="/inventory" component={Inventory} />
         <Route
           exact
@@ -64,11 +70,10 @@ function App() {
           path="/inventory/add-food-item-inventory"
           component={AddFoodItemInventory}
         />
-          <Route exact path="/vendors" component={Vendor} />
-          <Route exact path="/vendors/create" component={CreateVendor} />
-          <Route exact path="/vendor/confirmation" component={Confirmation} />
+        <Route exact path="/vendors" component={Vendor} />
+        <Route exact path="/vendors/create" component={CreateVendor} />
+        <Route exact path="/vendor/confirmation" component={Confirmation} />
         <Route exact path="/vendor/edit" component={EditVendor} />
-
       </Switch>
     </div>
   );
