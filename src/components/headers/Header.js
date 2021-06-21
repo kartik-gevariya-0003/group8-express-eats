@@ -1,3 +1,4 @@
+import "./header.css"
 import {Component} from "react";
 import {Image, Nav, Navbar, NavDropdown} from "react-bootstrap";
 import {faUserCircle} from "@fortawesome/free-solid-svg-icons";
@@ -42,13 +43,7 @@ class Header extends Component {
               className="d-inline-block align-top"
               alt="Express Eats"
           />
-          <Image
-              src={"/logo_name.png"}
-              width="100"
-              height="30"
-              className="d-inline-block ml-2"
-              alt="Express Eats"
-          />
+          <span className={"ml-2 logo-name-small"}>Express Eats</span>
         </Navbar.Brand>
         <Navbar.Toggle aria-controls="basic-navbar-nav"/>
         <Navbar.Collapse id="basic-navbar-nav">

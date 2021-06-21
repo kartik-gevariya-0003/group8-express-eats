@@ -1,6 +1,6 @@
-import {Component} from "react";
+import PlainHeaderComponent from "../PlainHeaderComponent";
 
-class Main extends Component {
+class Main extends PlainHeaderComponent {
 
     constructor(props) {
         super(props);
@@ -8,7 +8,11 @@ class Main extends Component {
     }
 
     render() {
-        return ('')
+        return (
+            <section>
+                {super.render()}
+            </section>
+        )
     }
 }
 export default Main

@@ -3,7 +3,6 @@ import { Route, Switch } from "react-router-dom";
 import * as PropTypes from "prop-types";
 import FoodItems from "./components/food-item/FoodItems";
 import AddFoodItem from "./components/food-item/AddFoodItem";
-import Header from "./components/headers/Header";
 import ManufacturingOrders from "./components/manufacturing-order/ManufacturingOrders";
 import CreateManufacturingOrder from "./components/manufacturing-order/CreateManufacturingOrder";
 import PurchaseOrders from "./components/purchase-order/PurchaseOrders";
@@ -11,8 +10,8 @@ import CreatePurchaseOrder from "./components/purchase-order/CreatePurchaseOrder
 import Confirmation from "./components/confirmation/Confirmation";
 import Vendor from "./components/vendor/Vendor";
 import CreateVendor from "./components/vendor/CreateVendor";
+import EditVendor from "./components/vendor/EditVendor";
 import Dashboard from "./components/dashboard/Dashboard";
-import LogoHeader from "./components/headers/LogoHeader";
 import Home from "./components/home/Home";
 import Main from "./components/main/Main";
 import Login from "./components/login/Login";
@@ -27,15 +26,8 @@ Route.propTypes = {
 };
 
 function App() {
-  const isLogoHeader =
-    window.location.pathname === "/" ||
-    window.location.pathname === "/home" ||
-    window.location.pathname === "/login" ||
-    window.location.pathname === "/register";
   return (
     <div className="App">
-      {!isLogoHeader && <Header />}
-      {isLogoHeader && <LogoHeader />}
       <Switch>
         <Route exact path="/dashboard" component={Dashboard} />
         <Route
@@ -81,6 +73,7 @@ function App() {
         <Route exact path="/vendors" component={Vendor} />
         <Route exact path="/vendors/create" component={CreateVendor} />
         <Route exact path="/vendor/confirmation" component={Confirmation} />
+        <Route exact path="/vendor/edit" component={EditVendor} />
       </Switch>
     </div>
   );

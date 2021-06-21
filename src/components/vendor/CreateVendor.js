@@ -8,11 +8,9 @@ import {
   Col,
   Form,
   FormControl,
-  InputGroup,
-  ListGroup,
-  Modal,
   Row,
 } from "react-bootstrap";
+import Header from "../headers/Header";
 
 function CreateVendor() {
   let history = useHistory();
@@ -124,6 +122,7 @@ function CreateVendor() {
 
   return (
     <>
+      <Header/>
       <Row className={"mt-3 justify-content-center"}>
         <Col sm={8}>
           <Card>
@@ -156,7 +155,7 @@ function CreateVendor() {
                           <Form.Control
                             type="text"
                             name="contactPersonName"
-                            value={values.conactPersonName}
+                            value={values.contactPersonName}
                             onChange={onChangeHandler}
                             className={
                               errorContactPersonName.length > 0

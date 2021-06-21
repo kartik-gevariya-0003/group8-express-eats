@@ -3,6 +3,7 @@ import {Button, Card, Col, Form, FormControl, InputGroup, ListGroup, Modal, Row}
 import { useHistory } from "react-router-dom";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faSearch, faTrashAlt, faPen} from "@fortawesome/free-solid-svg-icons";
+import Header from "../headers/Header";
 
 let vendorDetails = [{
   vendorName:"Food Factory",contactPersonName:"John", address:"Abbey Road",email:"john@foodfactory.com", contactNumber: 9876543210
@@ -29,6 +30,10 @@ function Vendor() {
   const createVendor = () => {
     history.push("/vendors/create");
   };
+
+  const editVendor=()=>{
+    history.push("/vendor/edit");
+  }
 
   const filterVendors =(e)=>{
     e.preventDefault();
@@ -71,6 +76,7 @@ function Vendor() {
   return (
     <>
       <section>
+        <Header/>
         <Row className="m-3">
           <Col className={"text-left"}>
             <h2>Vendors</h2>
@@ -118,14 +124,19 @@ function Vendor() {
                         <span><strong>Address</strong></span>
                       </h5>
                     </Col>
-                    <Col sm={2} className={"pl-3 text-left"}>
+                    <Col sm={3} className={"pl-3 text-left"}>
                       <h5>
                         <span><strong>Email</strong></span>
                       </h5>
                     </Col>
-                    <Col sm={2}>
+                    <Col sm={2} className={"pl-3 text-left"}>
                       <h5>
                         <span><strong>Contact Number</strong></span>
+                      </h5>
+                    </Col>
+                    <Col sm={1} className={"pl-3 text-left"}>
+                      <h5>
+                        <span><strong>Action</strong></span>
                       </h5>
                     </Col>
                   </Row>
@@ -150,18 +161,18 @@ function Vendor() {
                                   <span>{vendor.address}</span>
                                 </h6>
                               </Col>
-                              <Col sm={2} className={"pl-3 text-left"}>
+                              <Col sm={3} className={"pl-3 text-left"}>
                                 <h6>
                                   <span>{vendor.email}</span>
                                 </h6>
                               </Col>
-                              <Col sm={2}>
+                              <Col sm={2} className={"pl-3 text-left"}>
                                 <h6>
                                   <span>{vendor.contactNumber}</span>
                                 </h6>
                               </Col>
-                              <Col sm={2} >
-                                <FontAwesomeIcon icon={faPen} color={"#8a9ea7"} className={"mr-5"} />
+                              <Col sm={1} className={"pl-3 text-left"}>
+                                <FontAwesomeIcon icon={faPen} color={"#8a9ea7"} className={"mr-5"} onClick={() => editVendor(vendor)}/>
                                 <FontAwesomeIcon icon={faTrashAlt} color={"#ba2311"}
                                                  onClick={() => deleteVendorConfirmation(vendor)}  />
                               </Col>
