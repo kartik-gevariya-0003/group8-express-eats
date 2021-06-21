@@ -3,6 +3,7 @@ import {Component} from "react";
 import {Image, Nav, Navbar, NavDropdown} from "react-bootstrap";
 import {faUserCircle} from "@fortawesome/free-solid-svg-icons";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import {Link} from "react-router-dom";
 
 class Header extends Component {
   constructor(props) {
@@ -68,7 +69,7 @@ class Header extends Component {
             >
               <NavDropdown.Item>Profile</NavDropdown.Item>
               <NavDropdown.Divider />
-              <NavDropdown.Item>Log out</NavDropdown.Item>
+              <NavDropdown.Item href={"/login"}>Log out</NavDropdown.Item>
             </NavDropdown>
           </Nav>
         </Navbar.Collapse>
