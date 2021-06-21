@@ -133,7 +133,7 @@ class Dashboard extends ApplicationContainer {
                         <ButtonToolbar aria-label="Toolbar with button groups" className="float-right">
                           <ButtonGroup className="mr-2" aria-label="First group">
                             {this.chartOptions.map(chartOption => {
-                              return <Button
+                              return <Button key={chartOption}
                                 variant={chartOption === this.state.selectedLineChartOption ? 'primary' : 'outline-primary'}>{chartOption}</Button>
                             })}
                           </ButtonGroup>
@@ -171,7 +171,7 @@ class Dashboard extends ApplicationContainer {
                         <ButtonToolbar aria-label="Toolbar with button groups" className="float-right">
                           <ButtonGroup className="mr-2" aria-label="First group">
                             {this.chartOptions.map(chartOption => {
-                              return <Button
+                              return <Button key={chartOption}
                                 variant={chartOption === this.state.selectedPieChartOption ? 'primary' : 'outline-primary'}>{chartOption}</Button>
                             })}
                           </ButtonGroup>

@@ -166,7 +166,7 @@ function Inventory() {
                   </thead>
                   <tbody>
                   {foodItems.map((item) => (
-                    <tr key={item.rawMaterial}>
+                    <tr key={item.foodItem}>
                       <td className="text-left">{item.foodItem}</td>
                       <td>{item.quantity}</td>
                     </tr>

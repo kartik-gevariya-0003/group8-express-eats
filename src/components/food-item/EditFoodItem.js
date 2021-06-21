@@ -413,7 +413,6 @@ export default class EditFoodItem extends Component {
                       </Form.Label>
                       <Form.Control
                         type="text"
-                        isClearable
                         className={isError.foodItemName ? "is-invalid" : ""}
                         placeholder="Enter Food Item Name"
                         onChange={(e) => {
