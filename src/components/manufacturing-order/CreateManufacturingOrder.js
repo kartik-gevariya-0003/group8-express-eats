@@ -273,7 +273,7 @@ class CreateManufacturingOrder extends ApplicationContainer {
                   </Card.Text>
                 </section>)
                 }
-                <Button variant={"success"} className="mt-3" onClick={this.onSubmit.bind(this)} block>Create
+                <Button variant={"primary"} className="mt-3" onClick={this.onSubmit.bind(this)} block>Create
                   Order</Button>
               </Card.Body>
             </Card>

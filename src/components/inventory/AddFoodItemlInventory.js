@@ -99,15 +99,14 @@ function AddFoodItemInventory() {
                     </Row>
                     <br></br>
                     <Row className="justify-content-center">
+                      <Button variant="primary" className="mr-2" type="submit">
+                        Submit
+                      </Button>
                       <Button
-                          variant="primary"
-                          className="mr-2"
+                          variant="danger"
                           onClick={goToInventory}
                       >
                         Cancel
-                      </Button>
-                      <Button variant="secondary" type="submit">
-                        Submit
                       </Button>
                     </Row>
                   </Form>

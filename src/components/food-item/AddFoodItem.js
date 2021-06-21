@@ -14,6 +14,7 @@ import {
 } from "react-bootstrap";
 import { faSearch, faTrashAlt } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import ApplicationContainer from "../ApplicationContainer";
 
 const rawMaterials = [
   {
@@ -75,7 +76,7 @@ const rawMaterials = [
   },
 ];
 
-export default class AddFoodItem extends Component {
+export default class AddFoodItem extends ApplicationContainer {
   constructor(props) {
     super(props);
 
@@ -314,7 +315,7 @@ export default class AddFoodItem extends Component {
 
     return (
       <section>
-        <Header />
+        {super.render()}
         <Row className={"m-3"}>
           <Col sm={5}>
             <Card>
@@ -386,7 +387,7 @@ export default class AddFoodItem extends Component {
                   }).format(this.state.foodItem.totalCost)}
                 </Card.Text>
                 <Button
-                  variant={"success"}
+                  variant={"primary"}
                   className="mt-3"
                   onClick={this.onSubmit}
                   block

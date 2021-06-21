@@ -33,9 +33,9 @@ class Dashboard extends ApplicationContainer {
       ],
       selectedPieChartOption: '1w',
       pieChartData: [
-        {name: "Cheese", value: 200, fill: '#E8B38C'},
-        {name: "Black Beans", value: 120, fill: '#909E84'},
-        {name: "Bell Peppers", value: 80, fill: '#BB8644'}
+        {name: "Cheese", value: 200, fill: '#119696'},
+        {name: "Black Beans", value: 120, fill: '#035384AA'},
+        {name: "Bell Peppers", value: 80, fill: '#BC3347CC'}
       ]
     }
     this.chartOptions = ['1d', '1w', '1m', '6m', '1y']
@@ -149,8 +149,8 @@ class Dashboard extends ApplicationContainer {
                         <YAxis/>
                         <Tooltip/>
                         <Legend/>
-                        <Line name="Purchased" type="monotone" dataKey="pv" stroke="#909E84"/>
-                        <Line name="Used" type="monotone" dataKey="uv" stroke="#BB8644"/>
+                        <Line name="Purchased" type="monotone" dataKey="pv" stroke="#035384AA"/>
+                        <Line name="Used" type="monotone" dataKey="uv" stroke="#BC3347CC"/>
                       </LineChart>
                     </ResponsiveContainer>
                   </section>
