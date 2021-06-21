@@ -68,7 +68,7 @@ class Header extends Component {
             >
               <NavDropdown.Item>Profile</NavDropdown.Item>
               <NavDropdown.Divider/>
-              <NavDropdown.Item>Log out</NavDropdown.Item>
+              <NavDropdown.Item href={"/login"}>Log out</NavDropdown.Item>
             </NavDropdown>
           </Nav>
         </Navbar.Collapse>

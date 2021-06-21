@@ -84,7 +84,7 @@ export default class FoodItems extends Component {
 
                     <FontAwesomeIcon
                       icon={faPencilAlt}
-                      color={"#8a9ea7"}
+                      color={"#035384AA"}
                       className="float-left"
                       onClick={() => {
                         this.goToEditFoodItem(foodItem.id);

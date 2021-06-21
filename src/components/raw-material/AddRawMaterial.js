@@ -29,30 +29,26 @@ function AddRawMaterial() {
     });
   };
   const validator = () => {
-    let valid = true;
-
     if (values.name.trim() === "") {
       setErrorName("Raw material name is required");
-      valid = false;
     } else {
       setErrorName("");
     }
 
     if (values.vendorName.trim() === "") {
       setErrorVendorName("Vendor name is required");
-      valid = false;
     } else {
       setErrorVendorName("");
     }
+
     if (values.unitCost.trim() === "") {
       setErrorUnitCost("Unit cost is required");
-      valid = false;
     } else {
       setErrorUnitCost("");
     }
+
     if (values.unitMeasurement.trim() === "") {
       setErrorUnitMeasurement("Unit Measurement is required");
-      valid = false;
     } else {
       setErrorUnitMeasurement("");
     }

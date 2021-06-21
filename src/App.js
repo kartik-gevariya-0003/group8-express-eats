@@ -22,6 +22,7 @@ import EditFoodItem from "./components/food-item/EditFoodItem";
 import RawMaterials from "./components/raw-material/RawMaterials";
 import AddRawMaterial from "./components/raw-material/AddRawMaterial";
 import UpdateRawMaterial from "./components/raw-material/UpdateRawMaterial";
+import Register from "./components/register/Register";
 
 Route.propTypes = {
   component: PropTypes.any,
@@ -35,6 +36,7 @@ function App() {
       <Switch>
         <Route exact path="/" component={Main}/>
         <Route exact path="/login" component={Login}/>
+        <Route exact path="/register" component={Register}/>
         <Route exact path="/home" component={Home}/>
         <Route exact path="/dashboard" component={Dashboard}/>
         <Route

@@ -1,7 +1,7 @@
 import "./food-item.css";
 import React from "react";
 import {Button, Card, Col, Form, FormControl, InputGroup, ListGroup, Modal, Row,} from "react-bootstrap";
-import {faSearch} from "@fortawesome/free-solid-svg-icons";
+import {faSearch, faTrashAlt} from "@fortawesome/free-solid-svg-icons";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import ApplicationContainer from "../ApplicationContainer";
 
@@ -156,7 +156,7 @@ export default class AddFoodItem extends ApplicationContainer {
     state.foodItem.manufacturerCost = cost;
     let totalCost = 0;
     if (state.foodItem.selectedRawMaterials.length > 0) {
-      state.foodItem.selectedRawMaterials.map((rawMaterial) => {
+      state.foodItem.selectedRawMaterials.forEach((rawMaterial) => {
         totalCost += rawMaterial.unitPrice * rawMaterial.quantity;
       });
     }
