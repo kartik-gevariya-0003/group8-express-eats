@@ -136,6 +136,7 @@ export default class PurchaseOrders extends ApplicationContainer {
   render() {
     return (
       <section>
+        {super.render()}
         <Row className="m-3">
           <Col className={"text-left"}>
             <h2>Purchase Orders</h2>

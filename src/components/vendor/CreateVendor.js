@@ -10,6 +10,7 @@ import {
   FormControl,
   Row,
 } from "react-bootstrap";
+import Header from "../headers/Header";
 
 function CreateVendor() {
   let history = useHistory();
@@ -121,6 +122,7 @@ function CreateVendor() {
 
   return (
     <>
+      <Header/>
       <Row className={"mt-3 justify-content-center"}>
         <Col sm={8}>
           <Card>
