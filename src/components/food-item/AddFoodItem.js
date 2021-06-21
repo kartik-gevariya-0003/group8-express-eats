@@ -1,5 +1,6 @@
 import "./food-item.css";
 import React, { Component } from "react";
+import Header from "../headers/Header";
 import {
   Button,
   Card,
@@ -312,25 +313,152 @@ export default class AddFoodItem extends Component {
     const { isError } = this.state;
 
     return (
-      <Row className={"m-3"}>
-        <Col sm={5}>
-          <Card>
-            <Card.Body>
-              <Card.Title>Food Item</Card.Title>
-              <Card.Text>
-                <strong>Food Item Name :</strong>{" "}
-                {this.state.foodItem.foodItemName}
-              </Card.Text>
-              {this.state.foodItem.selectedRawMaterials &&
-                this.state.foodItem.selectedRawMaterials.length > 0 && (
-                  <section className={"mt-5"}>
-                    <strong>Selected Raw Materials</strong>
-                    <ListGroup className={"mt-3 po-selected-raw-material-list"}>
-                      {this.state.foodItem.selectedRawMaterials.map(
-                        (rawMaterial) => (
+      <section>
+        <Header />
+        <Row className={"m-3"}>
+          <Col sm={5}>
+            <Card>
+              <Card.Body>
+                <Card.Title>Food Item</Card.Title>
+                <Card.Text>
+                  <strong>Food Item Name :</strong>{" "}
+                  {this.state.foodItem.foodItemName}
+                </Card.Text>
+                {this.state.foodItem.selectedRawMaterials &&
+                  this.state.foodItem.selectedRawMaterials.length > 0 && (
+                    <section className={"mt-5"}>
+                      <strong>Selected Raw Materials</strong>
+                      <ListGroup
+                        className={"mt-3 po-selected-raw-material-list"}
+                      >
+                        {this.state.foodItem.selectedRawMaterials.map(
+                          (rawMaterial) => (
+                            <ListGroup.Item key={rawMaterial.id}>
+                              <Row>
+                                <Col sm={4} className={"pl-3 text-left"}>
+                                  <h6>
+                                    <span>{rawMaterial.name}</span>
+                                    <br />
+                                    <span>
+                                      <small>{rawMaterial.category}</small>
+                                    </span>
+                                  </h6>
+                                </Col>
+                                <Col sm={4} className={"pl-3"}>
+                                  <h6>
+                                    <span>
+                                      <strong>Quantity</strong>
+                                    </span>
+                                    <br />
+                                    <span>{rawMaterial.quantity}</span>
+                                  </h6>
+                                </Col>
+                                <Col sm={3}>
+                                  <h6>
+                                    <span>
+                                      <strong>Unit Price</strong>
+                                    </span>
+                                    <br />
+                                    <span>${rawMaterial.unitPrice}</span>
+                                  </h6>
+                                </Col>
+                                <Col sm={1}>
+                                  <FontAwesomeIcon
+                                    icon={faTrashAlt}
+                                    color={"#ba2311"}
+                                    onClick={() =>
+                                      this.deleteRawMaterial(rawMaterial)
+                                    }
+                                  />
+                                </Col>
+                              </Row>
+                            </ListGroup.Item>
+                          )
+                        )}
+                      </ListGroup>
+                    </section>
+                  )}
+                <Card.Text className="mt-5">
+                  <strong>Total Cost :</strong>{" "}
+                  {new Intl.NumberFormat("en-US", {
+                    style: "currency",
+                    currency: "USD",
+                  }).format(this.state.foodItem.totalCost)}
+                </Card.Text>
+                <Button
+                  variant={"success"}
+                  className="mt-3"
+                  onClick={this.onSubmit}
+                  block
+                >
+                  Create Order
+                </Button>
+              </Card.Body>
+            </Card>
+          </Col>
+          <Col sm={7}>
+            <Card>
+              <Card.Body className={"text-left"}>
+                <Card.Title>New Food Item</Card.Title>
+                <Row className={"mt-3"}>
+                  <Col sm={12}>
+                    <Form.Group controlId="fooditemname">
+                      <Form.Label>
+                        <strong>Food Item Name</strong>
+                      </Form.Label>
+                      <Form.Control
+                        type="text"
+                        isClearable
+                        className={isError.foodItemName ? "is-invalid" : ""}
+                        placeholder="Enter Food Item Name"
+                        onChange={(e) => {
+                          this.onFoodItemNameChange(e);
+                        }}
+                      />
+                      {isError.foodItemName.length > 0 && (
+                        <Form.Control.Feedback type={"invalid"}>
+                          {isError.foodItemName}
+                        </Form.Control.Feedback>
+                      )}
+                    </Form.Group>
+                  </Col>
+                </Row>
+                <Row className={"mt-3"}>
+                  <Col>
+                    <Form.Group controlId="rawMaterials">
+                      <Row>
+                        <Col sm={7} className={"pt-2"}>
+                          <Form.Label>
+                            <strong>Raw Materials</strong>
+                          </Form.Label>
+                        </Col>
+                        <Col sm={5}>
+                          <InputGroup>
+                            <FormControl
+                              placeholder="Search"
+                              onChange={this.filterRawMaterial}
+                              aria-label="Search"
+                              aria-describedby="search-control"
+                            />
+                            <InputGroup.Append>
+                              <InputGroup.Text>
+                                <FontAwesomeIcon icon={faSearch} />
+                              </InputGroup.Text>
+                            </InputGroup.Append>
+                          </InputGroup>
+                        </Col>
+                      </Row>
+                      <ListGroup
+                        className={
+                          isError.selectedRawMaterials.length > 0
+                            ? "is-invalid mt-3 po-raw-material-list"
+                            : "mt-3 po-raw-material-list"
+                        }
+                      >
+                        {this.state.rawMaterials.map((rawMaterial) => (
                           <ListGroup.Item key={rawMaterial.id}>
                             <Row>
-                              <Col sm={4} className={"pl-3 text-left"}>
+                              <Col sm={5} className={"pl-3"}>
                                 <h6>
                                   <span>{rawMaterial.name}</span>
                                   <br />
@@ -339,238 +467,124 @@ export default class AddFoodItem extends Component {
                                   </span>
                                 </h6>
                               </Col>
-                              <Col sm={4} className={"pl-3"}>
+                              <Col sm={5}>
                                 <h6>
                                   <span>
-                                    <strong>Quantity</strong>
+                                    <strong>Unit Price:</strong>
                                   </span>
-                                  <br />
-                                  <span>{rawMaterial.quantity}</span>
+                                  <span> ${rawMaterial.unitPrice}</span>
                                 </h6>
                               </Col>
-                              <Col sm={3}>
-                                <h6>
-                                  <span>
-                                    <strong>Unit Price</strong>
-                                  </span>
-                                  <br />
-                                  <span>${rawMaterial.unitPrice}</span>
-                                </h6>
-                              </Col>
-                              <Col sm={1}>
-                                <FontAwesomeIcon
-                                  icon={faTrashAlt}
-                                  color={"#ba2311"}
+                              <Col sm={2}>
+                                <Button
+                                  variant={"secondary"}
                                   onClick={() =>
-                                    this.deleteRawMaterial(rawMaterial)
+                                    this.addRawMaterial(rawMaterial)
                                   }
-                                />
+                                >
+                                  Add
+                                </Button>
                               </Col>
                             </Row>
                           </ListGroup.Item>
-                        )
+                        ))}
+                      </ListGroup>
+                      {isError.selectedRawMaterials.length > 0 && (
+                        <Form.Control.Feedback type={"invalid"}>
+                          {isError.selectedRawMaterials}
+                        </Form.Control.Feedback>
                       )}
-                    </ListGroup>
-                  </section>
+                    </Form.Group>
+                  </Col>
+                </Row>
+                <Row className={"mt-3"}>
+                  <Col sm={12}>
+                    <Form.Group controlId="vendor">
+                      <Form.Label>
+                        <strong>Manufacturer Cost</strong>
+                      </Form.Label>
+                      <Form.Control
+                        name={"manufacturercost"}
+                        type="number"
+                        step=".01"
+                        onChange={(e) => {
+                          this.onManufacturerCostChange(e.target.value);
+                        }}
+                        className={
+                          isError.manufacturerCost.length > 0
+                            ? "is-invalid"
+                            : ""
+                        }
+                        placeholder="Enter Manufacturer Cost"
+                      />
+                      {isError.manufacturerCost.length > 0 && (
+                        <Form.Control.Feedback type={"invalid"}>
+                          {isError.manufacturerCost}
+                        </Form.Control.Feedback>
+                      )}
+                    </Form.Group>
+                  </Col>
+                </Row>
+              </Card.Body>
+            </Card>
+          </Col>
+
+          <Modal
+            show={this.state.rawMaterialQuantityModal.show}
+            animation={false}
+            onHide={this.closeModal}
+          >
+            <Modal.Header closeButton>
+              <Modal.Title>Enter Quantity</Modal.Title>
+            </Modal.Header>
+            <Modal.Body>
+              <Form.Group>
+                <Form.Label className={"m-0"}>
+                  <strong>Raw Material</strong>
+                </Form.Label>
+                <Form.Control
+                  plaintext
+                  readOnly
+                  defaultValue={
+                    this.state.rawMaterialQuantityModal.selectedRawMaterial.name
+                  }
+                  className={"p-0"}
+                />
+              </Form.Group>
+              <Form.Group>
+                <Form.Label>
+                  <strong>Quantity : </strong>
+                </Form.Label>
+                <Form.Control
+                  name={"modalRawMaterialQuantity"}
+                  type="number"
+                  step=".01"
+                  onChange={this.rawMaterialQuantityChangeListener}
+                  className={
+                    isError.selectedRawMaterialQuantity.length > 0
+                      ? "is-invalid"
+                      : ""
+                  }
+                  placeholder="Enter Quantity"
+                />
+                {isError.selectedRawMaterialQuantity.length > 0 && (
+                  <Form.Control.Feedback type={"invalid"}>
+                    {isError.selectedRawMaterialQuantity}
+                  </Form.Control.Feedback>
                 )}
-              <Card.Text className="mt-5">
-                <strong>Total Cost :</strong>{" "}
-                {new Intl.NumberFormat("en-US", {
-                  style: "currency",
-                  currency: "USD",
-                }).format(this.state.foodItem.totalCost)}
-              </Card.Text>
+              </Form.Group>
+            </Modal.Body>
+            <Modal.Footer>
               <Button
-                variant={"success"}
-                className="mt-3"
-                onClick={this.onSubmit}
-                block
+                variant="secondary"
+                onClick={this.addRawMaterialToFoodItem}
               >
-                Create Order
+                Add to Food Item
               </Button>
-            </Card.Body>
-          </Card>
-        </Col>
-        <Col sm={7}>
-          <Card>
-            <Card.Body className={"text-left"}>
-              <Card.Title>New Food Item</Card.Title>
-              <Row className={"mt-3"}>
-                <Col sm={12}>
-                  <Form.Group controlId="fooditemname">
-                    <Form.Label>
-                      <strong>Food Item Name</strong>
-                    </Form.Label>
-                    <Form.Control
-                      type="text"
-                      isClearable
-                      className={isError.foodItemName ? "is-invalid" : ""}
-                      placeholder="Enter Food Item Name"
-                      onChange={(e) => {
-                        this.onFoodItemNameChange(e);
-                      }}
-                    />
-                    {isError.foodItemName.length > 0 && (
-                      <Form.Control.Feedback type={"invalid"}>
-                        {isError.foodItemName}
-                      </Form.Control.Feedback>
-                    )}
-                  </Form.Group>
-                </Col>
-              </Row>
-              <Row className={"mt-3"}>
-                <Col>
-                  <Form.Group controlId="rawMaterials">
-                    <Row>
-                      <Col sm={7} className={"pt-2"}>
-                        <Form.Label>
-                          <strong>Raw Materials</strong>
-                        </Form.Label>
-                      </Col>
-                      <Col sm={5}>
-                        <InputGroup>
-                          <FormControl
-                            placeholder="Search"
-                            onChange={this.filterRawMaterial}
-                            aria-label="Search"
-                            aria-describedby="search-control"
-                          />
-                          <InputGroup.Append>
-                            <InputGroup.Text>
-                              <FontAwesomeIcon icon={faSearch} />
-                            </InputGroup.Text>
-                          </InputGroup.Append>
-                        </InputGroup>
-                      </Col>
-                    </Row>
-                    <ListGroup
-                      className={
-                        isError.selectedRawMaterials.length > 0
-                          ? "is-invalid mt-3 po-raw-material-list"
-                          : "mt-3 po-raw-material-list"
-                      }
-                    >
-                      {this.state.rawMaterials.map((rawMaterial) => (
-                        <ListGroup.Item key={rawMaterial.id}>
-                          <Row>
-                            <Col sm={5} className={"pl-3"}>
-                              <h6>
-                                <span>{rawMaterial.name}</span>
-                                <br />
-                                <span>
-                                  <small>{rawMaterial.category}</small>
-                                </span>
-                              </h6>
-                            </Col>
-                            <Col sm={5}>
-                              <h6>
-                                <span>
-                                  <strong>Unit Price:</strong>
-                                </span>
-                                <span> ${rawMaterial.unitPrice}</span>
-                              </h6>
-                            </Col>
-                            <Col sm={2}>
-                              <Button
-                                variant={"secondary"}
-                                onClick={() => this.addRawMaterial(rawMaterial)}
-                              >
-                                Add
-                              </Button>
-                            </Col>
-                          </Row>
-                        </ListGroup.Item>
-                      ))}
-                    </ListGroup>
-                    {isError.selectedRawMaterials.length > 0 && (
-                      <Form.Control.Feedback type={"invalid"}>
-                        {isError.selectedRawMaterials}
-                      </Form.Control.Feedback>
-                    )}
-                  </Form.Group>
-                </Col>
-              </Row>
-              <Row className={"mt-3"}>
-                <Col sm={12}>
-                  <Form.Group controlId="vendor">
-                    <Form.Label>
-                      <strong>Manufacturer Cost</strong>
-                    </Form.Label>
-                    <Form.Control
-                      name={"manufacturercost"}
-                      type="number"
-                      step=".01"
-                      onChange={(e) => {
-                        this.onManufacturerCostChange(e.target.value);
-                      }}
-                      className={
-                        isError.manufacturerCost.length > 0 ? "is-invalid" : ""
-                      }
-                      placeholder="Enter Manufacturer Cost"
-                    />
-                    {isError.manufacturerCost.length > 0 && (
-                      <Form.Control.Feedback type={"invalid"}>
-                        {isError.manufacturerCost}
-                      </Form.Control.Feedback>
-                    )}
-                  </Form.Group>
-                </Col>
-              </Row>
-            </Card.Body>
-          </Card>
-        </Col>
-        <Modal
-          show={this.state.rawMaterialQuantityModal.show}
-          animation={false}
-          onHide={this.closeModal}
-        >
-          <Modal.Header closeButton>
-            <Modal.Title>Enter Quantity</Modal.Title>
-          </Modal.Header>
-          <Modal.Body>
-            <Form.Group>
-              <Form.Label className={"m-0"}>
-                <strong>Raw Material</strong>
-              </Form.Label>
-              <Form.Control
-                plaintext
-                readOnly
-                defaultValue={
-                  this.state.rawMaterialQuantityModal.selectedRawMaterial.name
-                }
-                className={"p-0"}
-              />
-            </Form.Group>
-            <Form.Group>
-              <Form.Label>
-                <strong>Quantity : </strong>
-              </Form.Label>
-              <Form.Control
-                name={"modalRawMaterialQuantity"}
-                type="number"
-                step=".01"
-                onChange={this.rawMaterialQuantityChangeListener}
-                className={
-                  isError.selectedRawMaterialQuantity.length > 0
-                    ? "is-invalid"
-                    : ""
-                }
-                placeholder="Enter Quantity"
-              />
-              {isError.selectedRawMaterialQuantity.length > 0 && (
-                <Form.Control.Feedback type={"invalid"}>
-                  {isError.selectedRawMaterialQuantity}
-                </Form.Control.Feedback>
-              )}
-            </Form.Group>
-          </Modal.Body>
-          <Modal.Footer>
-            <Button variant="secondary" onClick={this.addRawMaterialToFoodItem}>
-              Add to Food Item
-            </Button>
-          </Modal.Footer>
-        </Modal>
-      </Row>
+            </Modal.Footer>
+          </Modal>
+        </Row>
+      </section>
     );
   }
 }
