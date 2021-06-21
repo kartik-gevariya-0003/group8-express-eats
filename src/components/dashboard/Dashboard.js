@@ -33,8 +33,8 @@ class Dashboard extends ApplicationContainer {
       ],
       selectedPieChartOption: '1w',
       pieChartData: [
-        {name: "Cheese", value: 200, fill: '#119696'},
-        {name: "Black Beans", value: 120, fill: '#035384AA'},
+        {name: "Cheese", value: 200, fill: '#035384AA'},
+        {name: "Black Beans", value: 120, fill: '#4EA1D3'},
         {name: "Bell Peppers", value: 80, fill: '#BC3347CC'}
       ]
     }
@@ -75,7 +75,7 @@ class Dashboard extends ApplicationContainer {
                 <Card.Body>
                   <Card.Title>
                     <section>Total Expected Revenue</section>
-                    <section className="mt-3 text-success"><span>$54,323.77</span></section>
+                    <section className="mt-3 text-secondary"><span>$54,323.77</span></section>
                   </Card.Title>
                 </Card.Body>
               </Card>
@@ -101,7 +101,7 @@ class Dashboard extends ApplicationContainer {
                   <thead>
                   <tr>
                     <th>Raw Material</th>
-                    <th>Quantity in inventory</th>
+                    <th>Quantity in Inventory</th>
                   </tr>
                   </thead>
                   <tbody>
@@ -134,7 +134,7 @@ class Dashboard extends ApplicationContainer {
                           <ButtonGroup className="mr-2" aria-label="First group">
                             {this.chartOptions.map(chartOption => {
                               return <Button
-                                variant={chartOption === this.state.selectedLineChartOption ? 'secondary' : 'outline-secondary'}>{chartOption}</Button>
+                                variant={chartOption === this.state.selectedLineChartOption ? 'primary' : 'outline-primary'}>{chartOption}</Button>
                             })}
                           </ButtonGroup>
                         </ButtonToolbar>
@@ -172,7 +172,7 @@ class Dashboard extends ApplicationContainer {
                           <ButtonGroup className="mr-2" aria-label="First group">
                             {this.chartOptions.map(chartOption => {
                               return <Button
-                                variant={chartOption === this.state.selectedPieChartOption ? 'secondary' : 'outline-secondary'}>{chartOption}</Button>
+                                variant={chartOption === this.state.selectedPieChartOption ? 'primary' : 'outline-primary'}>{chartOption}</Button>
                             })}
                           </ButtonGroup>
                         </ButtonToolbar>
