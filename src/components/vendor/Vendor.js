@@ -31,6 +31,10 @@ function Vendor() {
     history.push("/vendors/create");
   };
 
+  const editVendor=()=>{
+    history.push("/vendor/edit");
+  }
+
   const filterVendors =(e)=>{
     e.preventDefault();
     const {value} = e.target;
@@ -120,14 +124,19 @@ function Vendor() {
                         <span><strong>Address</strong></span>
                       </h5>
                     </Col>
-                    <Col sm={2} className={"pl-3 text-left"}>
+                    <Col sm={3} className={"pl-3 text-left"}>
                       <h5>
                         <span><strong>Email</strong></span>
                       </h5>
                     </Col>
-                    <Col sm={2}>
+                    <Col sm={2} className={"pl-3 text-left"}>
                       <h5>
                         <span><strong>Contact Number</strong></span>
+                      </h5>
+                    </Col>
+                    <Col sm={1} className={"pl-3 text-left"}>
+                      <h5>
+                        <span><strong>Action</strong></span>
                       </h5>
                     </Col>
                   </Row>
@@ -152,18 +161,18 @@ function Vendor() {
                                   <span>{vendor.address}</span>
                                 </h6>
                               </Col>
-                              <Col sm={2} className={"pl-3 text-left"}>
+                              <Col sm={3} className={"pl-3 text-left"}>
                                 <h6>
                                   <span>{vendor.email}</span>
                                 </h6>
                               </Col>
-                              <Col sm={2}>
+                              <Col sm={2} className={"pl-3 text-left"}>
                                 <h6>
                                   <span>{vendor.contactNumber}</span>
                                 </h6>
                               </Col>
-                              <Col sm={2} >
-                                <FontAwesomeIcon icon={faPen} color={"#8a9ea7"} className={"mr-5"} />
+                              <Col sm={1} className={"pl-3 text-left"}>
+                                <FontAwesomeIcon icon={faPen} color={"#8a9ea7"} className={"mr-5"} onClick={() => editVendor(vendor)}/>
                                 <FontAwesomeIcon icon={faTrashAlt} color={"#ba2311"}
                                                  onClick={() => deleteVendorConfirmation(vendor)}  />
                               </Col>
