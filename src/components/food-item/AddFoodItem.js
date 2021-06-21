@@ -86,6 +86,7 @@ export default class AddFoodItem extends Component {
         selectedRawMaterials: [],
         manufacturerCost: 0,
         totalCost: 0,
+        profitMargin: 0,
       },
       rawMaterialQuantityModal: {
         show: false,
@@ -96,7 +97,6 @@ export default class AddFoodItem extends Component {
         foodItemName: "",
         selectedRawMaterials: "",
         selectedRawMaterialQuantity: "",
-        manufacturerCost: "",
       },
     };
   }
@@ -121,11 +121,6 @@ export default class AddFoodItem extends Component {
     this.validator(
       "rawMaterials",
       this.state.foodItem.selectedRawMaterials,
-      isError
-    );
-    this.validator(
-      "manufacturerCost",
-      this.state.foodItem.manufacturerCost,
       isError
     );
 
@@ -170,11 +165,6 @@ export default class AddFoodItem extends Component {
 
     state.foodItem.manufacturerCost = cost;
     let totalCost = 0;
-    this.validator(
-      "manufacturerCost",
-      state.foodItem.manufacturerCost,
-      state.isError
-    );
     if (state.foodItem.selectedRawMaterials.length > 0) {
       state.foodItem.selectedRawMaterials.map((rawMaterial) => {
         totalCost += rawMaterial.unitPrice * rawMaterial.quantity;
@@ -209,12 +199,6 @@ export default class AddFoodItem extends Component {
         if (value.length === 0) {
           isError.selectedRawMaterials =
             "Please select one or more raw materials";
-        }
-        break;
-      case "manufacturerCost":
-        isError.manufacturerCost = "";
-        if (!value || value.length === 0) {
-          isError.manufacturerCost = "Please enter valid cost.";
         }
         break;
       default:
@@ -309,6 +293,31 @@ export default class AddFoodItem extends Component {
     this.setState(state);
   };
 
+  profitMarginChangeListener = (value) => {
+    const profitMargin = value;
+    let state = { ...this.state };
+    state.foodItem.profitMargin = profitMargin;
+    this.setState(state);
+    console.log("profitmargin:" + this.state.foodItem.profitMargin);
+  };
+
+  calculateTotalCost = (event) => {
+    let state = { ...this.state };
+    let totalCost = this.state.foodItem.selectedRawMaterials.reduce(
+      (sum, item) => {
+        return sum + item.unitPrice * item.quantity;
+      },
+      0
+    );
+    console.log(totalCost);
+    console.log(state.foodItem.manufacturingCost);
+    totalCost += +state.foodItem.manufacturerCost;
+    console.log("totalcost:" + totalCost);
+    totalCost += (totalCost * +state.foodItem.profitMargin) / 100;
+    state.foodItem.totalCost = totalCost;
+    this.setState(state);
+  };
+
   render() {
     const { isError } = this.state;
 
@@ -376,6 +385,58 @@ export default class AddFoodItem extends Component {
                           )
                         )}
                       </ListGroup>
+                      <Row className="text-right mt-3">
+                        <Col sm={8}>
+                          <Form.Label>
+                            <strong>Manufacturing Cost</strong>
+                          </Form.Label>
+                        </Col>
+                        <Col sm={3}>
+                          <InputGroup className="mb-3">
+                            <InputGroup.Prepend>
+                              <InputGroup.Text id="basic-addon1">
+                                $
+                              </InputGroup.Text>
+                            </InputGroup.Prepend>
+                            <Form.Control
+                              name={"manufacturingCost"}
+                              type="text"
+                              onBlur={(e) => {
+                                this.calculateTotalCost(e);
+                              }}
+                              onChange={(e) => {
+                                this.onManufacturerCostChange(e.target.value);
+                              }}
+                            />
+                          </InputGroup>
+                        </Col>
+                      </Row>
+                      <Row className="text-right">
+                        <Col sm={8}>
+                          <Form.Label>
+                            <strong>Profit Margin</strong>
+                          </Form.Label>
+                        </Col>
+                        <Col sm={3}>
+                          <InputGroup className="mb-3">
+                            <Form.Control
+                              name={"profitMargin"}
+                              type="text"
+                              onBlur={(e) => {
+                                this.calculateTotalCost(e);
+                              }}
+                              onChange={(e) => {
+                                this.profitMarginChangeListener(e.target.value);
+                              }}
+                            />
+                            <InputGroup.Append>
+                              <InputGroup.Text id="basic-addon1">
+                                %
+                              </InputGroup.Text>
+                            </InputGroup.Append>
+                          </InputGroup>
+                        </Col>
+                      </Row>
                     </section>
                   )}
                 <Card.Text className="mt-5">
@@ -391,7 +452,7 @@ export default class AddFoodItem extends Component {
                   onClick={this.onSubmit}
                   block
                 >
-                  Create Order
+                  Create Food Item
                 </Button>
               </Card.Body>
             </Card>
@@ -492,34 +553,6 @@ export default class AddFoodItem extends Component {
                       {isError.selectedRawMaterials.length > 0 && (
                         <Form.Control.Feedback type={"invalid"}>
                           {isError.selectedRawMaterials}
-                        </Form.Control.Feedback>
-                      )}
-                    </Form.Group>
-                  </Col>
-                </Row>
-                <Row className={"mt-3"}>
-                  <Col sm={12}>
-                    <Form.Group controlId="vendor">
-                      <Form.Label>
-                        <strong>Manufacturer Cost</strong>
-                      </Form.Label>
-                      <Form.Control
-                        name={"manufacturercost"}
-                        type="number"
-                        step=".01"
-                        onChange={(e) => {
-                          this.onManufacturerCostChange(e.target.value);
-                        }}
-                        className={
-                          isError.manufacturerCost.length > 0
-                            ? "is-invalid"
-                            : ""
-                        }
-                        placeholder="Enter Manufacturer Cost"
-                      />
-                      {isError.manufacturerCost.length > 0 && (
-                        <Form.Control.Feedback type={"invalid"}>
-                          {isError.manufacturerCost}
                         </Form.Control.Feedback>
                       )}
                     </Form.Group>
