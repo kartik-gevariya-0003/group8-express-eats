@@ -8,6 +8,7 @@ import CreatePurchaseOrder from "./components/purchase-order/CreatePurchaseOrder
 import Confirmation from "./components/confirmation/Confirmation";
 import Vendor from "./components/vendor/Vendor";
 import CreateVendor from "./components/vendor/CreateVendor";
+import EditVendor from "./components/vendor/EditVendor";
 import Dashboard from "./components/dashboard/Dashboard";
 import Home from "./components/home/Home";
 import Main from "./components/main/Main";
@@ -66,6 +67,7 @@ function App() {
           <Route exact path="/vendors" component={Vendor} />
           <Route exact path="/vendors/create" component={CreateVendor} />
           <Route exact path="/vendor/confirmation" component={Confirmation} />
+        <Route exact path="/vendor/edit" component={EditVendor} />
 
       </Switch>
     </div>

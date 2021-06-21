@@ -155,7 +155,7 @@ function CreateVendor() {
                           <Form.Control
                             type="text"
                             name="contactPersonName"
-                            value={values.conactPersonName}
+                            value={values.contactPersonName}
                             onChange={onChangeHandler}
                             className={
                               errorContactPersonName.length > 0
