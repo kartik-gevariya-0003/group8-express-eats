@@ -1,4 +1,4 @@
-import "./purchase-order.css";
+import "./food-item.css";
 import React, { Component } from "react";
 import {
   Button,
@@ -11,7 +11,6 @@ import {
   Modal,
   Row,
 } from "react-bootstrap";
-import Select from "react-select";
 import { faSearch, faTrashAlt } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
@@ -163,21 +162,24 @@ export default class AddFoodItem extends Component {
     // this.validator("foodItemName", state.foodItem.foodItemName, state.isError);
 
     this.setState(state);
-    console.log("in fooditemnamechange end");
   };
 
   onManufacturerCostChange = (cost) => {
     let state = { ...this.state };
 
     state.foodItem.manufacturerCost = cost;
-
+    let totalCost = 0;
     this.validator(
       "manufacturerCost",
       state.foodItem.manufacturerCost,
       state.isError
     );
-
-    state.foodItem.totalCost += cost;
+    if (state.foodItem.selectedRawMaterials.length > 0) {
+      state.foodItem.selectedRawMaterials.map((rawMaterial) => {
+        totalCost += rawMaterial.unitPrice * rawMaterial.quantity;
+      });
+    }
+    state.foodItem.totalCost = parseFloat(totalCost) + parseFloat(cost);
     this.setState(state);
   };
 
@@ -185,13 +187,6 @@ export default class AddFoodItem extends Component {
     switch (name) {
       case "modalRawMaterialQuantity":
         isError.selectedRawMaterialQuantity = "";
-        console.log("invalidator");
-        console.log(
-          this.state.rawMaterialQuantityModal.selectedRawMaterial.quantity
-        );
-        console.log(
-          this.state.rawMaterialQuantityModal.selectedRawMaterialQuantity
-        );
         if (value.length === 0 || value <= 0) {
           isError.selectedRawMaterialQuantity =
             "Quantity should be greater than 0";
@@ -199,18 +194,14 @@ export default class AddFoodItem extends Component {
           this.state.rawMaterialQuantityModal.selectedRawMaterial.quantity <
           this.state.rawMaterialQuantityModal.selectedRawMaterialQuantity
         ) {
-          console.log("inif of modal");
           isError.selectedRawMaterialQuantity = "Insufficient Quantity";
         }
         break;
       case "foodItemName":
-        console.log("in fooditemname error validation");
         isError.foodItemName = "";
         if (!value || value.length === 0) {
-          console.log("inif");
           isError.foodItemName = "Please enter food item name";
         }
-        console.log("in fooditemname error validation");
         break;
       case "rawMaterials":
         isError.selectedRawMaterials = "";
@@ -221,8 +212,7 @@ export default class AddFoodItem extends Component {
         break;
       case "manufacturerCost":
         isError.manufacturerCost = "";
-        let numericRegEx = new RegExp("^[0-9]*$");
-        if (!value || value.length === 0 || !numericRegEx.test(value)) {
+        if (!value || value.length === 0) {
           isError.manufacturerCost = "Please enter valid cost.";
         }
         break;
@@ -329,7 +319,6 @@ export default class AddFoodItem extends Component {
               <Card.Title>Food Item</Card.Title>
               <Card.Text>
                 <strong>Food Item Name :</strong>{" "}
-                {console.log("in card:" + this.state.foodItem.foodItemName)}
                 {this.state.foodItem.foodItemName}
               </Card.Text>
               {this.state.foodItem.selectedRawMaterials &&
@@ -508,11 +497,16 @@ export default class AddFoodItem extends Component {
                       <strong>Manufacturer Cost</strong>
                     </Form.Label>
                     <Form.Control
-                      type="text"
-                      isClearable
-                      className={isError.manufacturerCost ? "is-invalid" : ""}
+                      name={"manufacturercost"}
+                      type="number"
+                      step=".01"
+                      onChange={(e) => {
+                        this.onManufacturerCostChange(e.target.value);
+                      }}
+                      className={
+                        isError.manufacturerCost.length > 0 ? "is-invalid" : ""
+                      }
                       placeholder="Enter Manufacturer Cost"
-                      onChange={this.onManufacturerCostChange}
                     />
                     {isError.manufacturerCost.length > 0 && (
                       <Form.Control.Feedback type={"invalid"}>

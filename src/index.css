@@ -38,6 +38,10 @@ code {
   text-underline-offset: 5px;
 }
 
+.Toastify__toast--success {
+  background: #8d9b6a !important;
+}
+
 .confirmation-image {
   width: 15rem;
 }

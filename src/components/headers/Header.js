@@ -4,7 +4,6 @@ import {faUserCircle} from "@fortawesome/free-solid-svg-icons";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 
 class Header extends Component {
-
   constructor(props) {
     super(props);
     this.state = {
@@ -22,11 +21,17 @@ class Header extends Component {
   }
 
   handleLinkClick(item, event) {
-    this.setState({activeLink: item.id});
+    this.setState({ activeLink: item.id });
   }
 
   render() {
-    const navDropDownTitle = (<FontAwesomeIcon size={"2x"} icon={faUserCircle} className={"secondary"}/>)
+    const navDropDownTitle = (
+      <FontAwesomeIcon
+        size={"2x"}
+        icon={faUserCircle}
+        className={"secondary"}
+      />
+    );
     return (
       <Navbar bg="dark" expand="lg" variant={"dark"} sticky={"top"}>
         <Navbar.Brand href="/home" className={"mr-5"}>
@@ -55,13 +60,17 @@ class Header extends Component {
                                  onClick={this.handleLinkClick.bind(this, headerLink)}>
                   {headerLink.name}
                 </Nav.Link>
-              })
-            }
+
+            })}
           </Nav>
         </Navbar.Collapse>
         <Navbar.Collapse className="justify-content-end">
           <Nav>
-            <NavDropdown title={navDropDownTitle} id="navbarScrollingDropdown" alignRight>
+            <NavDropdown
+              title={navDropDownTitle}
+              id="navbarScrollingDropdown"
+              alignRight
+            >
               <NavDropdown.Item>Profile</NavDropdown.Item>
               <NavDropdown.Divider />
               <NavDropdown.Item>Log out</NavDropdown.Item>
@@ -69,7 +78,7 @@ class Header extends Component {
           </Nav>
         </Navbar.Collapse>
       </Navbar>
-    )
+    );
   }
 }
-export default Header
+export default Header;
