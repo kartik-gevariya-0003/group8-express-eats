@@ -84,7 +84,7 @@ function Vendor() {
         </Row>
         <Row className="m-3">
           <Col sm={8} className={"text-left"}>
-            <Button variant={"success"} onClick={createVendor}>Add New Vendor</Button>
+            <Button variant={"primary"} onClick={createVendor}>Add New Vendor</Button>
           </Col>
           <Col sm={4}>
             <Form.Group>
@@ -172,8 +172,8 @@ function Vendor() {
                                 </h6>
                               </Col>
                               <Col sm={1} className={"pl-3 text-left"}>
-                                <FontAwesomeIcon icon={faPen} color={"#8a9ea7"} className={"mr-5"} onClick={() => editVendor(vendor)}/>
-                                <FontAwesomeIcon icon={faTrashAlt} color={"#ba2311"}
+                                <FontAwesomeIcon icon={faPen} color={"#035384AA"} className={"mr-5"} onClick={() => editVendor(vendor)}/>
+                                <FontAwesomeIcon icon={faTrashAlt} color={"#BC3347CC"}
                                                  onClick={() => deleteVendorConfirmation(vendor)}  />
                               </Col>
                             </Row>

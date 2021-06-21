@@ -1,15 +1,17 @@
 import React, {Component} from "react";
 import {Link} from "react-router-dom";
 import {Button, Image} from "react-bootstrap";
+import ApplicationContainer from "../ApplicationContainer";
 
-export default class Confirmation extends Component {
+export default class Confirmation extends ApplicationContainer {
   render() {
     const {confirmation} = this.props.location;
 
     return (
-      <section className="text-center mt-5">
+      <section>
+        {super.render()}
         {confirmation && confirmation.message ? (
-          <section>
+          <section className="text-center mt-5">
             <h5>{confirmation.message}</h5>
             <br/>
             <Image
@@ -19,7 +21,7 @@ export default class Confirmation extends Component {
             />
             <br/>
             <Link to={confirmation.redirect}>
-              <Button variant={"success"} className="mt-5">
+              <Button variant={"primary"} className="mt-5">
                 {confirmation.button}
               </Button>
             </Link>

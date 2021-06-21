@@ -1,5 +1,4 @@
-import { Button, Col, Container, Row } from "react-bootstrap";
-import { ToastContainer } from "react-toastify";
+import { Button, Col, Row } from "react-bootstrap";
 import React from "react";
 import { useHistory } from "react-router-dom";
 import Header from "../headers/Header";
@@ -20,7 +19,7 @@ function FoodItems() {
       </Row>
       <Row className="m-3">
         <Col sm={8} className={"text-left"}>
-          <Button variant={"success"} onClick={goToCreateFoodItem}>
+          <Button variant={"primary"} onClick={goToCreateFoodItem}>
             Create Food Item
           </Button>
         </Col>

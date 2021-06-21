@@ -280,8 +280,7 @@ export default class CreatePurchaseOrder extends ApplicationContainer {
                                     currency: 'USD'
                                 }).format(this.state.order.totalCost)}
                                 </Card.Text>
-                                <Button variant={"success"} className="mt-3" onClick={this.onSubmit} block>CREATE
-                                    ORDER</Button>
+                                <Button variant={"primary"} className="mt-3" onClick={this.onSubmit} block>Create Order</Button>
                             </Card.Body>
                         </Card>
                     </Col>
@@ -349,7 +348,7 @@ export default class CreatePurchaseOrder extends ApplicationContainer {
                                                             </Col>
                                                             <Col sm={2}>
                                                                 <Button variant={"secondary"}
-                                                                        onClick={() => this.addRawMaterial(rawMaterial)}>ADD</Button>
+                                                                        onClick={() => this.addRawMaterial(rawMaterial)}>Add</Button>
                                                             </Col>
                                                         </Row>
                                                     </ListGroup.Item>
@@ -392,7 +391,7 @@ export default class CreatePurchaseOrder extends ApplicationContainer {
                             </Form.Group>
                         </Modal.Body>
                         <Modal.Footer>
-                            <Button variant="secondary" onClick={this.addRawMaterialToOrder}>ADD TO ORDER</Button>
+                            <Button variant="secondary" onClick={this.addRawMaterialToOrder}>Add to Order</Button>
                         </Modal.Footer>
                     </Modal>
                 </Row>

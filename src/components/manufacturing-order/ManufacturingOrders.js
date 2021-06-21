@@ -167,7 +167,7 @@ class ManufacturingOrders extends ApplicationContainer {
         </Row>
         <Row className="m-3">
           <Col sm={8} className={"text-left"}>
-            <Button variant={"success"} onClick={this.goToCreateManufacturingOrder}>Create Manufacturing
+            <Button variant={"primary"} onClick={this.goToCreateManufacturingOrder}>Create Manufacturing
               Order</Button>
           </Col>
           <Col sm={4}>
@@ -256,10 +256,10 @@ class ManufacturingOrders extends ApplicationContainer {
                                   </h6>
                                 </Col>
                                 <Col sm={3}>
-                                  <Button variant={"primary"} className={"mr-5"}
+                                  <Button variant={"warning"} className={"mr-5"}
                                           onClick={() => this.moveToPrepping(order)}>Prep
                                     Order</Button>
-                                  <FontAwesomeIcon icon={faTrashAlt} color={"#ba2311"}
+                                  <FontAwesomeIcon icon={faTrashAlt} color={"#BC3347CC"}
                                                    onClick={() => this.deleteOpenManufacturingOrder(order)}/>
                                 </Col>
                               </Row>
@@ -434,7 +434,7 @@ class ManufacturingOrders extends ApplicationContainer {
                                   </h6>
                                 </Col>
                                 <Col sm={3}>
-                                  <Button variant={"warning"} className={"mr-5"}
+                                  <Button variant={"danger"} className={"mr-5"}
                                           onClick={() => this.archiveManufacturingOrder(order)}>Archive
                                     Order</Button>
                                 </Col>
