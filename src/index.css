@@ -12,16 +12,38 @@ code {
     monospace;
 }
 
+.btn-primary,
+.btn-secondary,
+.btn-success,
+.btn-warning,
+.btn-danger {
+  color: #ffffff;
+}
+
 .navbar {
   background-color: #4e301b !important;
 }
 
 .navbar-nav a:hover,
-.navbar-nav a:hover {
+.navbar-nav a:active {
   text-decoration: underline;
   text-underline-offset: 5px;
 }
 
-.Toastify__toast--success {
-  background: #8d9b6a !important;
+.navbar-dark .navbar-nav .show > .nav-link,
+.navbar-dark .navbar-nav .active > .nav-link,
+.navbar-dark .navbar-nav .nav-link.show,
+.navbar-dark .navbar-nav .nav-link.active {
+  text-decoration: underline;
+  text-underline-offset: 5px;
+}
+
+.confirmation-image {
+  width: 15rem;
+}
+
+.recharts-cartesian-axis-tick,
+.recharts-legend-item-text,
+.recharts-default-tooltip {
+  font-size: 1rem;
 }

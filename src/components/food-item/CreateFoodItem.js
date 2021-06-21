@@ -3,7 +3,7 @@ import { Button, Form } from "react-bootstrap";
 import { useState } from "react";
 import { Container, Table, Row, Col, Card, InputGroup } from "react-bootstrap";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faPlus, faTrash } from "@fortawesome/free-solid-svg-icons";
+import { faPlus, faTrashAlt } from "@fortawesome/free-solid-svg-icons";
 import { useHistory } from "react-router-dom";
 import { toast } from "react-toastify";
 
@@ -81,8 +81,8 @@ function CreateFoodItem() {
     history.push("/food-items");
   };
   return (
-    <Container fluid={"sm"}>
-      <Row className={"mt-3"}>
+    <section>
+      <Row className={"m-3"}>
         <Col sm>
           <Card>
             <Card.Body>
@@ -183,23 +183,18 @@ function CreateFoodItem() {
                               <td>
                                 {ingredientList.length !== 1 &&
                                   ingredientList.length - 1 === i && (
-                                    <Button
-                                      variant="link"
+                                    <FontAwesomeIcon
+                                      icon={faTrashAlt}
+                                      color={"#ba2311"}
                                       onClick={() => handleRemoveClick()}
-                                    >
-                                      <FontAwesomeIcon icon={faTrash} />
-                                    </Button>
+                                    />
                                   )}
                                 <span> </span>
                                 {ingredientList.length - 1 === i && (
-                                  <Button
-                                    variant="link"
-                                    className="plus"
-                                    id="plus"
+                                  <FontAwesomeIcon
+                                    icon={faPlus}
                                     onClick={handleAdd}
-                                  >
-                                    <FontAwesomeIcon icon={faPlus} />
-                                  </Button>
+                                  />
                                 )}
                               </td>
                             </tr>
@@ -297,7 +292,7 @@ function CreateFoodItem() {
           </Card>
         </Col>
       </Row>
-    </Container>
+    </section>
   );
 }
 
