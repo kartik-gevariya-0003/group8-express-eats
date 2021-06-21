@@ -18,6 +18,7 @@ import Login from "./components/login/Login";
 import Inventory from "./components/inventory/Inventory";
 import AddRawMaterialInventory from "./components/inventory/AddRawMaterialInventory";
 import AddFoodItemInventory from "./components/inventory/AddFoodItemlInventory";
+import EditFoodItem from "./components/food-item/EditFoodItem";
 
 Route.propTypes = {
   component: PropTypes.any,
@@ -70,6 +71,7 @@ function App() {
           path="/inventory/add-food-item-inventory"
           component={AddFoodItemInventory}
         />
+        <Route exact path="/edit-food-item" component={EditFoodItem} />
         <Route exact path="/vendors" component={Vendor} />
         <Route exact path="/vendors/create" component={CreateVendor} />
         <Route exact path="/vendor/confirmation" component={Confirmation} />
