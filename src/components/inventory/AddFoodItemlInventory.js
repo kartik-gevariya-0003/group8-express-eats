@@ -45,77 +45,77 @@ function AddFoodItemInventory() {
     }
   };
   return (
-      <section>
-        <Header/>
-        <Container fluid={"sm"}>
-          <Row className="mt-3">
-            <Col sm={12}>
-              <Card>
-                <Card.Body>
-                  <Card.Title className={"text-left"}>New Food Item</Card.Title>
-                  <Form onSubmit={handleSubmit}>
-                    <Row className={"text-left"}>
-                      <Col sm={2} className={"text-left"}>
-                        <Form.Label>Food Item Name *</Form.Label>
-                      </Col>
-                      <Col sm={4} className={"text-left"}>
-                        <Form.Control
-                            name="foodItemName"
-                            onChange={(e) => {
-                              setfoodItem(e.target.value);
-                            }}
-                            type="text"
-                        />
-                        {foodItemNameError ? (
-                            <Form.Text style={{color: "red"}}>
-                              {foodItemNameError}
-                            </Form.Text>
-                        ) : (
-                            <span></span>
-                        )}
-                      </Col>
-                    </Row>
-                    <br></br>
-                    <Row className={"text-left"}>
-                      <Col sm={2} className={"text-left"}>
-                        <Form.Label>Quantity *</Form.Label>
-                      </Col>
-                      <Col sm={4} className={"text-left"}>
-                        <Form.Control
-                            name="quantity"
-                            onChange={(e) => {
-                              setquantity(e.target.value);
-                            }}
-                            type="text"
-                        />
-                        {quantityError ? (
-                            <Form.Text style={{color: "red"}}>
-                              {quantityError}
-                            </Form.Text>
-                        ) : (
-                            <span></span>
-                        )}
-                      </Col>
-                    </Row>
-                    <br></br>
-                    <Row className="justify-content-center">
-                      <Button variant="primary" className="mr-2" type="submit">
-                        Submit
-                      </Button>
-                      <Button
-                          variant="danger"
-                          onClick={goToInventory}
-                      >
-                        Cancel
-                      </Button>
-                    </Row>
-                  </Form>
-                </Card.Body>
-              </Card>
-            </Col>
-          </Row>
-        </Container>
-      </section>
+    <section>
+      <Header/>
+      <Container fluid={"sm"}>
+        <Row className="mt-3">
+          <Col sm={12}>
+            <Card>
+              <Card.Body>
+                <Card.Title className={"text-left"}>New Food Item</Card.Title>
+                <Form onSubmit={handleSubmit}>
+                  <Row className={"text-left"}>
+                    <Col sm={2} className={"text-left"}>
+                      <Form.Label>Food Item Name *</Form.Label>
+                    </Col>
+                    <Col sm={4} className={"text-left"}>
+                      <Form.Control
+                        name="foodItemName"
+                        onChange={(e) => {
+                          setfoodItem(e.target.value);
+                        }}
+                        type="text"
+                      />
+                      {foodItemNameError ? (
+                        <Form.Text style={{color: "red"}}>
+                          {foodItemNameError}
+                        </Form.Text>
+                      ) : (
+                        <span></span>
+                      )}
+                    </Col>
+                  </Row>
+                  <br></br>
+                  <Row className={"text-left"}>
+                    <Col sm={2} className={"text-left"}>
+                      <Form.Label>Quantity *</Form.Label>
+                    </Col>
+                    <Col sm={4} className={"text-left"}>
+                      <Form.Control
+                        name="quantity"
+                        onChange={(e) => {
+                          setquantity(e.target.value);
+                        }}
+                        type="text"
+                      />
+                      {quantityError ? (
+                        <Form.Text style={{color: "red"}}>
+                          {quantityError}
+                        </Form.Text>
+                      ) : (
+                        <span></span>
+                      )}
+                    </Col>
+                  </Row>
+                  <br></br>
+                  <Row className="justify-content-center">
+                    <Button variant="primary" className="mr-2" type="submit">
+                      Submit
+                    </Button>
+                    <Button
+                      variant="danger"
+                      onClick={goToInventory}
+                    >
+                      Cancel
+                    </Button>
+                  </Row>
+                </Form>
+              </Card.Body>
+            </Card>
+          </Col>
+        </Row>
+      </Container>
+    </section>
   );
 }
 

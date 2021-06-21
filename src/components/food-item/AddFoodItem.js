@@ -1,19 +1,8 @@
 import "./food-item.css";
-import React, { Component } from "react";
-import Header from "../headers/Header";
-import {
-  Button,
-  Card,
-  Col,
-  Form,
-  FormControl,
-  InputGroup,
-  ListGroup,
-  Modal,
-  Row,
-} from "react-bootstrap";
-import { faSearch, faTrashAlt } from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import React from "react";
+import {Button, Card, Col, Form, FormControl, InputGroup, ListGroup, Modal, Row,} from "react-bootstrap";
+import {faSearch} from "@fortawesome/free-solid-svg-icons";
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import ApplicationContainer from "../ApplicationContainer";
 
 const rawMaterials = [
@@ -31,7 +20,7 @@ const rawMaterials = [
     category: "Meat, poultry, fish, and eggs",
     quantity: 2,
   },
-  { id: 3, name: "Mayonnaise", unitPrice: 4.5, category: "Oils", quantity: 10 },
+  {id: 3, name: "Mayonnaise", unitPrice: 4.5, category: "Oils", quantity: 10},
   {
     id: 4,
     name: "Tomato",
@@ -104,7 +93,7 @@ export default class AddFoodItem extends ApplicationContainer {
 
   filterRawMaterial = (e) => {
     e.preventDefault();
-    const { value } = e.target;
+    const {value} = e.target;
 
     this.setState({
       rawMaterials: rawMaterials.filter((rawMaterial) =>
@@ -116,7 +105,7 @@ export default class AddFoodItem extends ApplicationContainer {
   onSubmit = (e) => {
     e.preventDefault();
 
-    let isError = { ...this.state.isError };
+    let isError = {...this.state.isError};
 
     this.validator("foodItemName", this.state.foodItem.foodItemName, isError);
     this.validator(
@@ -149,7 +138,7 @@ export default class AddFoodItem extends ApplicationContainer {
   };
 
   onFoodItemNameChange = (e) => {
-    let state = { ...this.state };
+    let state = {...this.state};
 
     state.foodItem.foodItemName = e.target.value;
 
@@ -162,7 +151,7 @@ export default class AddFoodItem extends ApplicationContainer {
   };
 
   onManufacturerCostChange = (cost) => {
-    let state = { ...this.state };
+    let state = {...this.state};
 
     state.foodItem.manufacturerCost = cost;
     let totalCost = 0;
@@ -208,7 +197,7 @@ export default class AddFoodItem extends ApplicationContainer {
   };
 
   addRawMaterial = (rawMaterial) => {
-    let state = { ...this.state };
+    let state = {...this.state};
 
     state.rawMaterialQuantityModal.selectedRawMaterial = rawMaterial;
 
@@ -218,7 +207,7 @@ export default class AddFoodItem extends ApplicationContainer {
   };
 
   deleteRawMaterial = (rawMaterial) => {
-    let state = { ...this.state };
+    let state = {...this.state};
 
     state.foodItem.selectedRawMaterials =
       state.foodItem.selectedRawMaterials.filter(
@@ -237,7 +226,7 @@ export default class AddFoodItem extends ApplicationContainer {
   };
 
   closeModal = () => {
-    let state = { ...this.state };
+    let state = {...this.state};
 
     state.rawMaterialQuantityModal.show = false;
 
@@ -247,7 +236,7 @@ export default class AddFoodItem extends ApplicationContainer {
   addRawMaterialToFoodItem = (e) => {
     e.preventDefault();
 
-    let state = { ...this.state };
+    let state = {...this.state};
 
     if (state.rawMaterialQuantityModal.selectedRawMaterialQuantity > 0) {
       state.rawMaterialQuantityModal.selectedRawMaterial["quantity"] =
@@ -277,8 +266,8 @@ export default class AddFoodItem extends ApplicationContainer {
 
   rawMaterialQuantityChangeListener = (e) => {
     e.preventDefault();
-    const { name, value } = e.target;
-    let state = { ...this.state };
+    const {name, value} = e.target;
+    let state = {...this.state};
     state.rawMaterialQuantityModal.selectedRawMaterialQuantity = value;
 
     this.validator(name, value, state.isError);
@@ -287,7 +276,7 @@ export default class AddFoodItem extends ApplicationContainer {
   };
 
   showModal = () => {
-    let state = { ...this.state };
+    let state = {...this.state};
 
     state.rawMaterialQuantityModal.show = true;
 
@@ -296,14 +285,14 @@ export default class AddFoodItem extends ApplicationContainer {
 
   profitMarginChangeListener = (value) => {
     const profitMargin = value;
-    let state = { ...this.state };
+    let state = {...this.state};
     state.foodItem.profitMargin = profitMargin;
     this.setState(state);
     console.log("profitmargin:" + this.state.foodItem.profitMargin);
   };
 
   calculateTotalCost = (event) => {
-    let state = { ...this.state };
+    let state = {...this.state};
     let totalCost = this.state.foodItem.selectedRawMaterials.reduce(
       (sum, item) => {
         return sum + item.unitPrice * item.quantity;
@@ -320,7 +309,7 @@ export default class AddFoodItem extends ApplicationContainer {
   };
 
   render() {
-    const { isError } = this.state;
+    const {isError} = this.state;
 
     return (
       <section>
@@ -335,111 +324,109 @@ export default class AddFoodItem extends ApplicationContainer {
                   {this.state.foodItem.foodItemName}
                 </Card.Text>
                 {this.state.foodItem.selectedRawMaterials &&
-                  this.state.foodItem.selectedRawMaterials.length > 0 && (
-                    <section className={"mt-5"}>
-                      <strong>Selected Raw Materials</strong>
-                      <ListGroup
-                        className={"mt-3 po-selected-raw-material-list"}
-                      >
-                        {this.state.foodItem.selectedRawMaterials.map(
-                          (rawMaterial) => (
-                            <ListGroup.Item key={rawMaterial.id}>
-                              <Row>
-                                <Col sm={4} className={"pl-3 text-left"}>
-                                  <h6>
-                                    <span>{rawMaterial.name}</span>
-                                    <br />
-                                    <span>
-                                      <small>{rawMaterial.category}</small>
-                                    </span>
-                                  </h6>
-                                </Col>
-                                <Col sm={4} className={"pl-3"}>
-                                  <h6>
-                                    <span>
-                                      <strong>Quantity</strong>
-                                    </span>
-                                    <br />
-                                    <span>{rawMaterial.quantity}</span>
-                                  </h6>
-                                </Col>
-                                <Col sm={3}>
-                                  <h6>
-                                    <span>
-                                      <strong>Unit Price</strong>
-                                    </span>
-                                    <br />
-                                    <span>${rawMaterial.unitPrice}</span>
-                                  </h6>
-                                </Col>
-                                <Col sm={1}>
-                                  <FontAwesomeIcon
-                                    icon={faTrashAlt}
-                                    color={"#ba2311"}
-                                    onClick={() =>
-                                      this.deleteRawMaterial(rawMaterial)
-                                    }
-                                  />
-                                </Col>
-                              </Row>
-                            </ListGroup.Item>
-                          )
-                        )}
-                      </ListGroup>
-                      <Row className="text-right mt-3">
-                        <Col sm={8}>
-                          <Form.Label>
-                            <strong>Manufacturing Cost</strong>
-                          </Form.Label>
-                        </Col>
-                        <Col sm={3}>
-                          <InputGroup className="mb-3">
-                            <InputGroup.Prepend>
-                              <InputGroup.Text id="basic-addon1">
-                                $
-                              </InputGroup.Text>
-                            </InputGroup.Prepend>
-                            <Form.Control
-                              name={"manufacturingCost"}
-                              type="text"
-                              onBlur={(e) => {
-                                this.calculateTotalCost(e);
-                              }}
-                              onChange={(e) => {
-                                this.onManufacturerCostChange(e.target.value);
-                              }}
-                            />
-                          </InputGroup>
-                        </Col>
-                      </Row>
-                      <Row className="text-right">
-                        <Col sm={8}>
-                          <Form.Label>
-                            <strong>Profit Margin</strong>
-                          </Form.Label>
-                        </Col>
-                        <Col sm={3}>
-                          <InputGroup className="mb-3">
-                            <Form.Control
-                              name={"profitMargin"}
-                              type="text"
-                              onBlur={(e) => {
-                                this.calculateTotalCost(e);
-                              }}
-                              onChange={(e) => {
-                                this.profitMarginChangeListener(e.target.value);
-                              }}
-                            />
-                            <InputGroup.Append>
-                              <InputGroup.Text id="basic-addon1">
-                                %
-                              </InputGroup.Text>
-                            </InputGroup.Append>
-                          </InputGroup>
-                        </Col>
-                      </Row>
-                    </section>
-                  )}
+                this.state.foodItem.selectedRawMaterials.length > 0 && (
+                  <section className={"mt-5"}>
+                    <strong>Selected Raw Materials</strong>
+                    <ListGroup className={"mt-3 po-selected-raw-material-list"}>
+                      {this.state.foodItem.selectedRawMaterials.map(
+                        (rawMaterial) => (
+                          <ListGroup.Item key={rawMaterial.id}>
+                            <Row>
+                              <Col sm={4} className={"pl-3 text-left"}>
+                                <h6>
+                                  <span>{rawMaterial.name}</span>
+                                  <br/>
+                                  <span>
+                                    <small>{rawMaterial.category}</small>
+                                  </span>
+                                </h6>
+                              </Col>
+                              <Col sm={4} className={"pl-3"}>
+                                <h6>
+                                  <span>
+                                    <strong>Quantity</strong>
+                                  </span>
+                                  <br/>
+                                  <span>{rawMaterial.quantity}</span>
+                                </h6>
+                              </Col>
+                              <Col sm={3}>
+                                <h6>
+                                  <span>
+                                    <strong>Unit Price</strong>
+                                  </span>
+                                  <br/>
+                                  <span>${rawMaterial.unitPrice}</span>
+                                </h6>
+                              </Col>
+                              <Col sm={1}>
+                                <FontAwesomeIcon
+                                  icon={faTrashAlt}
+                                  color={"#ba2311"}
+                                  onClick={() =>
+                                    this.deleteRawMaterial(rawMaterial)
+                                  }
+                                />
+                              </Col>
+                            </Row>
+                          </ListGroup.Item>
+                        )
+                      )}
+                    </ListGroup>
+                    <Row className="text-right mt-3">
+                      <Col sm={8}>
+                        <Form.Label>
+                          <strong>Manufacturing Cost</strong>
+                        </Form.Label>
+                      </Col>
+                      <Col sm={3}>
+                        <InputGroup className="mb-3">
+                          <InputGroup.Prepend>
+                            <InputGroup.Text id="basic-addon1">
+                              $
+                            </InputGroup.Text>
+                          </InputGroup.Prepend>
+                          <Form.Control
+                            name={"manufacturingCost"}
+                            type="text"
+                            onBlur={(e) => {
+                              this.calculateTotalCost(e);
+                            }}
+                            onChange={(e) => {
+                              this.onManufacturerCostChange(e.target.value);
+                            }}
+                          />
+                        </InputGroup>
+                      </Col>
+                    </Row>
+                    <Row className="text-right">
+                      <Col sm={8}>
+                        <Form.Label>
+                          <strong>Profit Margin</strong>
+                        </Form.Label>
+                      </Col>
+                      <Col sm={3}>
+                        <InputGroup className="mb-3">
+                          <Form.Control
+                            name={"profitMargin"}
+                            type="text"
+                            onBlur={(e) => {
+                              this.calculateTotalCost(e);
+                            }}
+                            onChange={(e) => {
+                              this.profitMarginChangeListener(e.target.value);
+                            }}
+                          />
+                          <InputGroup.Append>
+                            <InputGroup.Text id="basic-addon1">
+                              %
+                            </InputGroup.Text>
+                          </InputGroup.Append>
+                        </InputGroup>
+                      </Col>
+                    </Row>
+                  </section>
+                )}
                 <Card.Text className="mt-5">
                   <strong>Total Cost :</strong>{" "}
                   {new Intl.NumberFormat("en-US", {
@@ -504,7 +491,7 @@ export default class AddFoodItem extends ApplicationContainer {
                             />
                             <InputGroup.Append>
                               <InputGroup.Text>
-                                <FontAwesomeIcon icon={faSearch} />
+                                <FontAwesomeIcon icon={faSearch}/>
                               </InputGroup.Text>
                             </InputGroup.Append>
                           </InputGroup>
@@ -523,7 +510,7 @@ export default class AddFoodItem extends ApplicationContainer {
                               <Col sm={5} className={"pl-3"}>
                                 <h6>
                                   <span>{rawMaterial.name}</span>
-                                  <br />
+                                  <br/>
                                   <span>
                                     <small>{rawMaterial.category}</small>
                                   </span>
