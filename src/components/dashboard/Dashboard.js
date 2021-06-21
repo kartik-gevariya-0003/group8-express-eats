@@ -1,4 +1,3 @@
-import {Component} from "react";
 import {Button, ButtonGroup, ButtonToolbar, Card, Col, Row, Table} from "react-bootstrap";
 import {
   CartesianGrid,
@@ -12,8 +11,9 @@ import {
   XAxis,
   YAxis
 } from "recharts";
+import ApplicationContainer from "../ApplicationContainer";
 
-class Dashboard extends Component {
+class Dashboard extends ApplicationContainer {
 
   constructor(props) {
     super(props);
@@ -45,6 +45,7 @@ class Dashboard extends Component {
   render() {
     return (
       <section>
+        {super.render()}
         <Row className="m-3 equal">
           <Col sm={3}>
             <section>

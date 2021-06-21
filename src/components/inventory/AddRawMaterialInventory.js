@@ -1,6 +1,7 @@
 import React, {useState} from "react";
 import {Button, Card, Col, Container, Form, Row} from "react-bootstrap";
 import {useHistory} from "react-router-dom";
+import Header from "../headers/Header";
 
 function AddRawMaterialInventory() {
   const history = useHistory();
@@ -45,75 +46,78 @@ function AddRawMaterialInventory() {
     }
   };
   return (
-    <Container fluid={"sm"}>
-      <Row className="mt-3">
-        <Col sm={12}>
-          <Card>
-            <Card.Body>
-              <Card.Title className={"text-left"}>New Raw Material</Card.Title>
-              <Form onSubmit={handleSubmit}>
-                <Row className={"text-left"}>
-                  <Col sm={2} className={"text-left"}>
-                    <Form.Label>Raw Material Name *</Form.Label>
-                  </Col>
-                  <Col sm={4} className={"text-left"}>
-                    <Form.Control
-                      name="rawMaterialName"
-                      onChange={(e) => {
-                        setrawMaterialName(e.target.value);
-                      }}
-                      type="text"
-                    ></Form.Control>
-                    {rawMaterialNameError ? (
-                      <Form.Text style={{color: "red"}}>
-                        {rawMaterialNameError}
-                      </Form.Text>
-                    ) : (
-                      <span></span>
-                    )}
-                  </Col>
-                </Row>
-                <br></br>
-                <Row className={"text-left"}>
-                  <Col sm={2} className={"text-left"}>
-                    <Form.Label>Quantity *</Form.Label>
-                  </Col>
-                  <Col sm={4} className={"text-left"}>
-                    <Form.Control
-                      name="quantity"
-                      onChange={(e) => {
-                        setquantity(e.target.value);
-                      }}
-                      type="text"
-                    ></Form.Control>
-                    {quantityError ? (
-                      <Form.Text style={{color: "red"}}>
-                        {quantityError}
-                      </Form.Text>
-                    ) : (
-                      <span></span>
-                    )}
-                  </Col>
-                </Row>
-                <br></br>
-                <Row className="justify-content-center">
-                  <Button
-                    variant="primary"
-                    className="mr-2"
-                    onClick={goToInventory}
-                  >
-                    Cancel
-                  </Button>
-                  <Button variant="secondary" type="submit">
-                    Submit
-                  </Button>
-                </Row>
-              </Form>
-            </Card.Body>
-          </Card>
-        </Col>
-      </Row>
-    </Container>
+      <section>
+        <Header/>
+        <Container fluid={"sm"}>
+          <Row className="mt-3">
+            <Col sm={12}>
+              <Card>
+                <Card.Body>
+                  <Card.Title className={"text-left"}>New Raw Material</Card.Title>
+                  <Form onSubmit={handleSubmit}>
+                    <Row className={"text-left"}>
+                      <Col sm={2} className={"text-left"}>
+                        <Form.Label>Raw Material Name *</Form.Label>
+                      </Col>
+                      <Col sm={4} className={"text-left"}>
+                        <Form.Control
+                            name="rawMaterialName"
+                            onChange={(e) => {
+                              setrawMaterialName(e.target.value);
+                            }}
+                            type="text"
+                        ></Form.Control>
+                        {rawMaterialNameError ? (
+                            <Form.Text style={{color: "red"}}>
+                              {rawMaterialNameError}
+                            </Form.Text>
+                        ) : (
+                            <span></span>
+                        )}
+                      </Col>
+                    </Row>
+                    <br></br>
+                    <Row className={"text-left"}>
+                      <Col sm={2} className={"text-left"}>
+                        <Form.Label>Quantity *</Form.Label>
+                      </Col>
+                      <Col sm={4} className={"text-left"}>
+                        <Form.Control
+                            name="quantity"
+                            onChange={(e) => {
+                              setquantity(e.target.value);
+                            }}
+                            type="text"
+                        ></Form.Control>
+                        {quantityError ? (
+                            <Form.Text style={{color: "red"}}>
+                              {quantityError}
+                            </Form.Text>
+                        ) : (
+                            <span></span>
+                        )}
+                      </Col>
+                    </Row>
+                    <br></br>
+                    <Row className="justify-content-center">
+                      <Button
+                          variant="primary"
+                          className="mr-2"
+                          onClick={goToInventory}
+                      >
+                        Cancel
+                      </Button>
+                      <Button variant="secondary" type="submit">
+                        Submit
+                      </Button>
+                    </Row>
+                  </Form>
+                </Card.Body>
+              </Card>
+            </Col>
+          </Row>
+        </Container>
+      </section>
   );
 }
 

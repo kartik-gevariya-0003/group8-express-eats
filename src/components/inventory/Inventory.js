@@ -3,6 +3,7 @@ import {Button, Card, Col, FormControl, InputGroup, Row, Table,} from "react-boo
 import {useHistory} from "react-router-dom";
 import {faSearch} from "@fortawesome/free-solid-svg-icons";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import Header from "../headers/Header";
 
 function Inventory() {
   const originalRawMaterialList = [
@@ -59,6 +60,7 @@ function Inventory() {
 
   return (
     <section>
+      <Header/>
       <Row className="m-3">
         <Col className={"text-left"}>
           <h2>Inventory</h2>

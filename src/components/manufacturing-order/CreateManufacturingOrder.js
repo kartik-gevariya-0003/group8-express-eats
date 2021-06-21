@@ -1,8 +1,9 @@
 import './manufacturing-order.css';
-import React, {Component} from "react";
+import React from "react";
 import {Button, Card, Col, Form, FormControl, InputGroup, ListGroup, Modal, Row} from "react-bootstrap";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faSearch, faTrashAlt} from "@fortawesome/free-solid-svg-icons";
+import ApplicationContainer from "../ApplicationContainer";
 
 const foodItems = [
   {id: 1, name: 'Egg Sandwich', unitPrice: 4.50},
@@ -16,7 +17,7 @@ const foodItems = [
   {id: 9, name: 'Greek Salad', unitPrice: 2.50},
 ]
 
-class CreateManufacturingOrder extends Component {
+class CreateManufacturingOrder extends ApplicationContainer {
 
   constructor(props) {
     super(props);
@@ -43,7 +44,7 @@ class CreateManufacturingOrder extends Component {
 
   }
 
-  goToManufacturingOrders(event) {
+  goToManufacturingOrders = (event) => {
     this.props.history.push('/manufacturing-orders')
   }
 
@@ -178,6 +179,7 @@ class CreateManufacturingOrder extends Component {
   render() {
     return (
       <section>
+        {super.render()}
         <Row className={"m-3"}>
           <Col sm={5}>
             <Card>

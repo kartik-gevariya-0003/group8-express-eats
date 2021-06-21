@@ -1,7 +1,6 @@
 import "./App.css";
 import { Route, Switch } from "react-router-dom";
 import * as PropTypes from "prop-types";
-import Header from "./components/headers/Header";
 import ManufacturingOrders from "./components/manufacturing-order/ManufacturingOrders";
 import CreateManufacturingOrder from "./components/manufacturing-order/CreateManufacturingOrder";
 import PurchaseOrders from "./components/purchase-order/PurchaseOrders";
@@ -10,7 +9,6 @@ import Confirmation from "./components/confirmation/Confirmation";
 import Vendor from "./components/vendor/Vendor";
 import CreateVendor from "./components/vendor/CreateVendor";
 import Dashboard from "./components/dashboard/Dashboard";
-import LogoHeader from "./components/headers/LogoHeader";
 import Home from "./components/home/Home";
 import Main from "./components/main/Main";
 import Login from "./components/login/Login";
@@ -19,21 +17,14 @@ import AddRawMaterialInventory from "./components/inventory/AddRawMaterialInvent
 import AddFoodItemInventory from "./components/inventory/AddFoodItemlInventory";
 
 Route.propTypes = {
-  component: PropTypes.any,
-  path: PropTypes.string,
-  exact: PropTypes.bool,
+    component: PropTypes.any,
+    path: PropTypes.string,
+    exact: PropTypes.bool
 };
 
 function App() {
-  const isLogoHeader =
-    window.location.pathname === "/" ||
-    window.location.pathname === "/home" ||
-    window.location.pathname === "/login" ||
-    window.location.pathname === "/register";
   return (
     <div className="App">
-      {!isLogoHeader && <Header />}
-      {isLogoHeader && <LogoHeader />}
       <Switch>
         <Route exact path="/dashboard" component={Dashboard} />
         <Route

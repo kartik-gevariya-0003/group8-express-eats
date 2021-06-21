@@ -1,9 +1,10 @@
-import React, {Component} from "react";
+import React from "react";
 import {Accordion, Button, Card, Col, Form, FormControl, InputGroup, ListGroup, Row} from "react-bootstrap";
 import {faAngleDown, faAngleUp, faSearch, faTrashAlt} from "@fortawesome/free-solid-svg-icons";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import ApplicationContainer from "../ApplicationContainer";
 
-class ManufacturingOrders extends Component {
+class ManufacturingOrders extends ApplicationContainer {
 
   constructor(props) {
     super(props);
@@ -133,7 +134,7 @@ class ManufacturingOrders extends Component {
     this.setState({openOrders, preppingOrders, packagedOrders})
   }
 
-  goToCreateManufacturingOrder(event) {
+  goToCreateManufacturingOrder = (event) => {
     this.props.history.push('/manufacturing-order/create')
   }
 
@@ -158,6 +159,7 @@ class ManufacturingOrders extends Component {
   render() {
     return (
       <section>
+        {super.render()}
         <Row className="m-3">
           <Col className={"text-left"}>
             <h2>Manufacturing Orders</h2>

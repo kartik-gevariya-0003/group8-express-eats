@@ -1,8 +1,9 @@
 import './purchase-order.css';
-import React, {Component} from 'react';
+import React from 'react';
 import {Accordion, Button, Card, Col, Form, FormControl, InputGroup, ListGroup, Row} from "react-bootstrap";
 import {faAngleDown, faAngleUp, faSearch, faTrashAlt} from "@fortawesome/free-solid-svg-icons";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import ApplicationContainer from "../ApplicationContainer";
 
 let openPurchaseOrders = [
   {orderNumber: "PO-1234567891", price: "20.5", vendor: "Rifraf", rawMaterials: ["Bread", "Mayonnaise"]},
@@ -37,7 +38,7 @@ let receivedPurchaseOrders = [
   {orderNumber: "PO-1234567799", price: "8.8", vendor: "Real Good Dairy", rawMaterials: ["Rice"]}
 ]
 
-export default class PurchaseOrders extends Component {
+export default class PurchaseOrders extends ApplicationContainer {
 
   constructor(props) {
     super(props);
@@ -135,6 +136,7 @@ export default class PurchaseOrders extends Component {
   render() {
     return (
       <section>
+        {super.render()}
         <Row className="m-3">
           <Col className={"text-left"}>
             <h2>Purchase Orders</h2>

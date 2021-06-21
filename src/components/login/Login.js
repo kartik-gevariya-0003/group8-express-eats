@@ -1,6 +1,8 @@
-import {Component} from "react";
+import PlainHeaderComponent from "../PlainHeaderComponent";
+import {Button} from "react-bootstrap";
+import {Link} from "react-router-dom";
 
-class Login extends Component {
+class Login extends PlainHeaderComponent {
 
     constructor(props) {
         super(props);
@@ -11,7 +13,14 @@ class Login extends Component {
     }
 
     render() {
-        return ('')
+        return (
+            <section>
+                {super.render()}
+                <Link to={"/home"}>
+                    <Button variant={"info"} className={"m-5"}>Go to Home</Button>
+                </Link>
+            </section>
+        )
     }
 }
 export default Login

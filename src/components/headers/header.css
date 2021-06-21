@@ -1,0 +1,35 @@
+.logo-name {
+    font-family: fantasy;
+    color: #119696;
+}
+
+.logo-image {
+    width: 200px;
+}
+
+.logo-name-small {
+    font-family: fantasy;
+    color: #f3f3dc;
+    font-size: 1.7rem;
+}
+
+.center {
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.home-position {
+    position: relative;
+    left: 39px;
+}
+
+.main-position {
+    position: relative;
+    left: 73px;
+}
+
+.button-group {
+    height: fit-content;
+    display: flex;
+}

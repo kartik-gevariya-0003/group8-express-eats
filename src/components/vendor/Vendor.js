@@ -3,6 +3,7 @@ import {Button, Card, Col, Form, FormControl, InputGroup, ListGroup, Modal, Row}
 import { useHistory } from "react-router-dom";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faSearch, faTrashAlt, faPen} from "@fortawesome/free-solid-svg-icons";
+import Header from "../headers/Header";
 
 let vendorDetails = [{
   vendorName:"Food Factory",contactPersonName:"John", address:"Abbey Road",email:"john@foodfactory.com", contactNumber: 9876543210
@@ -71,6 +72,7 @@ function Vendor() {
   return (
     <>
       <section>
+        <Header/>
         <Row className="m-3">
           <Col className={"text-left"}>
             <h2>Vendors</h2>
