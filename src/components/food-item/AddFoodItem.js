@@ -457,7 +457,6 @@ export default class AddFoodItem extends ApplicationContainer {
                       </Form.Label>
                       <Form.Control
                         type="text"
-                        isClearable
                         className={isError.foodItemName ? "is-invalid" : ""}
                         placeholder="Enter Food Item Name"
                         onChange={(e) => {
