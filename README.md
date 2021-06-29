@@ -1,5 +1,5 @@
-# Tutorial 2
- CSCI 5709 - Group 8 - Tutorial 2
+# Express Eats
+ CSCI 5709 - Group 8
 
 ## Authors
 
@@ -18,6 +18,7 @@
 
 ### Installing
 
+- Clone [repository](https://github.com/kartik-gevariya-0003/group8-express-eats)
 - Change current working directory to `group8-express-eats` repository root folder
 - Execute `npm install` to install dependencies
 - Execute `npm start` to start front-end server

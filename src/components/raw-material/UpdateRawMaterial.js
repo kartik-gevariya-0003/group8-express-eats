@@ -2,9 +2,6 @@ import {Component} from "react";
 import {Col, Row} from "react-bootstrap";
 
 class UpdateRawMaterial extends Component {
-  constructor(props) {
-    super(props);
-  }
 
   goToRawMaterials(event) {
     this.props.history.push('/raw-materials')

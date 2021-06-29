@@ -43,7 +43,7 @@ class LogoHeader extends Component {
                   <NavDropdown title={navDropDownTitle} id="navbarScrollingDropdown" className="dropdown-toggle-custom">
                     <NavDropdown.Item>Profile</NavDropdown.Item>
                     <NavDropdown.Divider/>
-                    <NavDropdown.Item>Log out</NavDropdown.Item>
+                    <NavDropdown.Item href={"/login"}>Log out</NavDropdown.Item>
                   </NavDropdown>
                 </Nav>
               )}

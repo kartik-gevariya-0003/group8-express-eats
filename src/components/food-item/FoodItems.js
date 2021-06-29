@@ -74,17 +74,16 @@ export default class FoodItems extends Component {
         </Row>
         <Row className="m-3">
           <CardDeck className="row row-cols-md-4 row-cols-sm-3 deck">
-            {console.log(foodItems)}
             {this.state.foodItems.map((foodItem) => (
-              <Col className="mb-3">
-                <Card key={foodItem.id}>
+              <Col className="mb-3" key={foodItem.id}>
+                <Card>
                   <Card.Img variant="top" src={foodItem.src}/>
                   <Card.Body>
                     <Card.Title>{foodItem.name}</Card.Title>
 
                     <FontAwesomeIcon
                       icon={faPencilAlt}
-                      color={"#8a9ea7"}
+                      color={"#035384AA"}
                       className="float-left"
                       onClick={() => {
                         this.goToEditFoodItem(foodItem.id);

@@ -181,7 +181,7 @@ export default class EditFoodItem extends Component {
       state.isError
     );
     if (state.foodItem.selectedRawMaterials.length > 0) {
-      state.foodItem.selectedRawMaterials.map((rawMaterial) => {
+      state.foodItem.selectedRawMaterials.forEach((rawMaterial) => {
         totalCost += rawMaterial.unitPrice * rawMaterial.quantity;
       });
     }
@@ -413,7 +413,6 @@ export default class EditFoodItem extends Component {
                       </Form.Label>
                       <Form.Control
                         type="text"
-                        isClearable
                         className={isError.foodItemName ? "is-invalid" : ""}
                         placeholder="Enter Food Item Name"
                         onChange={(e) => {

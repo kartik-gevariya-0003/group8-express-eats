@@ -33,3 +33,11 @@
     height: fit-content;
     display: flex;
 }
+
+a:link {
+    text-decoration: none;
+}
+
+.navbar-nav a:hover, .navbar-nav a:active {
+    text-decoration: none;
+}

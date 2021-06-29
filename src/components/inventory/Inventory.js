@@ -12,12 +12,12 @@ function Inventory() {
     {rawMaterial: "Apple", quantity: "5"},
     {rawMaterial: "Salt", quantity: "20"},
   ];
-  const [originalFoodItems, setoriginalFoodItems] = useState([
+  const originalFoodItems = [
     {foodItem: "Sandwich", quantity: "1"},
     {foodItem: "Strawberry Tart", quantity: "10"},
     {foodItem: "Chocolate Cake", quantity: "2"},
     {foodItem: "Spinach Quiche", quantity: "20"},
-  ]);
+  ];
   const [rawMaterialList, setrawMaterialList] = useState([
     {rawMaterial: "Milk", quantity: "10"},
     {rawMaterial: "Sugar", quantity: "2"},
@@ -42,7 +42,7 @@ function Inventory() {
     let thisrawMaterialList = originalRawMaterialList;
     if (value) {
       thisrawMaterialList = thisrawMaterialList.filter((item) =>
-        item.rawMaterial.includes(value)
+        item.rawMaterial.toLowerCase().includes(value.toLowerCase())
       );
     }
     setrawMaterialList(thisrawMaterialList);
@@ -52,7 +52,7 @@ function Inventory() {
     let thisfoodItems = originalFoodItems;
     if (value) {
       thisfoodItems = thisfoodItems.filter((item) =>
-        item.foodItem.includes(value)
+        item.foodItem.toLowerCase().includes(value.toLowerCase())
       );
     }
     setfoodItems(thisfoodItems);
@@ -166,7 +166,7 @@ function Inventory() {
                   </thead>
                   <tbody>
                   {foodItems.map((item) => (
-                    <tr key={item.rawMaterial}>
+                    <tr key={item.foodItem}>
                       <td className="text-left">{item.foodItem}</td>
                       <td>{item.quantity}</td>
                     </tr>
