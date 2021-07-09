@@ -24,8 +24,6 @@ export class AddFoodItemInventory extends ApplicationContainer {
         errors.foodItemName = "";
         if (!value || value.length === 0) {
           errors.foodItemName = "Required Field";
-        } else if (!alphabetRegex.test(value)) {
-          errors.foodItemName = "Only Alphabets allowed.";
         }
         break;
       case "quantity":
@@ -40,7 +38,7 @@ export class AddFoodItemInventory extends ApplicationContainer {
   setFoodItemName = (value) => {
     let state = { ...this.state };
 
-    state.foodItemName = value;
+    state.foodItemName = value.foodItem;
 
     this.validator("foodItemName", state.foodItemName, state.errors);
 

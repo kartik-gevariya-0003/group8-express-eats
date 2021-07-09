@@ -257,6 +257,7 @@ export default class Inventory extends ApplicationContainer {
           </Modal.Header>
           <Modal.Body>
             <AddRawMaterialInventory
+              rawMaterials={this.state.originalRawMaterialList}
               closeModal={this.closeRawMaterialModal}
             ></AddRawMaterialInventory>
           </Modal.Body>

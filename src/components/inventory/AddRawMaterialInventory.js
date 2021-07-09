@@ -3,6 +3,7 @@ import React from "react";
 import ApplicationContainer from "../ApplicationContainer";
 import { Button, Card, Col, Container, Form, Row } from "react-bootstrap";
 import { toast } from "react-toastify";
+import Select from "react-select";
 export default class AddRawMaterialInventory extends ApplicationContainer {
   constructor(props) {
     super(props);
@@ -13,7 +14,9 @@ export default class AddRawMaterialInventory extends ApplicationContainer {
         rawMaterialName: "",
         quantity: "",
       },
+      rawMaterials: this.props.rawMaterials,
     };
+    console.log(this.props.rawMaterials);
   }
 
   validator = (name, value, errors) => {
@@ -23,8 +26,6 @@ export default class AddRawMaterialInventory extends ApplicationContainer {
         errors.rawMaterialName = "";
         if (!value || value.length === 0) {
           errors.rawMaterialName = "Required Field";
-        } else if (!alphabetRegex.test(value)) {
-          errors.rawMaterialName = "Only Alphabets allowed.";
         }
         break;
       case "quantity":
@@ -39,7 +40,7 @@ export default class AddRawMaterialInventory extends ApplicationContainer {
   setRawMaterialName = (value) => {
     let state = { ...this.state };
 
-    state.rawMaterialName = value;
+    state.rawMaterialName = value.rawMaterial;
 
     this.validator("rawMaterialName", state.rawMaterialName, state.errors);
 
@@ -82,6 +83,12 @@ export default class AddRawMaterialInventory extends ApplicationContainer {
   goToInventory = () => {
     this.props.history.push("/inventory");
   };
+
+  formatRawMaterial = ({ rawMaterial }) => (
+    <Row>
+      <Col>{rawMaterial}</Col>
+    </Row>
+  );
   render() {
     return (
       <section>
@@ -96,18 +103,18 @@ export default class AddRawMaterialInventory extends ApplicationContainer {
                         <Form.Label>Raw Material Name *</Form.Label>
                       </Col>
                       <Col sm={6} className={"text-left"}>
-                        <Form.Control
-                          name="rawMaterialName"
-                          onChange={(e) => {
-                            this.setRawMaterialName(e.target.value);
-                          }}
-                          type="text"
+                        <Select
+                          isClearable
                           className={
                             this.state.errors.rawMaterialName
                               ? "is-invalid"
                               : ""
                           }
-                        ></Form.Control>
+                          options={this.state.rawMaterials}
+                          formatOptionLabel={this.formatRawMaterial}
+                          placeholder="Select"
+                          onChange={this.setRawMaterialName}
+                        />
                         {this.state.errors.rawMaterialName.length > 0 && (
                           <Form.Control.Feedback type={"invalid"}>
                             {this.state.errors.rawMaterialName}
