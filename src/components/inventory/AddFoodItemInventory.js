@@ -1,31 +1,29 @@
 import React from "react";
-
 import ApplicationContainer from "../ApplicationContainer";
 import { Button, Card, Col, Container, Form, Row } from "react-bootstrap";
-import { toast } from "react-toastify";
 import Select from "react-select";
-export default class AddRawMaterialInventory extends ApplicationContainer {
+import { toast } from "react-toastify";
+export class AddFoodItemInventory extends ApplicationContainer {
   constructor(props) {
     super(props);
     this.state = {
-      rawMaterialName: "",
+      foodItemName: "",
       quantity: 0,
       errors: {
-        rawMaterialName: "",
+        foodItemName: "",
         quantity: "",
       },
-      rawMaterials: this.props.rawMaterials,
+      foodItems: this.props.foodItems,
     };
-    console.log(this.props.rawMaterials);
+    console.log(this.props.foodItems);
   }
-
   validator = (name, value, errors) => {
     switch (name) {
-      case "rawMaterialName":
+      case "foodItemName":
         let alphabetRegex = new RegExp("^[a-zA-Z]*$");
-        errors.rawMaterialName = "";
+        errors.foodItemName = "";
         if (!value || value.length === 0) {
-          errors.rawMaterialName = "Required Field";
+          errors.foodItemName = "Required Field";
         }
         break;
       case "quantity":
@@ -37,12 +35,12 @@ export default class AddRawMaterialInventory extends ApplicationContainer {
     }
   };
 
-  setRawMaterialName = (value) => {
+  setFoodItemName = (value) => {
     let state = { ...this.state };
 
-    state.rawMaterialName = value.rawMaterial;
+    state.foodItemName = value.foodItem;
 
-    this.validator("rawMaterialName", state.rawMaterialName, state.errors);
+    this.validator("foodItemName", state.foodItemName, state.errors);
 
     this.setState(state);
   };
@@ -57,12 +55,17 @@ export default class AddRawMaterialInventory extends ApplicationContainer {
     this.setState(state);
   };
 
+  goToInventory = () => {
+    this.props.history.push("/inventory");
+  };
+
   handleSubmit = (e) => {
     e.preventDefault();
     let errors = { ...this.state.errors };
 
-    this.validator("rawMaterialName", this.state.rawMaterialName, errors);
+    this.validator("foodItemName", this.state.foodItemName, errors);
     this.validator("quantity", this.state.quantity, errors);
+
     let isValid = true;
     Object.values(errors).forEach((error) => {
       if (error.length > 0) {
@@ -71,22 +74,17 @@ export default class AddRawMaterialInventory extends ApplicationContainer {
     });
 
     if (isValid) {
-      toast.success(this.state.rawMaterialName + " added successfully!");
+      toast.success(this.state.foodItemName + " added successfully!");
       this.props.closeModal();
     }
     this.setState({
       errors: errors,
     });
-    console.log(this.state.errors);
   };
 
-  goToInventory = () => {
-    this.props.history.push("/inventory");
-  };
-
-  formatRawMaterial = ({ rawMaterial }) => (
+  formatFoodItem = ({ foodItem }) => (
     <Row>
-      <Col>{rawMaterial}</Col>
+      <Col>{foodItem}</Col>
     </Row>
   );
   render() {
@@ -94,30 +92,29 @@ export default class AddRawMaterialInventory extends ApplicationContainer {
       <section>
         <Container>
           <Row>
-            <Col>
+            <Col sm={12}>
               <Card>
                 <Card.Body>
                   <Form onSubmit={this.handleSubmit}>
                     <Row className={"text-left"}>
-                      <Col sm={6} className={"text-left"}>
-                        <Form.Label>Raw Material Name *</Form.Label>
+                      <Col sm={6}>
+                        <Form.Label>Food Item Name *</Form.Label>
                       </Col>
-                      <Col sm={6} className={"text-left"}>
+                      <Col sm={6}>
                         <Select
                           isClearable
                           className={
-                            this.state.errors.rawMaterialName
-                              ? "is-invalid"
-                              : ""
+                            this.state.errors.foodItemName ? "is-invalid" : ""
                           }
-                          options={this.state.rawMaterials}
-                          formatOptionLabel={this.formatRawMaterial}
-                          placeholder="Select"
-                          onChange={this.setRawMaterialName}
+                          options={this.state.foodItems}
+                          formatOptionLabel={this.formatFoodItem}
+                          placeholder="Select Food Item"
+                          onChange={this.setFoodItemName}
                         />
-                        {this.state.errors.rawMaterialName.length > 0 && (
-                          <Form.Control.Feedback type={"invalid"}>
-                            {this.state.errors.rawMaterialName}
+
+                        {this.state.errors.foodItemName.length > 0 && (
+                          <Form.Control.Feedback type="invalid">
+                            {this.state.errors.foodItemName}
                           </Form.Control.Feedback>
                         )}
                       </Col>
@@ -133,10 +130,10 @@ export default class AddRawMaterialInventory extends ApplicationContainer {
                           onChange={(e) => {
                             this.setQuantity(e.target.value);
                           }}
+                          type="number"
                           className={
                             this.state.errors.quantity ? "is-invalid" : ""
                           }
-                          type="number"
                         ></Form.Control>
                         {this.state.errors.quantity.length > 0 && (
                           <Form.Control.Feedback type={"invalid"}>
@@ -164,3 +161,5 @@ export default class AddRawMaterialInventory extends ApplicationContainer {
     );
   }
 }
+
+export default AddFoodItemInventory;
