@@ -1,18 +1,32 @@
-import {Button, Card, CardDeck, Col, Form, FormControl, InputGroup, Row,} from "react-bootstrap";
-import React, {Component} from "react";
+import {
+  Button,
+  Card,
+  CardDeck,
+  Col,
+  Form,
+  FormControl,
+  InputGroup,
+  Row,
+  Modal,
+} from "react-bootstrap";
+import React, { Component } from "react";
 import Header from "../headers/Header";
-import {faPencilAlt, faSearch, faTrashAlt,} from "@fortawesome/free-solid-svg-icons";
-import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import {
+  faPencilAlt,
+  faSearch,
+  faTrashAlt,
+} from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 const foodItems = [
-  {id: 1, name: "Egg Sandwich", quantity: 23, src: "/egg_sandwich.jpg"},
-  {id: 2, name: "Pepperoni Pizza", quantity: 3, src: "/pizza.jpg"},
-  {id: 3, name: "Cheese Burger", quantity: 3, src: "/cheese_burger.jpg"},
-  {id: 4, name: "Fish and Chips", quantity: 1, src: "/fish_chips.jpg"},
-  {id: 5, name: "Dim Sums", quantity: 5, src: "/dimsums.jpg"},
-  {id: 6, name: "Tacos", quantity: 23, src: "/tacos.jpg"},
-  {id: 7, name: "Greek Salad", quantity: 4, src: "/greek_salad.jpg"},
-  {id: 8, name: "Sushi", quantity: 10, src: "/sushi.jpg"},
+  { id: 1, name: "Egg Sandwich", quantity: 23, src: "/egg_sandwich.jpg" },
+  { id: 2, name: "Pepperoni Pizza", quantity: 3, src: "/pizza.jpg" },
+  { id: 3, name: "Cheese Burger", quantity: 3, src: "/cheese_burger.jpg" },
+  { id: 4, name: "Fish and Chips", quantity: 1, src: "/fish_chips.jpg" },
+  { id: 5, name: "Dim Sums", quantity: 5, src: "/dimsums.jpg" },
+  { id: 6, name: "Tacos", quantity: 23, src: "/tacos.jpg" },
+  { id: 7, name: "Greek Salad", quantity: 4, src: "/greek_salad.jpg" },
+  { id: 8, name: "Sushi", quantity: 10, src: "/sushi.jpg" },
 ];
 
 export default class FoodItems extends Component {
@@ -20,6 +34,11 @@ export default class FoodItems extends Component {
     super(props);
     this.state = {
       foodItems: foodItems,
+      deleteFoodItemModal: {
+        show: false,
+        id: -1,
+        foodItemName: "",
+      },
     };
   }
 
@@ -28,11 +47,12 @@ export default class FoodItems extends Component {
   };
 
   deleteFoodItem(id) {
-    let state = {...this.state};
+    let state = { ...this.state };
 
     state.foodItems = state.foodItems.filter((x) => {
       return x.id !== id;
     });
+    this.closeModal();
     this.setState(state);
   }
 
@@ -40,10 +60,27 @@ export default class FoodItems extends Component {
     this.props.history.push("/edit-food-item");
   };
 
+  showModal = (foodItem) => {
+    let state = { ...this.state };
+    state.deleteFoodItemModal.show = true;
+    state.deleteFoodItemModal.id = foodItem.id;
+    state.deleteFoodItemModal.name = foodItem.name;
+    this.setState(state);
+  };
+
+  closeModal = () => {
+    let state = { ...this.state };
+
+    state.deleteFoodItemModal.show = false;
+    state.deleteFoodItemModal.id = -1;
+    state.deleteFoodItemModal.name = "";
+    this.setState(state);
+  };
+
   render() {
     return (
       <section>
-        <Header/>
+        <Header />
         <Row className="m-3">
           <Col className={"text-left"}>
             <h2>Food Items</h2>
@@ -65,7 +102,7 @@ export default class FoodItems extends Component {
                 />
                 <InputGroup.Append>
                   <InputGroup.Text>
-                    <FontAwesomeIcon icon={faSearch}/>
+                    <FontAwesomeIcon icon={faSearch} />
                   </InputGroup.Text>
                 </InputGroup.Append>
               </InputGroup>
@@ -77,7 +114,7 @@ export default class FoodItems extends Component {
             {this.state.foodItems.map((foodItem) => (
               <Col className="mb-3" key={foodItem.id}>
                 <Card>
-                  <Card.Img variant="top" src={foodItem.src}/>
+                  <Card.Img variant="top" src={foodItem.src} />
                   <Card.Body>
                     <Card.Title>{foodItem.name}</Card.Title>
 
@@ -94,7 +131,7 @@ export default class FoodItems extends Component {
                       icon={faTrashAlt}
                       color={"#ba2311"}
                       onClick={() => {
-                        this.deleteFoodItem(foodItem.id);
+                        this.showModal(foodItem);
                       }}
                       className="float-right  "
                     />
@@ -104,6 +141,42 @@ export default class FoodItems extends Component {
             ))}
           </CardDeck>
         </Row>
+        <Modal
+          show={this.state.deleteFoodItemModal.show}
+          animation={false}
+          onHide={this.closeModal}
+        >
+          <Modal.Header closeButton>
+            <Modal.Title>Confirmation</Modal.Title>
+          </Modal.Header>
+          <Modal.Body>
+            <Form.Group>
+              <Form.Label className={"m-0"}>
+                <strong>
+                  Are you sure you want to delete{" "}
+                  {this.state.deleteFoodItemModal.name}?{" "}
+                </strong>
+              </Form.Label>
+              <Form.Label className={"m-0"}>
+                The food item should not be present in any Open Manufacturing
+                Orders.
+              </Form.Label>
+            </Form.Group>
+          </Modal.Body>
+          <Modal.Footer>
+            <Button
+              variant="success"
+              onClick={() =>
+                this.deleteFoodItem(this.state.deleteFoodItemModal.id)
+              }
+            >
+              Yes
+            </Button>
+            <Button variant="secondary" onClick={this.closeModal}>
+              No
+            </Button>
+          </Modal.Footer>
+        </Modal>
       </section>
     );
   }

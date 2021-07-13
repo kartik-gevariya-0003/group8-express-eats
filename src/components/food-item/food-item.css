@@ -33,3 +33,13 @@
 .deck {
   width: 100%;
 }
+
+.custom-file-label::after {
+  color: white;
+  height: 3rem;
+}
+
+.border-radius {
+  border-top-right-radius: 0rem;
+  border-bottom-right-radius: 0rem;
+}
