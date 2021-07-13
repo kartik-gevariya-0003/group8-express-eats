@@ -1,258 +1,321 @@
-import React, {useState} from "react";
-import {useHistory} from "react-router-dom";
+import React, { useState } from "react";
+import { useHistory } from "react-router-dom";
 import "./create-vendor.css";
 
-import {Button, Card, Col, Form, FormControl, Row,} from "react-bootstrap";
+import { Button, Card, Col, Form, FormControl, Row } from "react-bootstrap";
 import Header from "../headers/Header";
+import ApplicationContainer from "../ApplicationContainer";
 
-function CreateVendor() {
-    let history = useHistory();
+export default class CreateVendor extends ApplicationContainer {
+  constructor(props) {
+    super(props);
 
-    const [values, setValues] = useState({
+    this.state = {
+      values: {
         vendorName: "Milne MicroDried",
         address: "Barrington St.",
         contactPersonName: "Rick Morty",
         email: "rick@mmicrodires.ca",
         contactNumber: "9876543210",
+      },
+      errorVendorName: "",
+      errorAddress: "",
+      errorContactPersonName: "",
+      errorEmail: "",
+      errorContactNumber: "",
+    };
+  }
+
+  cancelHandler = (e) => {
+    e.preventDefault();
+    this.props.history.push("/vendors");
+  };
+
+  onChangeHandler = (e) => {
+    // setValues((prev) => {
+    //   return {
+    //     ...values,
+    //     [e.target.name]: e.target.value,
+    //   };
+    // });
+
+    this.setState({
+      values: {
+        ...this.state.values,
+        [e.target.name]: e.target.value,
+      },
     });
+  };
 
-    const [errorVendorName, setErrorVendorName] = useState("");
-    const [errorAddress, setErrorAddress] = useState("");
-    const [errorContactPersonName, setErrorContactPersonName] = useState("");
-    const [errorEmail, setErrorEmail] = useState("");
-    const [errorContactNumber, setErrorContactNumber] = useState("");
+  validator = () => {
+    let valid = true;
 
-    const cancelHandler = (e) => {
-        e.preventDefault();
-        history.push("/vendors");
-    };
+    if (this.state.values.vendorName.trim() === "") {
+      //   setErrorVendorName("Vendor name is required");
+      this.setState({
+        errorVendorName: "Vendor name is required",
+      });
+      valid = false;
+    } else if (
+      !/^[A-Za-z0-9 _]*[A-Za-z0-9][A-Za-z0-9 _]*$/i.test(
+        this.state.values.vendorName.trim()
+      )
+    ) {
+      //   setErrorVendorName("Only letters and numbers are allowed");
+      this.setState({
+        errorVendorName: "Only letters and numbers are allowed",
+      });
+      valid = false;
+    } else {
+      //   setErrorVendorName("");
+      this.setState({
+        errorVendorName: "",
+      });
+    }
 
-    const onChangeHandler = (e) => {
-        setValues((prev) => {
-            return {
-                ...values,
-                [e.target.name]: e.target.value,
-            };
-        });
-    };
+    if (this.state.values.address.trim() === "") {
+      //   setErrorAddress("Address is required");
 
-    const validator = () => {
-        let valid = true;
+      this.setState({
+        errorAddress: "Address is required",
+      });
+      valid = false;
+    } else {
+      //   setErrorAddress("");
+      this.setState({
+        errorAddress: "",
+      });
+    }
 
-        if (values.vendorName.trim() === "") {
-            setErrorVendorName("Vendor name is required");
-            valid = false;
-        } else if (
-          !/^[A-Za-z0-9 _]*[A-Za-z0-9][A-Za-z0-9 _]*$/i.test(
-            values.vendorName.trim()
-          )
-        ) {
-            setErrorVendorName("Only letters and numbers are allowed");
-            valid = false;
-        } else {
-            setErrorVendorName("");
-        }
+    if (this.state.values.contactPersonName.trim() === "") {
+      //   setErrorContactPersonName("Contact person name is required");
+      this.setState({
+        errorContactNumber: "Contact person name is required",
+      });
+      valid = false;
+    } else if (
+      !/^[A-Za-z0-9 _]*[A-Za-z0-9][A-Za-z0-9 _]*$/i.test(
+        this.state.values.contactPersonName.trim()
+      )
+    ) {
+      //   setErrorContactPersonName("Only letters and numbers are allowed");
+      this.setState({
+        errorContactNumber: "Only letters and numbers are allowed",
+      });
+      valid = false;
+    } else {
+      //   setErrorContactPersonName("");
+      this.setState({
+        errorContactNumber: "",
+      });
+    }
 
-        if (values.address.trim() === "") {
-            setErrorAddress("Address is required");
-            valid = false;
-        } else {
-            setErrorAddress("");
-        }
+    if (this.state.values.email.trim() === "") {
+      //   setErrorEmail("Email is required");
+      this.setState({
+        errorEmail: "Email is required",
+      });
+      valid = false;
+    } else if (
+      !/^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/i.test(
+        this.state.values.email.trim()
+      )
+    ) {
+      //   setErrorEmail("Invalid email");
+      this.setState({
+        errorEmail: "Invalid email",
+      });
+      valid = false;
+    } else {
+      //   setErrorEmail("");
+      this.setState({
+        errorEmail: "",
+      });
+    }
 
-        if (values.contactPersonName.trim() === "") {
-            setErrorContactPersonName("Contact person name is required");
-            valid = false;
-        } else if (
-          !/^[A-Za-z0-9 _]*[A-Za-z0-9][A-Za-z0-9 _]*$/i.test(
-            values.contactPersonName.trim()
-          )
-        ) {
-            setErrorContactPersonName("Only letters and numbers are allowed");
-            valid = false;
-        } else {
-            setErrorContactPersonName("");
-        }
+    if (this.state.values.contactNumber.trim() === "") {
+      //   setErrorContactNumber("Contact number is required");
+      this.setState({
+        errorContactNumber: "Contact number is required",
+      });
+      valid = false;
+    } else {
+      //   setErrorContactNumber("");
 
-        if (values.email.trim() === "") {
-            setErrorEmail("Email is required");
-            valid = false;
-        } else if (
-          !/^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/i.test(
-            values.email.trim()
-          )
-        ) {
-            setErrorEmail("Invalid email");
-            valid = false;
-        } else {
-            setErrorEmail("");
-        }
+      this.setState({
+        errorContactNumber: "",
+      });
+    }
+    return valid;
+  };
 
-        if (values.contactNumber.trim() === "") {
-            setErrorContactNumber("Contact number is required");
-            valid = false;
-        } else {
-            setErrorContactNumber("");
-        }
-        return valid;
-    };
+  submitHandler = (e) => {
+    e.preventDefault();
+    const isValid = this.validator();
+    console.log(this.state.errorVendorName);
+    if (isValid) {
+      this.props.history.push({
+        pathname: "/vendor/confirmation",
+        confirmation: {
+          message: this.state.values.vendorName + " Created Successfully",
+          redirect: "/vendors",
+          button: "Go to Vendors",
+        },
+      });
+    }
+  };
 
-    const submitHandler = (e) => {
-        e.preventDefault();
-        const isValid = validator();
-        console.log(errorVendorName);
-        if (isValid) {
-            history.push({
-                pathname: "/vendor/confirmation",
-                confirmation: {
-                    message: values.vendorName + " Created Successfully",
-                    redirect: "/vendors",
-                    button: "Go to Vendors",
-                },
-            });
-        }
-    };
-
+  render() {
     return (
       <>
-          <Header/>
-          <Row className={"mt-3 justify-content-center"}>
-              <Col sm={8}>
-                  <Card>
-                      <Card.Body className={"text-left"}>
-                          <Card.Title className={"text-left"}>Edit Vendor</Card.Title>
-                          <Row className={"mt-5"}>
-                              <Col sm={12}>
-                                  <Form onSubmit={submitHandler}>
-                                      <Form.Group className="mb-3">
-                                          <Row>
-                                              <Col sm={6}>
-                                                  <Form.Label>Vendor Name</Form.Label>
-                                                  <Form.Control
-                                                    type="text"
-                                                    name="vendorName"
-                                                    value={values.vendorName}
-                                                    onChange={onChangeHandler}
-                                                    className={
-                                                        errorVendorName.length > 0 ? "is-invalid" : ""
-                                                    }
-                                                  />
-                                                  {errorVendorName.length > 0 && (
-                                                    <Form.Control.Feedback type={"invalid"}>
-                                                        {errorVendorName}
-                                                    </Form.Control.Feedback>
-                                                  )}
-                                              </Col>
-                                              <Col sm={6}>
-                                                  <Form.Label>Contact Person Name</Form.Label>
-                                                  <Form.Control
-                                                    type="text"
-                                                    name="contactPersonName"
-                                                    value={values.contactPersonName}
-                                                    onChange={onChangeHandler}
-                                                    className={
-                                                        errorContactPersonName.length > 0
-                                                          ? "is-invalid"
-                                                          : ""
-                                                    }
-                                                  />
-                                                  {errorContactPersonName.length > 0 && (
-                                                    <Form.Control.Feedback type={"invalid"}>
-                                                        {errorContactPersonName}
-                                                    </Form.Control.Feedback>
-                                                  )}
-                                              </Col>
-                                          </Row>
-                                      </Form.Group>
+        <Header />
+        <Row className={"mt-3 justify-content-center"}>
+          <Col sm={8}>
+            <Card>
+              <Card.Body className={"text-left"}>
+                <Card.Title className={"text-left"}>Edit Vendor</Card.Title>
+                <Row className={"mt-5"}>
+                  <Col sm={12}>
+                    <Form onSubmit={this.submitHandler}>
+                      <Form.Group className="mb-3">
+                        <Row>
+                          <Col sm={6}>
+                            <Form.Label>Vendor Name</Form.Label>
+                            <Form.Control
+                              type="text"
+                              name="vendorName"
+                              value={this.state.values.vendorName}
+                              onChange={this.onChangeHandler}
+                              className={
+                                this.state.errorVendorName.length > 0
+                                  ? "is-invalid"
+                                  : ""
+                              }
+                            />
+                            {this.state.errorVendorName.length > 0 && (
+                              <Form.Control.Feedback type={"invalid"}>
+                                {this.state.errorVendorName}
+                              </Form.Control.Feedback>
+                            )}
+                          </Col>
+                          <Col sm={6}>
+                            <Form.Label>Contact Person Name</Form.Label>
+                            <Form.Control
+                              type="text"
+                              name="contactPersonName"
+                              value={this.state.values.contactPersonName}
+                              onChange={this.onChangeHandler}
+                              className={
+                                this.state.errorContactPersonName.length > 0
+                                  ? "is-invalid"
+                                  : ""
+                              }
+                            />
+                            {this.state.errorContactPersonName.length > 0 && (
+                              <Form.Control.Feedback type={"invalid"}>
+                                {this.state.errorContactPersonName}
+                              </Form.Control.Feedback>
+                            )}
+                          </Col>
+                        </Row>
+                      </Form.Group>
 
-                                      <Form.Group className="mb-3">
-                                          <Row>
-                                              <Col sm={12}>
-                                                  <Form.Label>Address</Form.Label>
-                                                  <Form.Control
-                                                    type="text"
-                                                    name="address"
-                                                    value={values.address}
-                                                    onChange={onChangeHandler}
-                                                    className={
-                                                        errorAddress.length > 0 ? "is-invalid" : ""
-                                                    }
-                                                  />
-                                                  {errorAddress.length > 0 && (
-                                                    <Form.Control.Feedback type={"invalid"}>
-                                                        {errorAddress}
-                                                    </Form.Control.Feedback>
-                                                  )}
-                                              </Col>
-                                          </Row>
-                                      </Form.Group>
+                      <Form.Group className="mb-3">
+                        <Row>
+                          <Col sm={12}>
+                            <Form.Label>Address</Form.Label>
+                            <Form.Control
+                              type="text"
+                              name="address"
+                              value={this.state.values.address}
+                              onChange={this.onChangeHandler}
+                              className={
+                                this.state.errorAddress.length > 0
+                                  ? "is-invalid"
+                                  : ""
+                              }
+                            />
+                            {this.state.errorAddress.length > 0 && (
+                              <Form.Control.Feedback type={"invalid"}>
+                                {this.state.errorAddress}
+                              </Form.Control.Feedback>
+                            )}
+                          </Col>
+                        </Row>
+                      </Form.Group>
 
-                                      <Form.Group className="mb-3">
-                                          <Row>
-                                              <Col sm={6}>
-                                                  <Form.Label>Email</Form.Label>
-                                                  <Form.Control
-                                                    type="email"
-                                                    name="email"
-                                                    value={values.email}
-                                                    onChange={onChangeHandler}
-                                                    className={
-                                                        errorEmail.length > 0 ? "is-invalid" : ""
-                                                    }
-                                                  />
+                      <Form.Group className="mb-3">
+                        <Row>
+                          <Col sm={6}>
+                            <Form.Label>Email</Form.Label>
+                            <Form.Control
+                              type="email"
+                              name="email"
+                              value={this.state.values.email}
+                              onChange={this.onChangeHandler}
+                              className={
+                                this.state.errorEmail.length > 0
+                                  ? "is-invalid"
+                                  : ""
+                              }
+                            />
 
-                                                  {errorEmail.length > 0 && (
-                                                    <Form.Control.Feedback type={"invalid"}>
-                                                        {errorEmail}
-                                                    </Form.Control.Feedback>
-                                                  )}
-                                              </Col>
-                                              <Col sm={6}>
-                                                  <Form.Label>Contact Number</Form.Label>
-                                                  <Form.Control
-                                                    type="number"
-                                                    name="contactNumber"
-                                                    value={values.contactNumber}
-                                                    onChange={onChangeHandler}
-                                                    className={
-                                                        errorContactNumber.length > 0 ? "is-invalid" : ""
-                                                    }
-                                                  />
-                                                  {errorContactNumber.length > 0 && (
-                                                    <FormControl.Feedback type={"invalid"}>
-                                                        {errorContactNumber}
-                                                    </FormControl.Feedback>
-                                                  )}
-                                              </Col>
-                                          </Row>
-                                      </Form.Group>
-                                      <Form.Group className={"mt-5 mb-3"}>
-                                          <Row>
-                                              <Col sm={6} className={"text-right"}>
-                                                  <Button
-                                                    className={"submit-btn"}
-                                                    variant="primary"
-                                                    type="submit"
-                                                  >
-                                                      Submit
-                                                  </Button>
-                                              </Col>
-                                              <Col sm={6} className={"submit-btn"}>
-                                                  <Button variant="danger" onClick={cancelHandler}>
-                                                      Cancel
-                                                  </Button>
-                                              </Col>
-                                          </Row>
-                                      </Form.Group>
-                                  </Form>
-                              </Col>
-                          </Row>
-                      </Card.Body>
-                  </Card>
-              </Col>
-          </Row>
+                            {this.state.errorEmail.length > 0 && (
+                              <Form.Control.Feedback type={"invalid"}>
+                                {this.state.errorEmail}
+                              </Form.Control.Feedback>
+                            )}
+                          </Col>
+                          <Col sm={6}>
+                            <Form.Label>Contact Number</Form.Label>
+                            <Form.Control
+                              type="number"
+                              name="contactNumber"
+                              value={this.state.values.contactNumber}
+                              onChange={this.onChangeHandler}
+                              className={
+                                this.state.errorContactNumber.length > 0
+                                  ? "is-invalid"
+                                  : ""
+                              }
+                            />
+                            {this.state.errorContactNumber.length > 0 && (
+                              <FormControl.Feedback type={"invalid"}>
+                                {this.state.errorContactNumber}
+                              </FormControl.Feedback>
+                            )}
+                          </Col>
+                        </Row>
+                      </Form.Group>
+                      <Form.Group className={"mt-5 mb-3"}>
+                        <Row>
+                          <Col sm={6} className={"text-right"}>
+                            <Button
+                              className={"submit-btn"}
+                              variant="primary"
+                              type="submit"
+                            >
+                              Submit
+                            </Button>
+                          </Col>
+                          <Col sm={6} className={"submit-btn"}>
+                            <Button
+                              variant="danger"
+                              onClick={this.cancelHandler}
+                            >
+                              Cancel
+                            </Button>
+                          </Col>
+                        </Row>
+                      </Form.Group>
+                    </Form>
+                  </Col>
+                </Row>
+              </Card.Body>
+            </Card>
+          </Col>
+        </Row>
       </>
     );
+  }
 }
-
-export default CreateVendor;

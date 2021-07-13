@@ -1,9 +1,20 @@
-import React, {useState} from "react";
-import {Button, Card, Col, Form, FormControl, InputGroup, ListGroup, Modal, Row,} from "react-bootstrap";
-import {useHistory} from "react-router-dom";
-import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faPen, faSearch, faTrashAlt} from "@fortawesome/free-solid-svg-icons";
+import React, { useState } from "react";
+import {
+  Button,
+  Card,
+  Col,
+  Form,
+  FormControl,
+  InputGroup,
+  ListGroup,
+  Modal,
+  Row,
+} from "react-bootstrap";
+import { useHistory } from "react-router-dom";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faPen, faSearch, faTrashAlt } from "@fortawesome/free-solid-svg-icons";
 import Header from "../headers/Header";
+import ApplicationContainer from "../ApplicationContainer";
 
 let vendorDetails = [
   {
@@ -36,250 +47,305 @@ let vendorDetails = [
   },
 ];
 
-function Vendor() {
-  let history = useHistory();
+export default class Vendor extends ApplicationContainer {
+  constructor(props) {
+    super(props);
 
-  const [vendors, setVendor] = useState(vendorDetails);
-  const [deleteModal, setDeleteModal] = useState({
-    show: false,
-    vendorName: "",
-  });
+    this.state = {
+      vendors: vendorDetails,
+      deleteModal: {
+        show: false,
+        vendorName: "",
+      },
+    };
+  }
 
-  const createVendor = () => {
-    history.push("/vendors/create");
+  // const [vendors, setVendor] = useState(vendorDetails);
+  // const [deleteModal, setDeleteModal] = useState({
+  //   show: false,
+  //   vendorName: "",
+  // });
+
+  createVendor = () => {
+    this.props.history.push("/vendors/create");
   };
 
-  const editVendor = () => {
-    history.push("/vendor/edit");
+  editVendor = () => {
+    this.props.history.push("/vendor/edit");
   };
 
-  const filterVendors = (e) => {
+  filterVendors = (e) => {
     e.preventDefault();
-    const {value} = e.target;
-    setVendor(
-      vendorDetails.filter((vendor) =>
+    const { value } = e.target;
+    // setVendor(
+    //   vendorDetails.filter((vendor) =>
+    //     vendor.vendorName.toLowerCase().includes(value.toLowerCase())
+    //   )
+    // );
+
+    this.setState({
+      vendors: vendorDetails.filter((vendor) =>
         vendor.vendorName.toLowerCase().includes(value.toLowerCase())
-      )
-    );
+      ),
+    });
   };
 
-  const deleteVendor = (deleteVendor) => {
+  deleteVendor = (deleteVendor) => {
     vendorDetails = vendorDetails.filter(
       (vendor) =>
         vendor.vendorName.toLowerCase() !==
         deleteVendor.vendorName.toLowerCase()
     );
-    setVendor(
-      vendors.filter(
+    // setVendor(
+    //   vendors.filter(
+    //     (vendor) =>
+    //       vendor.vendorName.toLowerCase() !==
+    //       deleteVendor.vendorName.toLowerCase()
+    //   )
+    // );
+    this.setState({
+      vendors: this.state.vendors.filter(
         (vendor) =>
           vendor.vendorName.toLowerCase() !==
           deleteVendor.vendorName.toLowerCase()
-      )
-    );
-    closeModal();
+      ),
+    });
+    this.closeModal();
   };
 
-  const deleteVendorConfirmation = (deleteVendor) => {
-    let state = {...deleteModal};
+  deleteVendorConfirmation = (deleteVendor) => {
+    let state = { ...this.state.deleteModal };
     state.vendorName = deleteVendor.vendorName;
 
-    console.log(state);
-    setDeleteModal((prevState) => {
-      return {
-        ...prevState,
-        vendorName: deleteVendor.vendorName,
-      };
-    });
-    showModal();
-  };
+    // console.log(state);
+    // setDeleteModal((prevState) => {
+    //   return {
+    //     ...prevState,
+    //     vendorName: deleteVendor.vendorName,
+    //   };
+    // });
 
-  const showModal = () => {
-    setDeleteModal((prevState) => {
-      return {
-        ...prevState,
+    this.setState(
+      {
+        deleteModal: {
+          vendorName: state.vendorName,
+        },
+      },
+      () => {
+        this.showModal();
+      }
+    );
+  };
+  // console.log(this.state.deleteModal);
+
+  showModal = () => {
+    // setDeleteModal((prevState) => {
+    //   return {
+    //     ...prevState,
+    //     show: true,
+    //   };
+    // });
+
+    console.log(this.state.deleteModal.vendorName);
+    this.setState({
+      deleteModal: {
         show: true,
-      };
+      },
     });
   };
 
-  const closeModal = () => {
-    setDeleteModal((prevState) => {
-      return {
-        ...prevState,
+  closeModal = () => {
+    // setDeleteModal((prevState) => {
+    //   return {
+    //     ...prevState,
+    //     show: false,
+    //   };
+    // });
+
+    this.setState({
+      deleteModal: {
         show: false,
-      };
+      },
     });
   };
-  return (
-    <>
-      <section>
-        <Header/>
-        <Row className="m-3">
-          <Col className={"text-left"}>
-            <h2>Vendors</h2>
-          </Col>
-        </Row>
-        <Row className="m-3">
-          <Col sm={8} className={"text-left"}>
-            <Button variant={"primary"} onClick={createVendor}>
-              Add New Vendor
-            </Button>
-          </Col>
-          <Col sm={4}>
-            <Form.Group>
-              <InputGroup>
-                <FormControl
-                  placeholder="Search"
-                  onChange={filterVendors}
-                  aria-label="Search"
-                  aria-describedby="search-control"
-                />
-                <InputGroup.Append>
-                  <InputGroup.Text>
-                    <FontAwesomeIcon icon={faSearch}/>
-                  </InputGroup.Text>
-                </InputGroup.Append>
-              </InputGroup>
-            </Form.Group>
-          </Col>
-        </Row>
-        <Row className="m-3">
-          <Col sm={12}>
-            <Card>
-              <Card.Body>
-                <ListGroup className={"mt-3"}>
-                  <ListGroup.Item>
-                    <Row>
-                      <Col sm={2} className={"pl-3 text-left"}>
-                        <h5>
-                          <span>
-                            <strong>Vendor Name</strong>
-                          </span>
-                        </h5>
-                      </Col>
-                      <Col sm={2} className={"pl-3 text-left"}>
-                        <h5>
-                          <span>
-                            <strong>Contact Person</strong>
-                          </span>
-                        </h5>
-                      </Col>
-                      <Col sm={2} className={"pl-3 text-left"}>
-                        <h5>
-                          <span>
-                            <strong>Address</strong>
-                          </span>
-                        </h5>
-                      </Col>
-                      <Col sm={2} className={"pl-3 text-left"}>
-                        <h5>
-                          <span>
-                            <strong>Email</strong>
-                          </span>
-                        </h5>
-                      </Col>
-                      <Col sm={2} className={"pl-3 text-left"}>
-                        <h5>
-                          <span>
-                            <strong>Contact Number</strong>
-                          </span>
-                        </h5>
-                      </Col>
-                      <Col sm={2} className={"pl-3 text-left"}>
-                        <h5>
-                          <span>
-                            <strong>Action</strong>
-                          </span>
-                        </h5>
-                      </Col>
-                    </Row>
-                  </ListGroup.Item>
-                  {vendors.length !== 0 ? (
-                    <section>
-                      {vendors.map((vendor) => (
-                        <ListGroup.Item key={vendor.vendorName}>
-                          <Row>
-                            <Col sm={2} className={"pl-3 text-left"}>
-                              <h6>
-                                <span>{vendor.vendorName}</span>
-                              </h6>
-                            </Col>
-                            <Col sm={2} className={"pl-3 text-left"}>
-                              <h6>
-                                <span>{vendor.contactPersonName}</span>
-                              </h6>
-                            </Col>
-                            <Col sm={2} className={"pl-3 text-left"}>
-                              <h6>
-                                <span>{vendor.address}</span>
-                              </h6>
-                            </Col>
-                            <Col sm={2} className={"pl-3 text-left"}>
-                              <h6>
-                                <span>{vendor.email}</span>
-                              </h6>
-                            </Col>
-                            <Col sm={2} className={"pl-3 text-left"}>
-                              <h6>
-                                <span>{vendor.contactNumber}</span>
-                              </h6>
-                            </Col>
-                            <Col sm={2} className={"pl-3 text-left"}>
-                              <FontAwesomeIcon
-                                icon={faPen}
-                                color={"#035384AA"}
-                                className={"mr-5"}
-                                onClick={() => editVendor(vendor)}
-                              />
-                              <FontAwesomeIcon
-                                icon={faTrashAlt}
-                                color={"#BC3347CC"}
-                                onClick={() => deleteVendorConfirmation(vendor)}
-                              />
-                            </Col>
-                          </Row>
-                        </ListGroup.Item>
-                      ))}
-                    </section>
-                  ) : (
-                    <ListGroup.Item>No vendor available.</ListGroup.Item>
-                  )}
-                </ListGroup>
-              </Card.Body>
-            </Card>
-          </Col>
-          <Modal show={deleteModal.show} animation={false} onHide={closeModal}>
-            <Modal.Header closeButton>
-              <Modal.Title>Confirmation</Modal.Title>
-            </Modal.Header>
-            <Modal.Body>
-              <Form.Group>
-                <Form.Label className={"m-0"}>
-                  <strong>
-                    Are you sure you want to delete {deleteModal.vendorName}?{" "}
-                  </strong>
-                </Form.Label>
-                <Form.Label className={"m-0"}>
-                  All related raw materials will be deleted too.
-                </Form.Label>
-              </Form.Group>
-            </Modal.Body>
-            <Modal.Footer>
-              <Button
-                variant="success"
-                onClick={() => deleteVendor(deleteModal)}
-              >
-                Yes
-              </Button>
-              <Button variant="secondary" onClick={closeModal}>
-                No
-              </Button>
-            </Modal.Footer>
-          </Modal>
-        </Row>
-      </section>
-    </>
-  );
-}
 
-export default Vendor;
+  render() {
+    return (
+      <>
+        <section>
+          <Header />
+          <Row className="m-3">
+            <Col className={"text-left"}>
+              <h2>Vendors</h2>
+            </Col>
+          </Row>
+          <Row className="m-3">
+            <Col sm={8} className={"text-left"}>
+              <Button variant={"primary"} onClick={this.createVendor}>
+                Add New Vendor
+              </Button>
+            </Col>
+            <Col sm={4}>
+              <Form.Group>
+                <InputGroup>
+                  <FormControl
+                    placeholder="Search"
+                    onChange={this.filterVendors}
+                    aria-label="Search"
+                    aria-describedby="search-control"
+                  />
+                  <InputGroup.Append>
+                    <InputGroup.Text>
+                      <FontAwesomeIcon icon={faSearch} />
+                    </InputGroup.Text>
+                  </InputGroup.Append>
+                </InputGroup>
+              </Form.Group>
+            </Col>
+          </Row>
+          <Row className="m-3">
+            <Col sm={12}>
+              <Card>
+                <Card.Body>
+                  <ListGroup className={"mt-3"}>
+                    <ListGroup.Item>
+                      <Row>
+                        <Col sm={2} className={"pl-3 text-left"}>
+                          <h5>
+                            <span>
+                              <strong>Vendor Name</strong>
+                            </span>
+                          </h5>
+                        </Col>
+                        <Col sm={2} className={"pl-3 text-left"}>
+                          <h5>
+                            <span>
+                              <strong>Contact Person</strong>
+                            </span>
+                          </h5>
+                        </Col>
+                        <Col sm={2} className={"pl-3 text-left"}>
+                          <h5>
+                            <span>
+                              <strong>Address</strong>
+                            </span>
+                          </h5>
+                        </Col>
+                        <Col sm={2} className={"pl-3 text-left"}>
+                          <h5>
+                            <span>
+                              <strong>Email</strong>
+                            </span>
+                          </h5>
+                        </Col>
+                        <Col sm={2} className={"pl-3 text-left"}>
+                          <h5>
+                            <span>
+                              <strong>Contact Number</strong>
+                            </span>
+                          </h5>
+                        </Col>
+                        <Col sm={2} className={"pl-3 text-left"}>
+                          <h5>
+                            <span>
+                              <strong>Action</strong>
+                            </span>
+                          </h5>
+                        </Col>
+                      </Row>
+                    </ListGroup.Item>
+                    {this.state.vendors.length !== 0 ? (
+                      <section>
+                        {this.state.vendors.map((vendor) => (
+                          <ListGroup.Item key={vendor.vendorName}>
+                            <Row>
+                              <Col sm={2} className={"pl-3 text-left"}>
+                                <h6>
+                                  <span>{vendor.vendorName}</span>
+                                </h6>
+                              </Col>
+                              <Col sm={2} className={"pl-3 text-left"}>
+                                <h6>
+                                  <span>{vendor.contactPersonName}</span>
+                                </h6>
+                              </Col>
+                              <Col sm={2} className={"pl-3 text-left"}>
+                                <h6>
+                                  <span>{vendor.address}</span>
+                                </h6>
+                              </Col>
+                              <Col sm={2} className={"pl-3 text-left"}>
+                                <h6>
+                                  <span>{vendor.email}</span>
+                                </h6>
+                              </Col>
+                              <Col sm={2} className={"pl-3 text-left"}>
+                                <h6>
+                                  <span>{vendor.contactNumber}</span>
+                                </h6>
+                              </Col>
+                              <Col sm={2} className={"pl-3 text-left"}>
+                                <FontAwesomeIcon
+                                  icon={faPen}
+                                  color={"#035384AA"}
+                                  className={"mr-5"}
+                                  onClick={() => this.editVendor(vendor)}
+                                />
+                                <FontAwesomeIcon
+                                  icon={faTrashAlt}
+                                  color={"#BC3347CC"}
+                                  onClick={() =>
+                                    this.deleteVendorConfirmation(vendor)
+                                  }
+                                />
+                              </Col>
+                            </Row>
+                          </ListGroup.Item>
+                        ))}
+                      </section>
+                    ) : (
+                      <ListGroup.Item>No vendor available.</ListGroup.Item>
+                    )}
+                  </ListGroup>
+                </Card.Body>
+              </Card>
+            </Col>
+            <Modal
+              show={this.state.deleteModal.show}
+              animation={false}
+              onHide={this.closeModal}
+            >
+              <Modal.Header closeButton>
+                <Modal.Title>Confirmation</Modal.Title>
+              </Modal.Header>
+              <Modal.Body>
+                <Form.Group>
+                  <Form.Label className={"m-0"}>
+                    <strong>
+                      Are you sure you want to delete{" "}
+                      {this.state.deleteModal.vendorName}?{" "}
+                    </strong>
+                  </Form.Label>
+                  <Form.Label className={"m-0"}>
+                    All related raw materials will be deleted too.
+                  </Form.Label>
+                </Form.Group>
+              </Modal.Body>
+              <Modal.Footer>
+                <Button
+                  variant="success"
+                  onClick={() => this.deleteVendor(this.state.deleteModal)}
+                >
+                  Yes
+                </Button>
+                <Button variant="secondary" onClick={this.closeModal}>
+                  No
+                </Button>
+              </Modal.Footer>
+            </Modal>
+          </Row>
+        </section>
+      </>
+    );
+  }
+}
