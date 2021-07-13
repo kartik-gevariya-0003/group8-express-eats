@@ -83,11 +83,8 @@ function App() {
         <Route exact path="/vendor/edit" component={EditVendor} />
         <Route exact path="/raw-materials" component={RawMaterials} />
         <Route exact path="/raw-material/add" component={AddRawMaterial} />
-        <Route
-          exact
-          path="/raw-material/update"
-          component={UpdateRawMaterial}
-        />
+        <Route exact path="/raw-material/update" component={UpdateRawMaterial}/>
+        <Route exact path="/raw-material/confirmation" component={Confirmation}/>
       </Switch>
     </div>
   );
