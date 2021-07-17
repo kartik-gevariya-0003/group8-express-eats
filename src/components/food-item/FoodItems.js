@@ -17,6 +17,7 @@ import {
   faTrashAlt,
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import axios from "axios";
 
 const foodItems = [
   { id: 1, name: "Egg Sandwich", quantity: 23, src: "/egg_sandwich.jpg" },
@@ -34,6 +35,7 @@ export default class FoodItems extends Component {
     super(props);
     this.state = {
       foodItems: foodItems,
+      foodItemsDB: null,
       deleteFoodItemModal: {
         show: false,
         id: -1,
@@ -56,8 +58,12 @@ export default class FoodItems extends Component {
     this.setState(state);
   }
 
-  goToEditFoodItem = (id) => {
-    this.props.history.push("/edit-food-item");
+  goToEditFoodItem = (foodItem) => {
+    console.log(foodItem);
+    this.props.history.push({
+      pathname: "/edit-food-item",
+      state: foodItem.id,
+    });
   };
 
   showModal = (foodItem) => {
@@ -76,7 +82,29 @@ export default class FoodItems extends Component {
     state.deleteFoodItemModal.name = "";
     this.setState(state);
   };
+  async componentDidMount() {
+    await this.loadFoodItems();
+  }
+  loadFoodItems = async () => {
+    let state = { ...this.state };
+    console.log("in loadFoodItems");
+    await axios
+      .get("http://localhost:3001/get-food-items")
+      .then((result) => {
+        console.log("in then of axios ");
+        state.foodItemsDB = result.data.foodItems;
+        state.foodItemsDB.forEach((foodItem) => {
+          foodItem.imageFile = new Buffer.from(
+            foodItem.imageFile.data
+          ).toString("base64");
+        });
+      })
+      .catch((error) => {
+        console.error(error);
+      });
 
+    this.setState(state);
+  };
   render() {
     return (
       <section>
@@ -111,34 +139,41 @@ export default class FoodItems extends Component {
         </Row>
         <Row className="m-3">
           <CardDeck className="row row-cols-md-4 row-cols-sm-3 deck">
-            {this.state.foodItems.map((foodItem) => (
-              <Col className="mb-3" key={foodItem.id}>
-                <Card>
-                  <Card.Img variant="top" src={foodItem.src} />
-                  <Card.Body>
-                    <Card.Title>{foodItem.name}</Card.Title>
-
-                    <FontAwesomeIcon
-                      icon={faPencilAlt}
-                      color={"#035384AA"}
-                      className="float-left"
-                      onClick={() => {
-                        this.goToEditFoodItem(foodItem.id);
-                      }}
+            {this.state.foodItemsDB ? (
+              this.state.foodItemsDB.map((foodItem) => (
+                <Col className="mb-3" key={foodItem.id}>
+                  <Card>
+                    <Card.Img
+                      variant="top"
+                      src={`data:image/jpeg;base64,${foodItem.imageFile}`}
                     />
+                    <Card.Body>
+                      <Card.Title>{foodItem.foodItemName}</Card.Title>
 
-                    <FontAwesomeIcon
-                      icon={faTrashAlt}
-                      color={"#ba2311"}
-                      onClick={() => {
-                        this.showModal(foodItem);
-                      }}
-                      className="float-right  "
-                    />
-                  </Card.Body>
-                </Card>
-              </Col>
-            ))}
+                      <FontAwesomeIcon
+                        icon={faPencilAlt}
+                        color={"#035384AA"}
+                        className="float-left"
+                        onClick={() => {
+                          this.goToEditFoodItem(foodItem);
+                        }}
+                      />
+
+                      <FontAwesomeIcon
+                        icon={faTrashAlt}
+                        color={"#ba2311"}
+                        onClick={() => {
+                          this.showModal(foodItem);
+                        }}
+                        className="float-right  "
+                      />
+                    </Card.Body>
+                  </Card>
+                </Col>
+              ))
+            ) : (
+              <></>
+            )}
           </CardDeck>
         </Row>
         <Modal
