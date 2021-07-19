@@ -10,7 +10,10 @@ import {
   Row,
   Table,
   Modal,
+  Form,
 } from "react-bootstrap";
+import { toast } from "react-toastify";
+import Select from "react-select";
 import { faSearch } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import AddRawMaterialInventory from "./AddRawMaterialInventory";
@@ -53,12 +56,22 @@ export default class Inventory extends ApplicationContainer {
       foodItems: foodItems,
       addRawMaterialModal: { show: false },
       addFoodItemModal: { show: false },
+      errors: {
+        rawMaterialName: "",
+        rawMaterialQuantity: "",
+        foodItemName: "",
+        foodItemQuantity: "",
+      },
+      newFoodItem: {
+        name: "",
+        quantity: 0,
+      },
+      newRawMaterial: {
+        name: "",
+        quantity: 0,
+      },
     };
   }
-
-  goToAddFoodItemInventory = () => {
-    this.props.history.push("/inventory/add-food-item-inventory");
-  };
 
   searchRawMaterial = (value) => {
     this.setState({
@@ -108,6 +121,147 @@ export default class Inventory extends ApplicationContainer {
 
     this.setState(state);
   };
+
+  setFoodItemName = (value) => {
+    let state = { ...this.state };
+
+    state.foodItemName = value.foodItem;
+
+    this.validator("foodItemName", state.foodItemName, state.errors);
+
+    this.setState(state);
+  };
+
+  setFoodItemQuantity = (value) => {
+    let state = { ...this.state };
+
+    state.quantity = value;
+
+    this.validator("quantity", state.quantity, state.errors);
+
+    this.setState(state);
+  };
+
+  validator = (name, value, errors) => {
+    switch (name) {
+      case "rawMaterialName":
+        errors.rawMaterialName = "";
+        if (!value || value.length === 0) {
+          errors.rawMaterialName = "Required Field";
+        }
+        break;
+      case "rawMaterialQuantity":
+        errors.rawMaterialQuantity = "";
+        if (!value || value.length === 0) {
+          errors.rawMaterialQuantity = "Required Field";
+        }
+        break;
+      case "foodItemName":
+        let alphabetRegex = new RegExp("^[a-zA-Z]*$");
+        errors.foodItemName = "";
+        if (!value || value.length === 0) {
+          errors.foodItemName = "Required Field";
+        }
+        break;
+      case "foodItemQuantity":
+        errors.quantity = "";
+        if (!value || value.length === 0) {
+          errors.quantity = "Required Field";
+        }
+        break;
+      default:
+        break;
+    }
+  };
+
+  setRawMaterialName = (value) => {
+    let state = { ...this.state };
+    console.log(value);
+    if (value) {
+      state.newFoodItem.name = value.rawMaterial;
+
+      this.validator("rawMaterialName", value.rawMaterial, state.errors);
+
+      this.setState(state);
+    } else {
+      state.newFoodItem.name = null;
+      this.validator("rawMaterialName", value, state.errors);
+      this.setState(state);
+    }
+  };
+
+  setRawMaterialQuantity = (value) => {
+    let state = { ...this.state };
+
+    state.newFoodItem.quantity = value;
+
+    this.validator("rawMaterialQuantity", value, state.errors);
+
+    this.setState(state);
+  };
+
+  handleRawMaterialModalSubmit = (e) => {
+    e.preventDefault();
+    let errors = { ...this.state.errors };
+
+    this.validator("rawMaterialName", this.state.newRawMaterial.name, errors);
+    console.log(this.state.newRawMaterial.name);
+    this.validator(
+      "rawMaterialQuantity",
+      this.state.newFoodItem.quantity,
+      errors
+    );
+    let isValid = true;
+    Object.values(errors).forEach((error) => {
+      if (error.length > 0) {
+        isValid = false;
+      }
+    });
+
+    if (isValid) {
+      toast.success(this.state.rawMaterialName + " added successfully!");
+      this.closeRawMaterialModal();
+    }
+    this.setState({
+      errors: errors,
+    });
+    console.log(this.state.errors);
+  };
+
+  formatRawMaterial = ({ rawMaterial }) => (
+    <Row>
+      <Col>{rawMaterial}</Col>
+    </Row>
+  );
+
+  handleFoodItemModalSubmit = (e) => {
+    e.preventDefault();
+    let errors = { ...this.state.errors };
+
+    this.validator("foodItemName", this.state.newFoodItem.name, errors);
+    this.validator("foodItemQuantity", this.state.newFoodItem.quantity, errors);
+
+    let isValid = true;
+    Object.values(errors).forEach((error) => {
+      if (error.length > 0) {
+        isValid = false;
+      }
+    });
+
+    if (isValid) {
+      toast.success(this.state.newFoodItem.name + " added successfully!");
+      this.closeFoodItemModal();
+    }
+    this.setState({
+      errors: errors,
+    });
+  };
+
+  formatFoodItem = ({ foodItem }) => (
+    <Row>
+      <Col>{foodItem}</Col>
+    </Row>
+  );
 
   render() {
     return (
@@ -256,10 +410,63 @@ export default class Inventory extends ApplicationContainer {
             <Modal.Title>Add Raw Material to Inventory</Modal.Title>
           </Modal.Header>
           <Modal.Body>
-            <AddRawMaterialInventory
-              rawMaterials={this.state.originalRawMaterialList}
-              closeModal={this.closeRawMaterialModal}
-            ></AddRawMaterialInventory>
+            <Form onSubmit={this.handleRawMaterialModalSubmit}>
+              <Row className={"text-left"}>
+                <Col sm={6} className={"text-left"}>
+                  <Form.Label>Raw Material Name *</Form.Label>
+                </Col>
+                <Col sm={6} className={"text-left"}>
+                  <Select
+                    isClearable
+                    className={
+                      this.state.errors.rawMaterialName ? "is-invalid" : ""
+                    }
+                    options={this.state.originalRawMaterialList}
+                    formatOptionLabel={this.formatRawMaterial}
+                    placeholder="Select"
+                    onChange={this.setRawMaterialName}
+                  />
+                  {this.state.errors.rawMaterialName.length > 0 && (
+                    <Form.Control.Feedback type={"invalid"}>
+                      {this.state.errors.rawMaterialName}
+                    </Form.Control.Feedback>
+                  )}
+                </Col>
+              </Row>
+              <br></br>
+              <Row className={"text-left"}>
+                <Col sm={6} className={"text-left"}>
+                  <Form.Label>Quantity *</Form.Label>
+                </Col>
+                <Col sm={6} className={"text-left"}>
+                  <Form.Control
+                    name="quantity"
+                    onChange={(e) => {
+                      this.setRawMaterialQuantity(e.target.value);
+                    }}
+                    className={
+                      this.state.errors.rawMaterialQuantity ? "is-invalid" : ""
+                    }
+                    type="number"
+                  ></Form.Control>
+                  {this.state.errors.rawMaterialQuantity.length > 0 && (
+                    <Form.Control.Feedback type={"invalid"}>
+                      {this.state.errors.rawMaterialQuantity}
+                    </Form.Control.Feedback>
+                  )}
+                </Col>
+              </Row>
+              <Modal.Footer>
+                <Row className="justify-content-center">
+                  <Button variant="primary" className="mr-2" type="submit">
+                    Submit
+                  </Button>
+                  <Button variant="danger" onClick={this.closeRawMaterialModal}>
+                    Cancel
+                  </Button>
+                </Row>
+              </Modal.Footer>
+            </Form>
           </Modal.Body>
         </Modal>
         <Modal
@@ -271,10 +478,64 @@ export default class Inventory extends ApplicationContainer {
             <Modal.Title>Add Food Item to Inventory</Modal.Title>
           </Modal.Header>
           <Modal.Body>
-            <AddFoodItemInventory
-              foodItems={this.state.originalFoodItems}
-              closeModal={this.closeFoodItemModal}
-            ></AddFoodItemInventory>
+            <Form onSubmit={this.handleFoodItemModalSubmit}>
+              <Row className={"text-left"}>
+                <Col sm={6}>
+                  <Form.Label>Food Item Name *</Form.Label>
+                </Col>
+                <Col sm={6}>
+                  <Select
+                    isClearable
+                    className={
+                      this.state.errors.foodItemName ? "is-invalid" : ""
+                    }
+                    options={this.state.originalFoodItems}
+                    formatOptionLabel={this.formatFoodItem}
+                    placeholder="Select Food Item"
+                    onChange={this.setFoodItemName}
+                  />
+
+                  {this.state.errors.foodItemName.length > 0 && (
+                    <Form.Control.Feedback type="invalid">
+                      {this.state.errors.foodItemName}
+                    </Form.Control.Feedback>
+                  )}
+                </Col>
+              </Row>
+              <br></br>
+              <Row className={"text-left"}>
+                <Col sm={6} className={"text-left"}>
+                  <Form.Label>Quantity *</Form.Label>
+                </Col>
+                <Col sm={6} className={"text-left"}>
+                  <Form.Control
+                    name="quantity"
+                    onChange={(e) => {
+                      this.setFoodItemQuantity(e.target.value);
+                    }}
+                    type="number"
+                    className={
+                      this.state.errors.foodItemQuantity ? "is-invalid" : ""
+                    }
+                  ></Form.Control>
+                  {this.state.errors.foodItemQuantity.length > 0 && (
+                    <Form.Control.Feedback type={"invalid"}>
+                      {this.state.errors.foodItemQuantity}
+                    </Form.Control.Feedback>
+                  )}
+                </Col>
+              </Row>
+              <Modal.Footer>
+                <Row className="justify-content-center">
+                  <Button variant="primary" className="mr-2" type="submit">
+                    Submit
+                  </Button>
+                  <Button variant="danger" onClick={this.closeFoodItemModal}>
+                    Cancel
+                  </Button>
+                </Row>
+              </Modal.Footer>
+            </Form>
           </Modal.Body>
         </Modal>
       </section>

@@ -1,6 +1,14 @@
 import React from "react";
 import ApplicationContainer from "../ApplicationContainer";
-import { Button, Card, Col, Container, Form, Row } from "react-bootstrap";
+import {
+  Button,
+  Card,
+  Col,
+  Container,
+  Form,
+  Row,
+  Modal,
+} from "react-bootstrap";
 import Select from "react-select";
 import { toast } from "react-toastify";
 export class AddFoodItemInventory extends ApplicationContainer {
@@ -45,7 +53,7 @@ export class AddFoodItemInventory extends ApplicationContainer {
     this.setState(state);
   };
 
-  setQuantity = (value) => {
+  setFoodItemQuantity = (value) => {
     let state = { ...this.state };
 
     state.quantity = value;
@@ -93,67 +101,62 @@ export class AddFoodItemInventory extends ApplicationContainer {
         <Container>
           <Row>
             <Col sm={12}>
-              <Card>
-                <Card.Body>
-                  <Form onSubmit={this.handleSubmit}>
-                    <Row className={"text-left"}>
-                      <Col sm={6}>
-                        <Form.Label>Food Item Name *</Form.Label>
-                      </Col>
-                      <Col sm={6}>
-                        <Select
-                          isClearable
-                          className={
-                            this.state.errors.foodItemName ? "is-invalid" : ""
-                          }
-                          options={this.state.foodItems}
-                          formatOptionLabel={this.formatFoodItem}
-                          placeholder="Select Food Item"
-                          onChange={this.setFoodItemName}
-                        />
+              <Form onSubmit={this.handleSubmit}>
+                <Row className={"text-left"}>
+                  <Col sm={6}>
+                    <Form.Label>Food Item Name *</Form.Label>
+                  </Col>
+                  <Col sm={6}>
+                    <Select
+                      isClearable
+                      className={
+                        this.state.errors.foodItemName ? "is-invalid" : ""
+                      }
+                      options={this.state.foodItems}
+                      formatOptionLabel={this.formatFoodItem}
+                      placeholder="Select Food Item"
+                      onChange={this.setFoodItemName}
+                    />
 
-                        {this.state.errors.foodItemName.length > 0 && (
-                          <Form.Control.Feedback type="invalid">
-                            {this.state.errors.foodItemName}
-                          </Form.Control.Feedback>
-                        )}
-                      </Col>
-                    </Row>
-                    <br></br>
-                    <Row className={"text-left"}>
-                      <Col sm={6} className={"text-left"}>
-                        <Form.Label>Quantity *</Form.Label>
-                      </Col>
-                      <Col sm={6} className={"text-left"}>
-                        <Form.Control
-                          name="quantity"
-                          onChange={(e) => {
-                            this.setQuantity(e.target.value);
-                          }}
-                          type="number"
-                          className={
-                            this.state.errors.quantity ? "is-invalid" : ""
-                          }
-                        ></Form.Control>
-                        {this.state.errors.quantity.length > 0 && (
-                          <Form.Control.Feedback type={"invalid"}>
-                            {this.state.errors.quantity}
-                          </Form.Control.Feedback>
-                        )}
-                      </Col>
-                    </Row>
-                    <br></br>
-                    <Row className="justify-content-center">
-                      <Button variant="primary" className="mr-2" type="submit">
-                        Submit
-                      </Button>
-                      <Button variant="danger" onClick={this.props.closeModal}>
-                        Cancel
-                      </Button>
-                    </Row>
-                  </Form>
-                </Card.Body>
-              </Card>
+                    {this.state.errors.foodItemName.length > 0 && (
+                      <Form.Control.Feedback type="invalid">
+                        {this.state.errors.foodItemName}
+                      </Form.Control.Feedback>
+                    )}
+                  </Col>
+                </Row>
+                <br></br>
+                <Row className={"text-left"}>
+                  <Col sm={6} className={"text-left"}>
+                    <Form.Label>Quantity *</Form.Label>
+                  </Col>
+                  <Col sm={6} className={"text-left"}>
+                    <Form.Control
+                      name="quantity"
+                      onChange={(e) => {
+                        this.setQuantity(e.target.value);
+                      }}
+                      type="number"
+                      className={this.state.errors.quantity ? "is-invalid" : ""}
+                    ></Form.Control>
+                    {this.state.errors.quantity.length > 0 && (
+                      <Form.Control.Feedback type={"invalid"}>
+                        {this.state.errors.quantity}
+                      </Form.Control.Feedback>
+                    )}
+                  </Col>
+                </Row>
+                <Modal.Footer>
+                  <Row className="justify-content-center">
+                    <Button variant="primary" className="mr-2" type="submit">
+                      Submit
+                    </Button>
+                    <Button variant="danger" onClick={this.props.closeModal}>
+                      Cancel
+                    </Button>
+                  </Row>
+                </Modal.Footer>
+              </Form>
             </Col>
           </Row>
         </Container>

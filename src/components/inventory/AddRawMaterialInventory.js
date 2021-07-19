@@ -39,12 +39,17 @@ export default class AddRawMaterialInventory extends ApplicationContainer {
 
   setRawMaterialName = (value) => {
     let state = { ...this.state };
+    if (value) {
+      state.rawMaterialName = value.rawMaterial;
 
-    state.rawMaterialName = value.rawMaterial;
+      this.validator("rawMaterialName", state.rawMaterialName, state.errors);
 
-    this.validator("rawMaterialName", state.rawMaterialName, state.errors);
-
-    this.setState(state);
+      this.setState(state);
+    } else {
+      state.rawMaterialName = null;
+      this.validator("rawMaterialName", value, state.errors);
+      this.setState(state);
+    }
   };
 
   setQuantity = (value) => {
@@ -62,6 +67,7 @@ export default class AddRawMaterialInventory extends ApplicationContainer {
     let errors = { ...this.state.errors };
 
     this.validator("rawMaterialName", this.state.rawMaterialName, errors);
+    console.log(this.state.rawMaterialName);
     this.validator("quantity", this.state.quantity, errors);
     let isValid = true;
     Object.values(errors).forEach((error) => {
