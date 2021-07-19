@@ -48,6 +48,10 @@ code {
   font-size: 1rem;
 }
 
+.navbar span{
+  color: #f3f3dc
+}
+
 .Toastify__toast-container {
   margin-top: 4% !important;
   width: 20% !important;

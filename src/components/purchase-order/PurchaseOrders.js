@@ -244,6 +244,7 @@ export default class PurchaseOrders extends ApplicationContainer {
         <Row className="m-3">
           <Col className={"text-left"}>
             <h2>Purchase Orders</h2>
+            <hr/>
           </Col>
         </Row>
         <Row className="m-3">

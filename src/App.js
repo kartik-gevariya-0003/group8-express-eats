@@ -24,6 +24,7 @@ import AddRawMaterial from "./components/raw-material/AddRawMaterial";
 import UpdateRawMaterial from "./components/raw-material/UpdateRawMaterial";
 import Register from "./components/register/Register";
 import React from "react";
+import Footer from "./components/footer/Footer";
 
 Route.propTypes = {
   component: PropTypes.any,
