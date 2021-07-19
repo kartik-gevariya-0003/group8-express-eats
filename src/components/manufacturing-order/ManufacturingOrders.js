@@ -1,3 +1,6 @@
+/*
+Author: Mansi Gevariya
+* */
 import React from "react";
 import {Accordion, Button, Card, Col, Form, FormControl, InputGroup, ListGroup, Modal, Row} from "react-bootstrap";
 import {faAngleDown, faAngleUp, faSearch, faTrashAlt} from "@fortawesome/free-solid-svg-icons";
