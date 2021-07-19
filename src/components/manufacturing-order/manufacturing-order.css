@@ -14,3 +14,7 @@ Author: Mansi Gevariya
     overflow-y: auto;
     border: 1px solid rgba(0, 0, 0, 0.125);
 }
+
+.is-invalid.mo-food-items-list {
+    border-color: #BC3347CC;
+}

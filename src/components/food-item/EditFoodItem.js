@@ -19,6 +19,7 @@ import ApplicationContainer from "../ApplicationContainer";
 import bsCustomFileInput from "bs-custom-file-input";
 import axios from "axios";
 import { toast } from "react-toastify";
+import {GET_FOOD_ITEM_BY_ID, GET_FOOD_ITEM_NAME, PUT_FOOD_ITEM, PUT_FOOD_ITEM_WITH_IMAGE} from "../../config";
 
 const rawMaterials = [
   {
@@ -112,7 +113,7 @@ export default class EditFoodItem extends ApplicationContainer {
   async componentDidMount() {
     let state = { ...this.state };
     await axios
-      .get("http://localhost:3001/get-food-item-by-id/" + this.state.foodItemId)
+      .get(GET_FOOD_ITEM_BY_ID + this.state.foodItemId)
       .then((result) => {
         state.foodItem = result.data.foodItem;
         state.foodItem.selectedRawMaterials = [];
@@ -188,7 +189,7 @@ export default class EditFoodItem extends ApplicationContainer {
       if (this.state.isReplaceImage) {
         await axios
           .put(
-            "http://localhost:3001/update-food-item-with-image",
+            PUT_FOOD_ITEM_WITH_IMAGE,
             formData,
             config
           )
@@ -209,7 +210,7 @@ export default class EditFoodItem extends ApplicationContainer {
           });
       } else {
         await axios
-          .put("http://localhost:3001/update-food-item", {
+          .put(PUT_FOOD_ITEM, {
             id: this.state.foodItem.id,
             foodItemName: this.state.foodItem.foodItemName,
             totalCost: this.state.foodItem.totalCost,
@@ -287,7 +288,7 @@ export default class EditFoodItem extends ApplicationContainer {
         } else if (value !== this.state.originalFoodItemName) {
           await axios
             .get(
-              "http://localhost:3001/get-food-item-name/" +
+              GET_FOOD_ITEM_NAME +
                 this.state.foodItem.foodItemName
             )
             .then((response) => {
