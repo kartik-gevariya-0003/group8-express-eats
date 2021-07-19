@@ -1,3 +1,6 @@
+/**
+ * Author: Kartik Gevariya
+ */
 import './purchase-order.css';
 import React from 'react';
 import {Accordion, Button, Card, Col, Form, FormControl, InputGroup, ListGroup, Modal, Row} from "react-bootstrap";
@@ -6,6 +9,7 @@ import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import ApplicationContainer from "../ApplicationContainer";
 import axios from "axios";
 import {toast} from "react-toastify";
+import {GET_PURCHASE_ORDERS, DELETE_PURCHASE_ORDER, PLACE_PURCHASE_ORDER, RECEIVE_PURCHASE_ORDER, ARCHIVE_PURCHASE_ORDER} from "../../config";
 
 let openPurchaseOrders = []
 let placedPurchaseOrders = []
@@ -35,7 +39,7 @@ export default class PurchaseOrders extends ApplicationContainer {
     this.setState({loading: true});
 
     await axios
-      .get("http://localhost:3001/purchase-orders")
+      .get(GET_PURCHASE_ORDERS)
       .then((response) => {
         this.setState({loading: false});
 
@@ -93,7 +97,7 @@ export default class PurchaseOrders extends ApplicationContainer {
     this.setState({loading: true});
 
     await axios
-      .delete("http://localhost:3001/purchase-order/" + order.orderNumber)
+      .delete(DELETE_PURCHASE_ORDER + "/" + order.orderNumber)
       .then((response) => {
         this.setState({loading: false});
 
@@ -117,7 +121,7 @@ export default class PurchaseOrders extends ApplicationContainer {
     this.setState({loading: true});
 
     await axios
-      .post("http://localhost:3001/archive-purchase-order/" + order.orderNumber)
+      .post(ARCHIVE_PURCHASE_ORDER + "/" + order.orderNumber)
       .then((response) => {
         this.setState({loading: false});
 
@@ -139,7 +143,7 @@ export default class PurchaseOrders extends ApplicationContainer {
     this.setState({loading: true});
 
     await axios
-      .post("http://localhost:3001/place-purchase-order/" + order.orderNumber)
+      .post(PLACE_PURCHASE_ORDER + "/" + order.orderNumber)
       .then((response) => {
         this.setState({loading: false});
 
@@ -170,7 +174,7 @@ export default class PurchaseOrders extends ApplicationContainer {
     this.setState({loading: true});
 
     await axios
-      .post("http://localhost:3001/receive-purchase-order/" + order.orderNumber)
+      .post(RECEIVE_PURCHASE_ORDER + "/" + order.orderNumber)
       .then((response) => {
         this.setState({loading: false});
 

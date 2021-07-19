@@ -1,3 +1,6 @@
+/**
+ * Author: Kartik Gevariya
+ */
 import "./register.css"
 import PlainHeaderComponent from "../PlainHeaderComponent";
 import {Button, Card, Col, Container, Form, Image, Row} from "react-bootstrap";

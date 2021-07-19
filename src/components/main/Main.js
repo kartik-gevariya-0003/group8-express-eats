@@ -1,3 +1,6 @@
+/**
+ * Author: Kartik Gevariya
+ */
 import PlainHeaderComponent from "../PlainHeaderComponent";
 
 class Main extends PlainHeaderComponent {

@@ -1,3 +1,6 @@
+/**
+ * Author: Kartik Gevariya
+ */
 import './purchase-order.css';
 import React from 'react';
 import {Button, Card, Col, Form, FormControl, InputGroup, ListGroup, Modal, Row} from "react-bootstrap";
@@ -7,6 +10,7 @@ import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import ApplicationContainer from "../ApplicationContainer";
 import {toast} from "react-toastify";
 import axios from "axios";
+import {GET_VENDORS, GET_RAW_MATERIALS, CREATE_PURCHASE_ORDER} from "../../config";
 
 let vendors = [];
 let rawMaterials = [];
@@ -45,7 +49,7 @@ export default class CreatePurchaseOrder extends ApplicationContainer {
     this.setState({loading: true});
 
     await axios
-      .get("http://localhost:3001/vendors")
+      .get(GET_VENDORS)
       .then((response) => {
         this.setState({loading: false});
 
@@ -62,7 +66,7 @@ export default class CreatePurchaseOrder extends ApplicationContainer {
       });
 
     await axios
-      .get("http://localhost:3001/raw-materials")
+      .get(GET_RAW_MATERIALS)
       .then((response) => {
         this.setState({loading: false});
 
@@ -127,7 +131,7 @@ export default class CreatePurchaseOrder extends ApplicationContainer {
       this.setState({loading: true});
 
       await axios
-        .post("http://localhost:3001/purchase-order", bodyData)
+        .post(CREATE_PURCHASE_ORDER, bodyData)
         .then((response) => {
           this.setState({loading: false});
           toast.success("Purchase Order created successfully. !");
