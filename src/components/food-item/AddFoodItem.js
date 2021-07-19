@@ -20,6 +20,7 @@ import ApplicationContainer from "../ApplicationContainer";
 import bsCustomFileInput from "bs-custom-file-input";
 import axios from "axios";
 import { toast } from "react-toastify";
+import {GET_FOOD_ITEM_NAME, POST_ADD_FOOD_ITEM} from "../../config";
 const rawMaterials = [
   {
     id: 1,
@@ -176,7 +177,7 @@ export default class AddFoodItem extends ApplicationContainer {
         },
       };
       await axios
-        .post("http://localhost:3001/add-food-item", formData, config)
+        .post(POST_ADD_FOOD_ITEM, formData, config)
         .then((response) => {
           this.props.history.push({
             pathname: "/food-item/confirmation",
@@ -248,7 +249,7 @@ export default class AddFoodItem extends ApplicationContainer {
         } else {
           await axios
             .get(
-              "http://localhost:3001/get-food-item-name/" +
+              GET_FOOD_ITEM_NAME +
                 this.state.foodItem.foodItemName
             )
             .then((response) => {

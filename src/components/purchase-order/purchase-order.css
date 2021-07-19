@@ -27,15 +27,6 @@
     background: rgba(0, 0, 0, 0.03);
 }
 
-[class*='control']:focus, [class*='control']:hover, [class*='control']:active, [class*='control']:visited, [class*='control']:focus-within, [class*='control']:focus-visible, [class*='control']:target {
-    border-color: #119696 !important;
-    box-shadow: 0 0 0 1px #119696;
-}
-
-.is-invalid > [class*='control'] {
-    border-color: #BC3347CC;
-}
-
 .is-invalid.po-raw-material-list {
     border-color: #BC3347CC;
 }
