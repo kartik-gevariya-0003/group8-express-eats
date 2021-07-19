@@ -1,17 +1,21 @@
+// Author: Karishma Suresh Lalwani
 import React, {useState} from "react";
 import {Button, Card, Col, Form, Row,} from "react-bootstrap";
 import Header from "../headers/Header";
 import ApplicationContainer from "../ApplicationContainer";
+import axios from 'axios';
+import Select from "react-select";
 
 export class AddRawMaterial extends ApplicationContainer {
   constructor(props) {
     super(props);
     this.state = {
-      rawMaterialName: "",
-      vendorName: "",
-      unitCost: "",
-      unitMeasurement: "",
-
+      rawMaterial:{
+        rawMaterialName: "",
+        vendorName: "",
+        unitCost: "",
+        unitMeasurement: "",
+    },
       errors: {
         rawMaterialName: "",
         vendorName: "",
@@ -21,6 +25,21 @@ export class AddRawMaterial extends ApplicationContainer {
       rawMaterials: this.props.rawMaterials,
     };
     console.log(this.props.rawMaterials);
+  }
+  formatMeasurementOption = ({})
+
+
+
+
+  onMeasurementSelect = (selectedMeasurement) => {
+
+    let state = {...this.state};
+
+    state.rawMaterial.selectedMeasurement = {...selectedMeasurement};
+
+    this.validator('rawMaterial', this.state.rawMaterial.selectedMeasurement, state.errors);
+
+    this.setState(state);
   }
 
   validator = (name, value, errors) => {
@@ -53,31 +72,31 @@ export class AddRawMaterial extends ApplicationContainer {
         break;
     }
   };
-  setRawMaterialName = (value) => {
+  setRawMaterialName = (e) => {
     let state = { ...this.state };
-    state.rawMaterialName = value;
-    this.validator("rawMaterialName", value, state.errors);
+    state.rawMaterial.rawMaterialName = e.target.value;
+    this.validator("rawMaterialName", state.rawMaterial.rawMaterialName, state.errors);
     this.setState(state);
   };
 
-  setVendorName = (value) => {
+  setVendorName = (e) => {
     let state = { ...this.state };
-    state.vendorName = value;
-    this.validator("vendorName", state.vendorName, state.errors);
+    state.rawMaterial.vendorName = e.target.value;
+    this.validator("vendorName", state.rawMaterial.vendorName, state.errors);
     this.setState(state);
   };
 
-  setUnitCost= (value) => {
+  setUnitCost= (e) => {
     let state = { ...this.state };
-    state.unitCost = value;
-    this.validator("unitCost", state.unitCost, state.errors);
+    state.rawMaterial.unitCost = e.target.value;
+    this.validator("unitCost", state.rawMaterial.unitCost, state.errors);
     this.setState(state);
   };
 
-  setUnitMeasurement = (value) => {
+  setUnitMeasurement = (e) => {
     let state = { ...this.state };
-    state.unitMeasurement = value;
-    this.validator("unitMeasurement", state.unitMeasurement, state.errors);
+    state.rawMaterial.unitMeasurement = e.target.value;
+    this.validator("unitMeasurement", state.rawMaterial.unitMeasurement, state.errors);
     this.setState(state);
   };
 
@@ -88,10 +107,10 @@ export class AddRawMaterial extends ApplicationContainer {
   handleSubmit = (e) => {
     e.preventDefault();
     let errors = { ...this.state.errors };
-    this.validator("rawMaterialName", this.state.rawMaterialName, errors);
-    this.validator("vendorName", this.state.vendorName, errors);
-    this.validator("unitCost", this.state.unitCost, errors);
-    this.validator("unitMeasurement", this.state.unitMeasurement, errors);
+    this.validator("rawMaterialName", this.state.rawMaterial.rawMaterialName, errors);
+    this.validator("vendorName", this.state.rawMaterial.vendorName, errors);
+    this.validator("unitCost", this.state.rawMaterial.unitCost, errors);
+    this.validator("unitMeasurement", this.state.rawMaterial.unitMeasurement, errors);
 
     let isValid = true;
     Object.values(errors).forEach(error => {
@@ -101,16 +120,24 @@ export class AddRawMaterial extends ApplicationContainer {
     });
 
     if (isValid) {
-      this.props.history.push({
-        pathname: "/raw-material/confirmation",
-        confirmation: {
-          message: this.state.rawMaterialName + " Created Successfully",
-          redirect: "/raw-materials",
-          button: "Go to Raw Materials",
-        },
-      });
+      const url = "http://localhost:3000/raw-material/add"
+        const postData ={
+          rawMaterialName : this.state.rawMaterial.rawMaterialName,
+          vendorName : this.state.rawMaterial.vendorName,
+          unitCost : this.state.rawMaterial.unitCost,
+          unitMeasurement : this.state.rawMaterial.unitMeasurement
+        }
+        axios.post(url,postData).then((response) => {
+          this.props.history.push({
+            pathname: "/raw-material/confirmation",
+            confirmation: {
+              message: this.state.rawMaterial.rawMaterialName + " Created Successfully",
+              redirect: "/raw-materials",
+              button: "Go to Raw Materials",
+            }
+          })
+        });
     }
-
     this.setState({
       errors: errors,
     });
@@ -133,7 +160,7 @@ export class AddRawMaterial extends ApplicationContainer {
                         <Col sm={6}>
                           <Form.Label>Name *</Form.Label>
                           <Form.Control type="text" name="rawMaterialName" onChange={(e)=>{
-                          this.setRawMaterialName(e.target.value);}}
+                          this.setRawMaterialName(e);}}
                                         className={this.state.errors.rawMaterialName ? "is-invalid" : ""}/>
                           {this.state.errors.rawMaterialName.length > 0 && (
                               <Form.Control.Feedback type={"invalid"}>
@@ -144,7 +171,7 @@ export class AddRawMaterial extends ApplicationContainer {
                         <Col sm={6}>
                           <Form.Label>Vendor Name *</Form.Label>
                           <Form.Control type="text" name="vendorName" onChange={(e)=>{
-                          this.setVendorName(e.target.value);}}
+                          this.setVendorName(e);}}
                                         className={this.state.errors.vendorName ? "is-invalid" : ""}/>
                           {this.state.errors.vendorName.length > 0 && (
                               <Form.Control.Feedback type={"invalid"}>
@@ -158,8 +185,8 @@ export class AddRawMaterial extends ApplicationContainer {
                       <Row>
                         <Col sm={6}>
                           <Form.Label>Unit Cost *</Form.Label>
-                          <Form.Control type="number" name="unitCost" onChange={(e)=>{
-                            this.setUnitCost(e.target.value);}}
+                          <Form.Control type="float" name="unitCost" onChange={(e)=>{
+                            this.setUnitCost(e);}}
                                         className={this.state.errors.unitCost ? "is-invalid" : ""}/>
                           {this.state.errors.unitCost.length > 0 && (
                               <Form.Control.Feedback type={"invalid"}>
@@ -170,7 +197,7 @@ export class AddRawMaterial extends ApplicationContainer {
                         <Col sm={3}>
                           <Form.Label>Unit Measurement *</Form.Label>
                           <Form.Control type="number" name="unitMeasurement" onChange={(e)=>{
-                            this.setUnitMeasurement(e.target.value);}}
+                            this.setUnitMeasurement(e);}}
                                         className={this.state.errors.unitMeasurement ? "is-invalid" : ""}/>
                           {this.state.errors.unitMeasurement.length > 0 && (
                               <Form.Control.Feedback type={"invalid"}>
@@ -180,13 +207,25 @@ export class AddRawMaterial extends ApplicationContainer {
                         </Col>
                         <Col sm={3}>
                           <Form.Label>&nbsp;</Form.Label>
-                          <Form.Control as="select">
+                          <Select
+                          isClearable
+                          className = {this.state.errors.selectedMeasurement ? "is-invalid" : ""}
+                          formatOptionLabel={this.formatMeasurementOption}
+                          options={this.state.rawMaterial}
+                          placeholder="Select Measurement"
+                          onChange={this.onMeasurementSelect}
+                          />
+                          {this.state.error.selectedMeasurement.length > 0 && (
+                              <Form.Control.Feedback
+                                  type={"invalid"}>{this.state.error.selectedMeasurement}</Form.Control.Feedback>
+                          )}
+                          />
                             <option>gm</option>
                             <option>ml</option>
                             <option>L</option>
                             <option>gal</option>
                             <option>lb</option>
-                          </Form.Control>
+
                         </Col>
                       </Row>
                     </Form.Group>

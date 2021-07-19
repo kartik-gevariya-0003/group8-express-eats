@@ -1,16 +1,14 @@
+// Author: Karishma Suresh Lalwani
 import React from "react";
 import {Button, Card, Col, Form, FormControl, InputGroup, ListGroup, Modal, Row} from "react-bootstrap";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faPen, faSearch, faTrash} from "@fortawesome/free-solid-svg-icons";
 import Header from "../headers/Header";
 import ApplicationContainer from "../ApplicationContainer";
+import axios from "axios";
+import {DELETE_RAW_MATERIAL, GET_RAW_MATERIALS} from "../../config";
 
-let rawMaterialList = [
-    {id: 1, name: "Chocolate Syrup", vendorName: "Honeyville Inc.", unitMeasurement: "3L", unitCost: "$39"},
-    {id: 2, name: "Peanut Butter", vendorName: "Glory Bee", unitMeasurement: "500gms", unitCost: "$11"},
-    {id: 3, name: "Chilli Sauce", vendorName: "Real Good Dairy", unitMeasurement: "100ml", unitCost: "$5"},
-    {id: 4, name: "Yoghurt", vendorName: "Milne MicroDried", unitMeasurement: "200ml", unitCost: "$9"}
-]
+let rawMaterialList = []
 
 export default class RawMaterials extends ApplicationContainer {
     constructor(props) {
@@ -34,13 +32,10 @@ export default class RawMaterials extends ApplicationContainer {
     }
 
     deleteRawMaterial(id) {
-        let state = {...this.state};
-
-        state.rawMaterialList = state.rawMaterialList.filter((x) => {
-            return x.id !== id;
-        });
-        this.closeModal();
-        this.setState(state);
+        axios.delete(DELETE_RAW_MATERIAL).then(result =>{
+            this.getRawMaterials()
+            this.closeModal();
+        })
     }
 
     showModal = (rawMaterial) => {
@@ -59,16 +54,26 @@ export default class RawMaterials extends ApplicationContainer {
         this.setState(state);
     };
 
-
     filterRawMaterial = (e) => {
         e.preventDefault();
         const {value} = e.target;
         this.setState({
-            rawMaterialList: rawMaterialList.filter((rawMaterial) =>
+            rawMaterialList: this.state.rawMaterialList.filter((rawMaterial) =>
                 rawMaterial.name.toLowerCase().includes(value.toLowerCase())
             ),
         });
     };
+
+    componentDidMount() {
+        this.getRawMaterials();
+    }
+
+    getRawMaterials =()=>{
+        axios.get(GET_RAW_MATERIALS).then(result => {
+        let rawMaterials = result.data['rawMaterials']
+        this.setState({rawMaterialList : rawMaterialList})
+        })
+    }
 
     render() {
         return (

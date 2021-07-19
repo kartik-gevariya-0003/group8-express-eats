@@ -1,6 +1,9 @@
+// Author: Karishma Suresh Lalwani
 import React, {Component} from "react";
 import {Button, Card, Col, Form, FormControl, Row} from "react-bootstrap";
 import Header from "../headers/Header";
+import axios from "axios";
+import {PUT_CHANGE_RAW_MATERIAL } from "../../config";
 
 const rawMaterials = [
     {
@@ -109,13 +112,22 @@ class UpdateRawMaterial extends Component {
         });
 
         if (isValid) {
-            this.props.history.push({
-                pathname: "/raw-material/confirmation",
-                confirmation: {
-                    message: this.state.rawMaterialName + " Updated Successfully",
-                    redirect: "/raw-materials",
-                    button: "Go to Raw Materials",
-                },
+            const url = "http://localhost:3000/raw-material/edit"
+            const updateData ={
+                rawMaterialName : this.state.rawMaterial.rawMaterialName,
+                vendorName : this.state.rawMaterial.vendorName,
+                unitCost : this.state.rawMaterial.unitCost,
+                unitMeasurement : this.state.rawMaterial.unitMeasurement
+            }
+            axios.put(url,updateData).then((response) => {
+                this.props.history.push({
+                    pathname: "/raw-material/confirmation",
+                    confirmation: {
+                        message: this.state.rawMaterial.rawMaterialName + " Updated Successfully",
+                        redirect: "/raw-materials",
+                        button: "Go to Raw Materials",
+                    }
+                })
             });
         }
 
