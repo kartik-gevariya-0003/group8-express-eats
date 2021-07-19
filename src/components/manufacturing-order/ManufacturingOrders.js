@@ -72,7 +72,7 @@ class ManufacturingOrders extends ApplicationContainer {
   changeOrderStatus = (item, status) => {
     this.setState({loading: true});
     const putData = {
-      orderNumber: item.orderNumber,
+      order: item,
       status: status
     }
     axios.put(PUT_CHANGE_MANUFACTURING_ORDER_STATUS, putData).then(() => {
@@ -81,7 +81,11 @@ class ManufacturingOrders extends ApplicationContainer {
     }).catch(error => {
       this.setState({loading: false});
       console.error(error);
-      toast.error("Error occurred while fetching purchase orders.");
+      if (error.response.status === 412) {
+        toast.error("The manufacturing order cannot be moved to Prepping state as there are not enough raw materials in the inventory.");
+      } else {
+        toast.error("Error occurred while changing the status of manufacturing order.");
+      }
     })
   }
 
