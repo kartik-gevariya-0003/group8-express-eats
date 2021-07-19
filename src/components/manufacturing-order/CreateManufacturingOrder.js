@@ -193,6 +193,7 @@ class CreateManufacturingOrder extends ApplicationContainer {
             <Card>
               <Card.Body>
                 <Card.Title>Order Details</Card.Title>
+                <hr/>
                 <Card.Text>
                   <strong>Order Number:</strong> {this.state.order.orderNumber}
                 </Card.Text>

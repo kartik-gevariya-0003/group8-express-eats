@@ -100,7 +100,7 @@ export default class PurchaseOrders extends ApplicationContainer {
       .delete(DELETE_PURCHASE_ORDER + "/" + order.orderNumber)
       .then((response) => {
         this.setState({loading: false});
-
+        toast.success("Purchase Order deleted successfully.");
         openPurchaseOrders = openPurchaseOrders.filter(openOrder => openOrder.orderNumber.toLowerCase() !== order.orderNumber.toLowerCase());
         this.setState({
           openPurchaseOrders: this.state.openPurchaseOrders.filter(openOrder => openOrder.orderNumber.toLowerCase() !== order.orderNumber.toLowerCase())
@@ -124,7 +124,7 @@ export default class PurchaseOrders extends ApplicationContainer {
       .post(ARCHIVE_PURCHASE_ORDER + "/" + order.orderNumber)
       .then((response) => {
         this.setState({loading: false});
-
+        toast.success("Purchase Order archived successfully.");
         receivedPurchaseOrders = receivedPurchaseOrders.filter(openOrder => openOrder.orderNumber.toLowerCase() !== order.orderNumber.toLowerCase());
         this.setState({
           receivedPurchaseOrders: this.state.receivedPurchaseOrders.filter(openOrder => openOrder.orderNumber.toLowerCase() !== order.orderNumber.toLowerCase())
@@ -146,7 +146,7 @@ export default class PurchaseOrders extends ApplicationContainer {
       .post(PLACE_PURCHASE_ORDER + "/" + order.orderNumber)
       .then((response) => {
         this.setState({loading: false});
-
+        toast.success("Purchase Order placed successfully.");
         let openOrders = [...this.state.openPurchaseOrders];
         let placedOrders = [...this.state.placedPurchaseOrders];
 
@@ -177,7 +177,7 @@ export default class PurchaseOrders extends ApplicationContainer {
       .post(RECEIVE_PURCHASE_ORDER + "/" + order.orderNumber)
       .then((response) => {
         this.setState({loading: false});
-
+        toast.success("Purchase Order received successfully.");
         let placedOrders = [...this.state.placedPurchaseOrders];
         let receivedOrders = [...this.state.receivedPurchaseOrders];
 

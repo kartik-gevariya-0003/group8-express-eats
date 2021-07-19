@@ -125,7 +125,7 @@ export default class CreatePurchaseOrder extends ApplicationContainer {
         .post(CREATE_PURCHASE_ORDER, bodyData)
         .then((response) => {
           this.setState({loading: false});
-          toast.success("Purchase Order created successfully. !");
+          toast.success("Purchase Order created successfully.");
           this.props.history.push({
             pathname: '/purchase-orders'
           });
@@ -277,11 +277,18 @@ export default class CreatePurchaseOrder extends ApplicationContainer {
         </div>
         }
         {super.render()}
+        <Row className="m-3">
+          <Col className={"text-left"}>
+            <h2>New Purchase Order</h2>
+            <hr/>
+          </Col>
+        </Row>
         <Row className={"m-3"}>
           <Col sm={5}>
             <Card>
               <Card.Body>
                 <Card.Title>Order Details</Card.Title>
+                <hr/>
                 <Card.Text>
                   <strong>Order Number:</strong> {this.state.order.orderNumber}
                 </Card.Text>
@@ -345,11 +352,10 @@ export default class CreatePurchaseOrder extends ApplicationContainer {
           <Col sm={7}>
             <Card>
               <Card.Body className={"text-left"}>
-                <Card.Title>New Purchase Order</Card.Title>
                 <Row className={"mt-3"}>
                   <Col sm={12}>
                     <Form.Group controlId="vendor">
-                      <Form.Label><strong>Vendor</strong></Form.Label>
+                      <Form.Label><Card.Title>Vendor</Card.Title></Form.Label>
                       <Select
                         isClearable
                         className={isError.selectedVendor ? "is-invalid" : ""}
@@ -371,7 +377,7 @@ export default class CreatePurchaseOrder extends ApplicationContainer {
                     <Form.Group controlId="rawMaterials">
                       <Row>
                         <Col sm={7} className={"pt-2"}>
-                          <Form.Label><strong>Raw Materials</strong></Form.Label>
+                          <Form.Label><Card.Title>Raw Materials</Card.Title></Form.Label>
                         </Col>
                         <Col sm={5}>
                           <InputGroup>
