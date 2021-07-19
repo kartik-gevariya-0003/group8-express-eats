@@ -12,6 +12,7 @@ import {
   YAxis
 } from "recharts";
 import ApplicationContainer from "../ApplicationContainer";
+import React from "react";
 
 class Dashboard extends ApplicationContainer {
 
@@ -46,6 +47,12 @@ class Dashboard extends ApplicationContainer {
     return (
       <section>
         {super.render()}
+        <Row className="m-3">
+          <Col className={"text-left"}>
+            <h2>Dashboard</h2>
+            <hr/>
+          </Col>
+        </Row>
         <Row className="m-3 equal">
           <Col sm={3}>
             <section>

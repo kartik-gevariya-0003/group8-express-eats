@@ -134,6 +134,7 @@ export default class FoodItems extends Component {
         <Row className="m-3">
           <Col className={"text-left"}>
             <h2>Food Items</h2>
+            <hr/>
           </Col>
         </Row>
         <Row className="m-3">
