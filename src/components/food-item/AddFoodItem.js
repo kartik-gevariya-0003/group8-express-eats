@@ -132,7 +132,7 @@ export default class AddFoodItem extends ApplicationContainer {
     e.preventDefault();
 
     let isError = { ...this.state.isError };
-    console.log("in onsubmit");
+
     await this.validator(
       "foodItemName",
       this.state.foodItem.foodItemName,
@@ -152,8 +152,6 @@ export default class AddFoodItem extends ApplicationContainer {
     this.validator("imageFile", this.state.foodItem.imageFile, isError);
     let isValid = true;
 
-    console.log(isError.foodItemName);
-
     Object.values(isError).forEach((error) => {
       if (error.length > 0) {
         isValid = false;
@@ -170,7 +168,7 @@ export default class AddFoodItem extends ApplicationContainer {
           formData.append(key, this.state.foodItem[key]);
         }
       }
-      console.log(formData.getAll("selectedRawMaterials[]"));
+
       const config = {
         headers: {
           "content-type": "multipart/form-data",
@@ -179,7 +177,6 @@ export default class AddFoodItem extends ApplicationContainer {
       await axios
         .post("http://localhost:3001/add-food-item", formData, config)
         .then((response) => {
-          console.log(response);
           this.props.history.push({
             pathname: "/food-item/confirmation",
             confirmation: {
@@ -211,7 +208,7 @@ export default class AddFoodItem extends ApplicationContainer {
       state.foodItem.foodItemName,
       state.isError
     );
-    console.log(state.isError);
+
     this.setState(state);
   };
 
@@ -254,8 +251,6 @@ export default class AddFoodItem extends ApplicationContainer {
                 this.state.foodItem.foodItemName
             )
             .then((response) => {
-              console.log("in then");
-              console.log(response.data.message);
               isError.foodItemName = response.data.message;
             })
             .catch((error) => {
@@ -287,7 +282,7 @@ export default class AddFoodItem extends ApplicationContainer {
         isError.imageFile = "";
         if (!value) {
           isError.imageFile = "Please upload an image file";
-        } else if (value.type != "image/jpeg" && value.type != "image/png") {
+        } else if (value.type !== "image/jpeg" && value.type !== "image/png") {
           isError.imageFile = "Please upload only jpg or png format image.";
         }
       default:
@@ -386,7 +381,6 @@ export default class AddFoodItem extends ApplicationContainer {
   profitMarginChangeListener = (value) => {
     const profitMargin = value;
     let state = { ...this.state };
-
     state.foodItem.profitMargin = profitMargin;
     this.validator("profitMargin", profitMargin, this.state.isError);
     this.setState(state);
@@ -416,7 +410,6 @@ export default class AddFoodItem extends ApplicationContainer {
 
   closeDeleteModal = () => {
     let state = { ...this.state };
-
     state.deleteRawMaterialModal.show = false;
     state.deleteRawMaterialModal.rawMaterial = {};
     this.setState(state);
@@ -424,7 +417,6 @@ export default class AddFoodItem extends ApplicationContainer {
 
   onFileChange = (event) => {
     let state = { ...this.state };
-    console.log(event.target.files[0]);
     state.foodItem.imageFile = event.target.files[0];
     state.foodItem.imageFileName = state.foodItem.imageFile.name;
     this.validator("imageFile", state.foodItem.imageFile, state.isError);
