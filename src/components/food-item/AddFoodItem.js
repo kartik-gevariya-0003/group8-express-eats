@@ -1,3 +1,4 @@
+// Author: Tasneem Yusuf Porbanderwala
 import "./food-item.css";
 import React from "react";
 import {
