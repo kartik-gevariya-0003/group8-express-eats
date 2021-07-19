@@ -12,6 +12,7 @@ import {
   GET_MANUFACTURING_ORDERS,
   PUT_CHANGE_MANUFACTURING_ORDER_STATUS
 } from "../../config";
+import {toast} from "react-toastify";
 
 const MANUFACTURING_ORDER_STATUS = {
   OPEN: 'OPEN',
@@ -32,6 +33,7 @@ class ManufacturingOrders extends ApplicationContainer {
       isOpenOrderAccordionOpen: true,
       isPreppingOrderAccordionOpen: true,
       isPackagedOrderAccordionOpen: true,
+      loading: false,
       deleteModal: {
         show: false,
         orderNumber: null
@@ -48,6 +50,7 @@ class ManufacturingOrders extends ApplicationContainer {
   }
 
   getManufacturingOrders = () => {
+    this.setState({loading: true});
     axios.get(GET_MANUFACTURING_ORDERS).then(result => {
       let manufacturingOrders = result.data['manufacturingOrders'];
       this.originalOrder.openOrders = manufacturingOrders.filter(manufacturingOrder => manufacturingOrder.status === MANUFACTURING_ORDER_STATUS.OPEN)
@@ -56,18 +59,29 @@ class ManufacturingOrders extends ApplicationContainer {
       this.setState({
         openOrders: this.originalOrder.openOrders,
         preppingOrders: this.originalOrder.preppingOrders,
-        packagedOrders: this.originalOrder.packagedOrders
+        packagedOrders: this.originalOrder.packagedOrders,
+        loading: false
       })
+    }).catch(error => {
+      this.setState({loading: false});
+      console.error(error);
+      toast.error("Error occurred while fetching manufacturing orders.");
     })
   }
 
   changeOrderStatus = (item, status) => {
+    this.setState({loading: true});
     const putData = {
       orderNumber: item.orderNumber,
       status: status
     }
     axios.put(PUT_CHANGE_MANUFACTURING_ORDER_STATUS, putData).then(() => {
       this.getManufacturingOrders();
+      this.setState({loading: false});
+    }).catch(error => {
+      this.setState({loading: false});
+      console.error(error);
+      toast.error("Error occurred while fetching purchase orders.");
     })
   }
 
@@ -101,10 +115,16 @@ class ManufacturingOrders extends ApplicationContainer {
 
   deleteOpenManufacturingOrder = () => {
     let state = this.state
+    this.setState({loading: true});
     const deleteUrl = DELETE_MANUFACTURING_ORDER + "/" + state.deleteModal.orderNumber;
     axios.delete(deleteUrl).then(() => {
       this.closeDeleteModal();
       this.getManufacturingOrders();
+      this.setState({loading: false});
+    }).catch(error => {
+      this.setState({loading: false});
+      console.error(error);
+      toast.error("Error occurred while fetching purchase orders.");
     })
   }
 
@@ -154,6 +174,13 @@ class ManufacturingOrders extends ApplicationContainer {
   render() {
     return (
       <section>
+        {this.state.loading &&
+        <div className="dialog-background">
+          <div className="dialog-loading-wrapper">
+            <img src={"/confirmation.gif"} alt={"Loading..."} className={"loading-img"}/>
+          </div>
+        </div>
+        }
         {super.render()}
         <Row className="m-3">
           <Col className={"text-left"}>

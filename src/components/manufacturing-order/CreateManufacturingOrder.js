@@ -1,6 +1,6 @@
 /*
 Author: Mansi Gevariya
-* */
+*/
 import './manufacturing-order.css';
 import React from "react";
 import {Button, Card, Col, Form, FormControl, InputGroup, ListGroup, Modal, Row} from "react-bootstrap";
@@ -8,32 +8,22 @@ import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faSearch, faTrashAlt} from "@fortawesome/free-solid-svg-icons";
 import ApplicationContainer from "../ApplicationContainer";
 import axios from "axios";
-import {POST_CREATE_MANUFACTURING_ORDER} from "../../config";
-
-const foodItems = [
-  {id: 1, name: 'Egg Sandwich', unitPrice: 4.50},
-  {id: 2, name: 'Dim Sums', unitPrice: 5.00},
-  {id: 3, name: 'Cheese Burger', unitPrice: 1.50},
-  {id: 4, name: 'Pepperoni Pizza', unitPrice: 4.50},
-  {id: 5, name: 'Fish and Chips', unitPrice: 2.50},
-  {id: 6, name: 'Tom Yum Kung', unitPrice: 1.50},
-  {id: 7, name: 'Tacos', unitPrice: 3.00},
-  {id: 8, name: 'Sushi', unitPrice: 5.00},
-  {id: 9, name: 'Greek Salad', unitPrice: 2.50},
-]
+import {GET_FOOD_ITEMS, POST_CREATE_MANUFACTURING_ORDER} from "../../config";
+import {toast} from "react-toastify";
 
 class CreateManufacturingOrder extends ApplicationContainer {
 
   constructor(props) {
     super(props);
     let currentDate = Date.now();
+    this.originalFoodItems = [];
     this.state = {
       order: {
         orderNumber: 'MO-' + currentDate,
         selectedFoodItems: [],
         totalPrice: 0
       },
-      foodItems: foodItems,
+      foodItems: [],
       foodItemQuantityModal: {
         show: false,
         selectedFoodItem: '',
@@ -44,10 +34,23 @@ class CreateManufacturingOrder extends ApplicationContainer {
         selectedFoodItemQuantity: ''
       }
     }
-
   }
 
-  goToManufacturingOrders = (event) => {
+  componentDidMount() {
+    this.setState({loading: true});
+    axios.get(GET_FOOD_ITEMS).then(result => {
+      let foodItems = result.data['foodItems'];
+      this.originalFoodItems = foodItems;
+      this.setState({foodItems: foodItems});
+      this.setState({loading: false});
+    }).catch(error => {
+      this.setState({loading: false});
+      console.error(error);
+      toast.error("Error occurred while fetching purchase orders.");
+    })
+  }
+
+  goToManufacturingOrders = () => {
     this.props.history.push('/manufacturing-orders')
   }
 
@@ -55,7 +58,7 @@ class CreateManufacturingOrder extends ApplicationContainer {
     event.preventDefault()
     const {value} = event.target;
     this.setState({
-      foodItems: foodItems.filter(foodItem => foodItem.name.toLowerCase().includes(value.toLowerCase()))
+      foodItems: this.originalFoodItems.filter(foodItem => foodItem.foodItemName.toLowerCase().includes(value.toLowerCase()))
     })
   }
 
@@ -97,10 +100,10 @@ class CreateManufacturingOrder extends ApplicationContainer {
     }
   }
 
-  calculateTotalCost = (event) => {
+  calculateTotalCost = () => {
     let state = {...this.state};
     state.order.totalPrice = this.state.order.selectedFoodItems.reduce((sum, item) => {
-      return sum + item.unitPrice * +item.quantity;
+      return sum + item.totalCost * +item.quantity;
     }, 0);
     this.setState(state)
   }
@@ -139,8 +142,11 @@ class CreateManufacturingOrder extends ApplicationContainer {
     })
 
     if (isValid) {
+      this.setState({loading: true});
       const postData = state.order
-      axios.post(POST_CREATE_MANUFACTURING_ORDER, postData).then(result => {
+      axios.post(POST_CREATE_MANUFACTURING_ORDER, postData).then(() => {
+        this.setState({loading: false});
+        toast.success("Manufacturing Order created successfully.");
         this.props.history.push({
           pathname: '/manufacturing-orders',
         });
@@ -160,7 +166,7 @@ class CreateManufacturingOrder extends ApplicationContainer {
   deleteFoodItem = foodItem => {
     let state = {...this.state};
     state.order.selectedFoodItems = state.order.selectedFoodItems.filter(e => e.id !== foodItem.id);
-    state.order.totalPrice -= (foodItem.unitPrice * foodItem.quantity);
+    state.order.totalPrice -= (foodItem.totalCost * foodItem.quantity);
     this.validator('foodItems', this.state.order.selectedFoodItems, state.isError);
     this.setState(state);
   };
@@ -168,7 +174,20 @@ class CreateManufacturingOrder extends ApplicationContainer {
   render() {
     return (
       <section>
+        {this.state.loading &&
+        <div className="dialog-background">
+          <div className="dialog-loading-wrapper">
+            <img src={"/confirmation.gif"} alt={"Loading..."} className={"loading-img"}/>
+          </div>
+        </div>
+        }
         {super.render()}
+        <Row className="m-3">
+          <Col className={"text-left"}>
+            <h2>New Manufacturing Order</h2>
+            <hr/>
+          </Col>
+        </Row>
         <Row className={"m-3"}>
           <Col sm={5}>
             <Card>
@@ -186,7 +205,7 @@ class CreateManufacturingOrder extends ApplicationContainer {
                         <Row>
                           <Col sm={4} className={"pl-3 text-left"}>
                             <h6>
-                              <span>{foodItem.name}</span>
+                              <span>{foodItem.foodItemName}</span>
                             </h6>
                           </Col>
                           <Col sm={4} className={"pl-3"}>
@@ -200,7 +219,7 @@ class CreateManufacturingOrder extends ApplicationContainer {
                             <h6>
                               <span><strong>Unit Price</strong></span>
                               <br/>
-                              <span>${foodItem.unitPrice}</span>
+                              <span>${foodItem.totalCost}</span>
                             </h6>
                           </Col>
                           <Col sm={1}>
@@ -228,13 +247,12 @@ class CreateManufacturingOrder extends ApplicationContainer {
           <Col sm={7}>
             <Card>
               <Card.Body className="text-left">
-                <Card.Title>New Manufacturing Order</Card.Title>
                 <Row>
                   <Col>
                     <Form.Group controlId="foodItems">
                       <Row>
                         <Col sm={7} className={"pt-2"}>
-                          <Form.Label><strong>Food Items</strong></Form.Label>
+                          <Card.Title>Food Items</Card.Title>
                         </Col>
                         <Col sm={5}>
                           <InputGroup>
@@ -251,32 +269,37 @@ class CreateManufacturingOrder extends ApplicationContainer {
                           </InputGroup>
                         </Col>
                       </Row>
-                      <ListGroup
-                        className={this.state.isError.selectedFoodItem.length > 0 ? "is-invalid mt-3 mo-food-items-list" : "mt-3 mo-food-items-list"}>
-                        {this.state.foodItems.map((foodItem) =>
-                          <ListGroup.Item key={foodItem.id}>
-                            <Row>
-                              <Col sm={5} className={"pl-3"}>
-                                <h6>
-                                  <span>{foodItem.name}</span>
-                                </h6>
-                              </Col>
-                              <Col sm={5}>
-                                <h6>
-                                  <span><strong>Unit Price:</strong></span>
-                                  <span> ${foodItem.unitPrice}</span>
-                                </h6>
-                              </Col>
-                              <Col sm={2}>
-                                <Button variant={"secondary"}
-                                        onClick={() => this.addFoodItem(foodItem)}>
-                                  Add
-                                </Button>
-                              </Col>
-                            </Row>
-                          </ListGroup.Item>
-                        )}
-                      </ListGroup>
+                      {
+                        this.state.foodItems.length > 0 ?
+                          <ListGroup
+                            className={this.state.isError.selectedFoodItem.length > 0 ? "is-invalid mt-3 mo-food-items-list" : "mt-3 mo-food-items-list"}>
+                            {this.state.foodItems.map((foodItem) =>
+                              <ListGroup.Item key={foodItem.id}>
+                                <Row>
+                                  <Col sm={5} className={"pl-3"}>
+                                    <h6>
+                                      <span>{foodItem.foodItemName}</span>
+                                    </h6>
+                                  </Col>
+                                  <Col sm={5}>
+                                    <h6>
+                                      <span><strong>Unit Price:</strong></span>
+                                      <span> ${foodItem.totalCost}</span>
+                                    </h6>
+                                  </Col>
+                                  <Col sm={2}>
+                                    <Button variant={"secondary"}
+                                            onClick={() => this.addFoodItem(foodItem)}>
+                                      Add
+                                    </Button>
+                                  </Col>
+                                </Row>
+                              </ListGroup.Item>
+                            )}
+                          </ListGroup>
+                          :
+                          <ListGroup className={"mt-3 mo-food-items-list"}><ListGroup.Item>No food items found.</ListGroup.Item></ListGroup>
+                      }
                       {this.state.isError.selectedFoodItem && (
                         <Form.Control.Feedback
                           type={"invalid"}>{this.state.isError.selectedFoodItem}</Form.Control.Feedback>
@@ -295,7 +318,7 @@ class CreateManufacturingOrder extends ApplicationContainer {
               <Form.Group>
                 <Form.Label className={"m-0"}><strong>Food Item</strong></Form.Label>
                 <Form.Control plaintext readOnly
-                              defaultValue={this.state.foodItemQuantityModal.selectedFoodItem.name}
+                              defaultValue={this.state.foodItemQuantityModal.selectedFoodItem.foodItemName}
                               className={"p-0"}/>
               </Form.Group>
               <Form.Group>

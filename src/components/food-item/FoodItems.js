@@ -1,27 +1,13 @@
 // Author: Tasneem Yusuf Porbanderwala
-import {
-  Button,
-  Card,
-  CardDeck,
-  Col,
-  Form,
-  FormControl,
-  InputGroup,
-  Row,
-  Modal,
-} from "react-bootstrap";
-import React, { Component } from "react";
+import {Button, Card, CardDeck, Col, Form, FormControl, InputGroup, Modal, Row,} from "react-bootstrap";
+import React, {Component} from "react";
 import Header from "../headers/Header";
-import {
-  faPencilAlt,
-  faSearch,
-  faTrashAlt,
-} from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import {faPencilAlt, faSearch, faTrashAlt,} from "@fortawesome/free-solid-svg-icons";
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import axios from "axios";
-import { toast } from "react-toastify";
+import {toast, ToastContainer} from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import { ToastContainer } from "react-toastify";
+import {DELETE_FOOD_ITEM, GET_FOOD_ITEMS} from "../../config";
 
 export default class FoodItems extends Component {
   constructor(props) {
@@ -50,7 +36,7 @@ export default class FoodItems extends Component {
     this.closeModal();
     this.setState(state);
     await axios
-      .delete("http://localhost:3001/delete-food-item/" + id)
+      .delete(DELETE_FOOD_ITEM + id)
       .then((response) => {
         toast.success("Food Item deleted successfully!");
       })
@@ -91,7 +77,7 @@ export default class FoodItems extends Component {
     let state = { ...this.state };
 
     await axios
-      .get("http://localhost:3001/get-food-items")
+      .get(GET_FOOD_ITEMS)
       .then((result) => {
         state.foodItemsDB = result.data.foodItems;
         state.foodItemsDB.forEach((foodItem) => {
