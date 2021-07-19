@@ -87,15 +87,6 @@ export default class CreatePurchaseOrder extends ApplicationContainer {
     mounted = false;
   }
 
-  formatVendorOption = ({vendorName, contactPersonName}) => (
-    <Row className="d-flex">
-      <Col>{vendorName}</Col>
-      <Col className="ml-3 select-option-city">
-        <small>{contactPersonName}</small>
-      </Col>
-    </Row>
-  );
-
   filterRawMaterial = (e) => {
     e.preventDefault();
     const {value} = e.target;
@@ -157,7 +148,7 @@ export default class CreatePurchaseOrder extends ApplicationContainer {
 
     let state = {...this.state};
 
-    state.order.selectedVendor = {...selectedVendor};
+    state.order.selectedVendor = selectedVendor;
 
     this.validator('vendor', this.state.order.selectedVendor, state.isError);
 
@@ -362,8 +353,9 @@ export default class CreatePurchaseOrder extends ApplicationContainer {
                       <Select
                         isClearable
                         className={isError.selectedVendor ? "is-invalid" : ""}
-                        formatOptionLabel={this.formatVendorOption}
                         options={this.state.vendors}
+                        getOptionValue={vendor => vendor.id}
+                        getOptionLabel={vendor => `${vendor.vendorName} (${vendor.contactPersonName})`}
                         placeholder="Select Vendor"
                         onChange={this.onVendorSelect}
                       />
