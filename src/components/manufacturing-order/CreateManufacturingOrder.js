@@ -1,9 +1,14 @@
+/*
+Author: Mansi Gevariya
+* */
 import './manufacturing-order.css';
 import React from "react";
 import {Button, Card, Col, Form, FormControl, InputGroup, ListGroup, Modal, Row} from "react-bootstrap";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faSearch, faTrashAlt} from "@fortawesome/free-solid-svg-icons";
 import ApplicationContainer from "../ApplicationContainer";
+import axios from "axios";
+import {POST_CREATE_MANUFACTURING_ORDER} from "../../config";
 
 const foodItems = [
   {id: 1, name: 'Egg Sandwich', unitPrice: 4.50},
@@ -26,9 +31,7 @@ class CreateManufacturingOrder extends ApplicationContainer {
       order: {
         orderNumber: 'MO-' + currentDate,
         selectedFoodItems: [],
-        totalCost: 0,
-        manufacturingCost: 0,
-        profitMargin: 0
+        totalPrice: 0
       },
       foodItems: foodItems,
       foodItemQuantityModal: {
@@ -69,7 +72,6 @@ class CreateManufacturingOrder extends ApplicationContainer {
     this.setState(state);
   }
 
-
   closeModal = () => {
     let state = {...this.state};
     state.foodItemQuantityModal.show = false;
@@ -97,12 +99,9 @@ class CreateManufacturingOrder extends ApplicationContainer {
 
   calculateTotalCost = (event) => {
     let state = {...this.state};
-    let totalCost = this.state.order.selectedFoodItems.reduce((sum, item) => {
+    state.order.totalPrice = this.state.order.selectedFoodItems.reduce((sum, item) => {
       return sum + item.unitPrice * +item.quantity;
     }, 0);
-    totalCost += +state.order.manufacturingCost;
-    totalCost += (totalCost * +state.order.profitMargin) / 100
-    state.order.totalCost = totalCost;
     this.setState(state)
   }
 
@@ -126,6 +125,7 @@ class CreateManufacturingOrder extends ApplicationContainer {
   onSubmit(e) {
     e.preventDefault();
     let isError = {...this.state.isError};
+    let state = this.state;
     this.validator('foodItems', this.state.order.selectedFoodItems, isError);
     let isValid = true;
     Object.values(isError).forEach(error => {
@@ -139,25 +139,14 @@ class CreateManufacturingOrder extends ApplicationContainer {
     })
 
     if (isValid) {
-      this.props.history.push({
-        pathname: '/manufacturing-orders',
-      });
+      const postData = state.order
+      axios.post(POST_CREATE_MANUFACTURING_ORDER, postData).then(result => {
+        this.props.history.push({
+          pathname: '/manufacturing-orders',
+        });
+      })
     }
   };
-
-  manufacturingCostChangeListener = event => {
-    const manufacturingCost = event.target.value;
-    let state = {...this.state}
-    state.order.manufacturingCost = manufacturingCost;
-    this.setState(state);
-  }
-
-  profitMarginChangeListener = event => {
-    const profitMargin = event.target.value;
-    let state = {...this.state}
-    state.order.profitMargin = profitMargin;
-    this.setState(state);
-  }
 
   foodItemQuantityChangeListener = e => {
     e.preventDefault();
@@ -171,7 +160,7 @@ class CreateManufacturingOrder extends ApplicationContainer {
   deleteFoodItem = foodItem => {
     let state = {...this.state};
     state.order.selectedFoodItems = state.order.selectedFoodItems.filter(e => e.id !== foodItem.id);
-    state.order.totalCost -= (foodItem.unitPrice * foodItem.quantity);
+    state.order.totalPrice -= (foodItem.unitPrice * foodItem.quantity);
     this.validator('foodItems', this.state.order.selectedFoodItems, state.isError);
     this.setState(state);
   };
@@ -222,54 +211,12 @@ class CreateManufacturingOrder extends ApplicationContainer {
                       </ListGroup.Item>
                     )}
                   </ListGroup>
-                  <Row className="text-right mt-3">
-                    <Col sm={8}>
-                      <Form.Label><strong>Manufacturing Cost</strong></Form.Label>
-                    </Col>
-                    <Col sm={3}>
-                      <InputGroup className="mb-3">
-                        <InputGroup.Prepend>
-                          <InputGroup.Text id="basic-addon1">$</InputGroup.Text>
-                        </InputGroup.Prepend>
-                        <Form.Control
-                          name={"manufacturingCost"}
-                          type="text"
-                          onBlur={this.calculateTotalCost}
-                          onChange={this.manufacturingCostChangeListener}/>
-                      </InputGroup>
-                    </Col>
-                  </Row>
-                  <Row className="text-right">
-                    <Col sm={8}>
-                      <Form.Label><strong>Profit Margin</strong></Form.Label>
-                    </Col>
-                    <Col sm={3}>
-                      <InputGroup className="mb-3">
-                        <Form.Control
-                          name={"profitMargin"}
-                          type="text"
-                          onBlur={this.calculateTotalCost}
-                          onChange={this.profitMarginChangeListener}/>
-                        <InputGroup.Append>
-                          <InputGroup.Text id="basic-addon1">%</InputGroup.Text>
-                        </InputGroup.Append>
-                      </InputGroup>
-                    </Col>
-                  </Row>
-                  <Card.Text>
-                    <Row>
-                      <Col sm={8} className="text-right">
-                        <Form.Label><strong>Total Cost :</strong> </Form.Label>
-                      </Col>
-                      <Col sm={3} className="text-left">
-                        <strong>
-                          {new Intl.NumberFormat('en-US', {
-                            style: 'currency',
-                            currency: 'USD'
-                          }).format(this.state.order.totalCost)}
-                        </strong>
-                      </Col>
-                    </Row>
+                  <Card.Text className="mt-5">
+                    <strong>Total Cost :</strong>
+                    {new Intl.NumberFormat('en-US', {
+                      style: 'currency',
+                      currency: 'USD'
+                    }).format(this.state.order.totalPrice)}
                   </Card.Text>
                 </section>)
                 }

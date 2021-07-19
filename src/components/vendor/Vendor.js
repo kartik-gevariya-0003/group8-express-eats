@@ -117,6 +117,7 @@ function Vendor() {
         <Row className="m-3">
           <Col className={"text-left"}>
             <h2>Vendors</h2>
+            <hr/>
           </Col>
         </Row>
         <Row className="m-3">

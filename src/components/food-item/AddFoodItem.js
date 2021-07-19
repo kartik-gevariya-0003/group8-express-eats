@@ -1,3 +1,4 @@
+// Author: Tasneem Yusuf Porbanderwala
 import "./food-item.css";
 import React from "react";
 import {
@@ -11,10 +12,14 @@ import {
   Modal,
   Row,
 } from "react-bootstrap";
+import "react-toastify/dist/ReactToastify.css";
+import { ToastContainer } from "react-toastify";
 import { faSearch, faTrashAlt } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import ApplicationContainer from "../ApplicationContainer";
 import bsCustomFileInput from "bs-custom-file-input";
+import axios from "axios";
+import { toast } from "react-toastify";
 const rawMaterials = [
   {
     id: 1,
@@ -88,6 +93,7 @@ export default class AddFoodItem extends ApplicationContainer {
         totalCost: 0,
         profitMargin: 0,
         imageFile: null,
+        imageFileName: "",
       },
       rawMaterialQuantityModal: {
         show: false,
@@ -123,12 +129,16 @@ export default class AddFoodItem extends ApplicationContainer {
     });
   };
 
-  onSubmit = (e) => {
+  onSubmit = async (e) => {
     e.preventDefault();
 
     let isError = { ...this.state.isError };
 
-    this.validator("foodItemName", this.state.foodItem.foodItemName, isError);
+    await this.validator(
+      "foodItemName",
+      this.state.foodItem.foodItemName,
+      isError
+    );
     this.validator(
       "rawMaterials",
       this.state.foodItem.selectedRawMaterials,
@@ -142,23 +152,46 @@ export default class AddFoodItem extends ApplicationContainer {
     this.validator("profitMargin", this.state.foodItem.profitMargin, isError);
     this.validator("imageFile", this.state.foodItem.imageFile, isError);
     let isValid = true;
-    console.log(isError.profitMargin);
-    console.log(this.state.profitMargin);
+
     Object.values(isError).forEach((error) => {
       if (error.length > 0) {
         isValid = false;
       }
     });
-
     if (isValid) {
-      this.props.history.push({
-        pathname: "/food-item/confirmation",
-        confirmation: {
-          message: this.state.foodItem.foodItemName + " Created Successfully",
-          redirect: "/food-items",
-          button: "GO TO FOOD ITEMS",
+      const formData = new FormData();
+      for (var key in this.state.foodItem) {
+        if (key === "selectedRawMaterials") {
+          this.state.foodItem[key].forEach((item) =>
+            formData.append("selectedRawMaterials[]", JSON.stringify(item))
+          );
+        } else {
+          formData.append(key, this.state.foodItem[key]);
+        }
+      }
+
+      const config = {
+        headers: {
+          "content-type": "multipart/form-data",
         },
-      });
+      };
+      await axios
+        .post("http://localhost:3001/add-food-item", formData, config)
+        .then((response) => {
+          this.props.history.push({
+            pathname: "/food-item/confirmation",
+            confirmation: {
+              message:
+                this.state.foodItem.foodItemName + " Created Successfully",
+              redirect: "/food-items",
+              button: "GO TO FOOD ITEMS",
+            },
+          });
+        })
+        .catch((error) => {
+          console.error(error);
+          toast.error("Food Item was not added. Please try again. !");
+        });
     }
 
     this.setState({
@@ -166,12 +199,16 @@ export default class AddFoodItem extends ApplicationContainer {
     });
   };
 
-  onFoodItemNameChange = (e) => {
+  onFoodItemNameChange = async (e) => {
     let state = { ...this.state };
 
     state.foodItem.foodItemName = e.target.value;
 
-    this.validator("foodItemName", state.foodItem.foodItemName, state.isError);
+    await this.validator(
+      "foodItemName",
+      state.foodItem.foodItemName,
+      state.isError
+    );
 
     this.setState(state);
   };
@@ -190,7 +227,7 @@ export default class AddFoodItem extends ApplicationContainer {
     this.setState(state);
   };
 
-  validator = (name, value, isError) => {
+  validator = async (name, value, isError) => {
     switch (name) {
       case "modalRawMaterialQuantity":
         isError.selectedRawMaterialQuantity = "";
@@ -208,7 +245,20 @@ export default class AddFoodItem extends ApplicationContainer {
         isError.foodItemName = "";
         if (!value || value.length === 0) {
           isError.foodItemName = "Please enter food item name";
+        } else {
+          await axios
+            .get(
+              "http://localhost:3001/get-food-item-name/" +
+                this.state.foodItem.foodItemName
+            )
+            .then((response) => {
+              isError.foodItemName = response.data.message;
+            })
+            .catch((error) => {
+              console.error(error);
+            });
         }
+
         break;
       case "rawMaterials":
         isError.selectedRawMaterials = "";
@@ -231,9 +281,10 @@ export default class AddFoodItem extends ApplicationContainer {
         break;
       case "imageFile":
         isError.imageFile = "";
-        console.log(value);
         if (!value) {
           isError.imageFile = "Please upload an image file";
+        } else if (value.type !== "image/jpeg" && value.type !== "image/png") {
+          isError.imageFile = "Please upload only jpg or png format image.";
         }
       default:
         break;
@@ -331,7 +382,6 @@ export default class AddFoodItem extends ApplicationContainer {
   profitMarginChangeListener = (value) => {
     const profitMargin = value;
     let state = { ...this.state };
-
     state.foodItem.profitMargin = profitMargin;
     this.validator("profitMargin", profitMargin, this.state.isError);
     this.setState(state);
@@ -361,7 +411,6 @@ export default class AddFoodItem extends ApplicationContainer {
 
   closeDeleteModal = () => {
     let state = { ...this.state };
-
     state.deleteRawMaterialModal.show = false;
     state.deleteRawMaterialModal.rawMaterial = {};
     this.setState(state);
@@ -369,9 +418,8 @@ export default class AddFoodItem extends ApplicationContainer {
 
   onFileChange = (event) => {
     let state = { ...this.state };
-    console.log(event.target.files[0]);
     state.foodItem.imageFile = event.target.files[0];
-    console.log("in onfilechange:" + state.foodItem.imageFile);
+    state.foodItem.imageFileName = state.foodItem.imageFile.name;
     this.validator("imageFile", state.foodItem.imageFile, state.isError);
     this.setState(state);
   };
@@ -381,6 +429,17 @@ export default class AddFoodItem extends ApplicationContainer {
     return (
       <section>
         {super.render()}
+        <ToastContainer
+          position="top-center"
+          autoClose={3000}
+          hideProgressBar
+          newestOnTop={false}
+          closeOnClick
+          rtl={false}
+          pauseOnFocusLoss
+          draggable
+          pauseOnHover
+        />
         <Row className={"m-3"}>
           <Col sm={5}>
             <Card>
@@ -547,7 +606,7 @@ export default class AddFoodItem extends ApplicationContainer {
                         type="text"
                         className={isError.foodItemName ? "is-invalid" : ""}
                         placeholder="Enter Food Item Name"
-                        onChange={(e) => {
+                        onBlur={(e) => {
                           this.onFoodItemNameChange(e);
                         }}
                       />

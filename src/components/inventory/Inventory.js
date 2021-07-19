@@ -281,6 +281,7 @@ export default class Inventory extends ApplicationContainer {
         <Row className="m-3">
           <Col className={"text-left"}>
             <h2>Inventory</h2>
+            <hr/>
           </Col>
         </Row>
         <Row className="m-3">

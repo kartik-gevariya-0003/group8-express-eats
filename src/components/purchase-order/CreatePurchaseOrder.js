@@ -5,27 +5,12 @@ import Select from "react-select";
 import {faSearch, faTrashAlt} from "@fortawesome/free-solid-svg-icons";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import ApplicationContainer from "../ApplicationContainer";
+import {toast} from "react-toastify";
+import axios from "axios";
 
-const vendors = [
-  {value: "Rifraf", state: "DC", city: "Washington"},
-  {value: "Real Good Dairy", state: "CA", city: "Woodland", disabled: true},
-  {value: "Honeyville Inc.", state: "NY", city: "North Rose"},
-  {value: "Glory Bee", state: "NJ", city: "NBayonne"},
-  {value: "Milne MicroDried", state: "NY", city: "Brooklyn"},
-  {value: "Pilotworks Brooklyn", state: "NY", city: "BedfordStuyvesant"}
-];
-
-const rawMaterials = [
-  {id: 1, name: "Bread", unitPrice: 1.5, category: 'Grains/Cereals'},
-  {id: 2, name: "Egg", unitPrice: 0.8, category: 'Meat, poultry, fish, and eggs'},
-  {id: 3, name: "Mayonnaise", unitPrice: 4.5, category: 'Oils'},
-  {id: 4, name: "Tomato", unitPrice: 2.0, category: 'Vegetables'},
-  {id: 5, name: "Meat", unitPrice: 4.3, category: 'Meat, poultry, fish, and eggs'},
-  {id: 6, name: "Lettuce", unitPrice: 8.0, category: 'Vegetables'},
-  {id: 7, name: "Wheat", unitPrice: 10.0, category: 'Grains/Cereals'},
-  {id: 8, name: "Rice", unitPrice: 12.7, category: 'Grains/Cereals'},
-  {id: 9, name: "Sunflower Oil", unitPrice: 24.0, category: 'Oils'},
-]
+let vendors = [];
+let rawMaterials = [];
+let mounted = true;
 
 export default class CreatePurchaseOrder extends ApplicationContainer {
   constructor(props) {
@@ -34,6 +19,7 @@ export default class CreatePurchaseOrder extends ApplicationContainer {
     let currentDate = Date.now();
 
     this.state = {
+      loading: false,
       rawMaterials: rawMaterials,
       vendors: vendors,
       order: {
@@ -55,11 +41,53 @@ export default class CreatePurchaseOrder extends ApplicationContainer {
     }
   }
 
-  formatVendorOption = ({value, state, city}) => (
+  componentDidMount = async () => {
+    this.setState({loading: true});
+
+    await axios
+      .get("http://localhost:3001/vendors")
+      .then((response) => {
+        this.setState({loading: false});
+
+        vendors = response.data.vendors;
+
+        this.setState({
+          vendors: vendors,
+        });
+      })
+      .catch((error) => {
+        this.setState({loading: false});
+        console.error(error);
+        toast.error("Error occurred while fetching vendors.");
+      });
+
+    await axios
+      .get("http://localhost:3001/raw-materials")
+      .then((response) => {
+        this.setState({loading: false});
+
+        rawMaterials = response.data.rawMaterials;
+
+        this.setState({
+          rawMaterials: rawMaterials,
+        });
+      })
+      .catch((error) => {
+        this.setState({loading: false});
+        console.error(error);
+        toast.error("Error occurred while fetching raw materials.");
+      });
+  }
+
+  componentWillUnmount() {
+    mounted = false;
+  }
+
+  formatVendorOption = ({vendorName, contactPersonName}) => (
     <Row className="d-flex">
-      <Col>{value}</Col>
+      <Col>{vendorName}</Col>
       <Col className="ml-3 select-option-city">
-        <small>{city}, {state}</small>
+        <small>{contactPersonName}</small>
       </Col>
     </Row>
   );
@@ -69,15 +97,14 @@ export default class CreatePurchaseOrder extends ApplicationContainer {
     const {value} = e.target;
 
     this.setState({
-      rawMaterials: rawMaterials.filter(rawMaterial => rawMaterial.name.toLowerCase().includes(value.toLowerCase()))
+      rawMaterials: rawMaterials.filter(rawMaterial => rawMaterial.rawMaterialName.toLowerCase().includes(value.toLowerCase()))
     })
   }
 
-  onSubmit = e => {
+  onSubmit = async (e) => {
     e.preventDefault();
 
     let isError = {...this.state.isError};
-
 
     this.validator('vendor', this.state.order.selectedVendor, isError);
     this.validator('rawMaterials', this.state.order.selectedRawMaterials, isError);
@@ -90,26 +117,43 @@ export default class CreatePurchaseOrder extends ApplicationContainer {
     });
 
     if (isValid) {
-      this.props.history.push({
-        pathname: '/purchase-order/confirmation',
-        confirmation: {
-          message: this.state.order.orderNumber + ' Created Successfully',
-          redirect: '/purchase-orders',
-          button: 'GO TO PURCHASE ORDERS'
-        }
-      });
+      let bodyData = {
+        orderNumber: this.state.order.orderNumber,
+        totalCost: this.state.order.totalCost,
+        vendorId: this.state.order.selectedVendor.id,
+        selectedRawMaterials: this.state.order.selectedRawMaterials
+      }
+
+      this.setState({loading: true});
+
+      await axios
+        .post("http://localhost:3001/purchase-order", bodyData)
+        .then((response) => {
+          this.setState({loading: false});
+          toast.success("Purchase Order created successfully. !");
+          this.props.history.push({
+            pathname: '/purchase-orders'
+          });
+        })
+        .catch((error) => {
+          this.setState({loading: false});
+          console.error(error);
+          toast.error("Purchase Order was not added. Please try again. !");
+        });
     }
 
-    this.setState({
-      isError: isError
-    })
+    if (mounted) {
+      this.setState({
+        isError: isError
+      });
+    }
   };
 
   onVendorSelect = (selectedVendor) => {
 
     let state = {...this.state};
 
-    state.order.selectedVendor = selectedVendor;
+    state.order.selectedVendor = {...selectedVendor};
 
     this.validator('vendor', this.state.order.selectedVendor, state.isError);
 
@@ -144,7 +188,7 @@ export default class CreatePurchaseOrder extends ApplicationContainer {
   addRawMaterial = rawMaterial => {
     let state = {...this.state};
 
-    state.rawMaterialQuantityModal.selectedRawMaterial = rawMaterial;
+    state.rawMaterialQuantityModal.selectedRawMaterial = {...rawMaterial};
 
     this.setState(state);
 
@@ -156,7 +200,7 @@ export default class CreatePurchaseOrder extends ApplicationContainer {
 
     state.order.selectedRawMaterials = state.order.selectedRawMaterials.filter(e => e.id !== rawMaterial.id);
 
-    state.order.totalCost -= (rawMaterial.unitPrice * rawMaterial.quantity);
+    state.order.totalCost -= (rawMaterial.unitCost * rawMaterial.quantity);
 
     this.validator('rawMaterials', this.state.order.selectedRawMaterials, state.isError);
 
@@ -177,9 +221,21 @@ export default class CreatePurchaseOrder extends ApplicationContainer {
     let state = {...this.state};
 
     if (state.rawMaterialQuantityModal.selectedRawMaterialQuantity > 0) {
-      state.rawMaterialQuantityModal.selectedRawMaterial['quantity'] = state.rawMaterialQuantityModal.selectedRawMaterialQuantity;
-      state.order.selectedRawMaterials.push(state.rawMaterialQuantityModal.selectedRawMaterial);
-      state.order.totalCost += (state.rawMaterialQuantityModal.selectedRawMaterial.unitPrice * state.rawMaterialQuantityModal.selectedRawMaterialQuantity);
+      state.rawMaterialQuantityModal.selectedRawMaterial['quantity'] = parseFloat(state.rawMaterialQuantityModal.selectedRawMaterialQuantity);
+
+      let rawMaterialFound = false;
+      state.order.selectedRawMaterials.forEach(rawMaterial => {
+        if (rawMaterial.id === state.rawMaterialQuantityModal.selectedRawMaterial.id) {
+          rawMaterial.quantity += parseFloat(state.rawMaterialQuantityModal.selectedRawMaterialQuantity);
+          state.order.totalCost += (state.rawMaterialQuantityModal.selectedRawMaterial.unitCost * state.rawMaterialQuantityModal.selectedRawMaterialQuantity);
+          rawMaterialFound = true;
+        }
+      });
+
+      if (!rawMaterialFound) {
+        state.order.selectedRawMaterials.push(state.rawMaterialQuantityModal.selectedRawMaterial);
+        state.order.totalCost += (state.rawMaterialQuantityModal.selectedRawMaterial.unitCost * state.rawMaterialQuantityModal.selectedRawMaterialQuantity);
+      }
 
       state.rawMaterialQuantityModal.selectedRawMaterial = '';
       state.rawMaterialQuantityModal.selectedRawMaterialQuantity = 0;
@@ -218,6 +274,13 @@ export default class CreatePurchaseOrder extends ApplicationContainer {
 
     return (
       <section>
+        {this.state.loading &&
+        <div className="dialog-background">
+          <div className="dialog-loading-wrapper">
+            <img src={"/confirmation.gif"} alt={"Loading..."} className={"loading-img"}/>
+          </div>
+        </div>
+        }
         {super.render()}
         <Row className={"m-3"}>
           <Col sm={5}>
@@ -230,7 +293,7 @@ export default class CreatePurchaseOrder extends ApplicationContainer {
                 {this.state.order.selectedVendor &&
                 (
                   <Card.Text>
-                    <strong>Vendor :</strong> {this.state.order.selectedVendor.value}
+                    <strong>Vendor :</strong> {this.state.order.selectedVendor.vendorName}
                   </Card.Text>
                 )
                 }
@@ -244,9 +307,9 @@ export default class CreatePurchaseOrder extends ApplicationContainer {
                           <Row>
                             <Col sm={4} className={"pl-3 text-left"}>
                               <h6>
-                                <span>{rawMaterial.name}</span>
+                                <span>{rawMaterial.rawMaterialName}</span>
                                 <br/>
-                                <span><small>{rawMaterial.category}</small></span>
+                                <span><small>Unit Measurement: {rawMaterial.unitMeasurement}</small></span>
                               </h6>
                             </Col>
                             <Col sm={4} className={"pl-3"}>
@@ -260,7 +323,7 @@ export default class CreatePurchaseOrder extends ApplicationContainer {
                               <h6>
                                 <span><strong>Unit Price</strong></span>
                                 <br/>
-                                <span>${rawMaterial.unitPrice}</span>
+                                <span>${rawMaterial.unitCost}</span>
                               </h6>
                             </Col>
                             <Col sm={1}>
@@ -328,32 +391,36 @@ export default class CreatePurchaseOrder extends ApplicationContainer {
                           </InputGroup>
                         </Col>
                       </Row>
-                      <ListGroup
-                        className={isError.selectedRawMaterials.length > 0 ? "is-invalid mt-3 po-raw-material-list" : "mt-3 po-raw-material-list"}>
-                        {this.state.rawMaterials.map((rawMaterial) =>
-                          <ListGroup.Item key={rawMaterial.id}>
-                            <Row>
-                              <Col sm={5} className={"pl-3"}>
-                                <h6>
-                                  <span>{rawMaterial.name}</span>
-                                  <br/>
-                                  <span><small>{rawMaterial.category}</small></span>
-                                </h6>
-                              </Col>
-                              <Col sm={5}>
-                                <h6>
-                                  <span><strong>Unit Price:</strong></span>
-                                  <span> ${rawMaterial.unitPrice}</span>
-                                </h6>
-                              </Col>
-                              <Col sm={2}>
-                                <Button variant={"secondary"}
-                                        onClick={() => this.addRawMaterial(rawMaterial)}>Add</Button>
-                              </Col>
-                            </Row>
-                          </ListGroup.Item>
-                        )}
-                      </ListGroup>
+                      {this.state.rawMaterials.length !== 0 ?
+                        <ListGroup
+                          className={isError.selectedRawMaterials.length > 0 ? "is-invalid mt-3 po-raw-material-list" : "mt-3 po-raw-material-list"}>
+                          {this.state.rawMaterials.map((rawMaterial) =>
+                            <ListGroup.Item key={rawMaterial.id}>
+                              <Row>
+                                <Col sm={5} className={"pl-3"}>
+                                  <h6>
+                                    <span>{rawMaterial.rawMaterialName}</span>
+                                    <br/>
+                                    <span><small>Unit Measurement: {rawMaterial.unitMeasurement}</small></span>
+                                  </h6>
+                                </Col>
+                                <Col sm={5}>
+                                  <h6>
+                                    <span><strong>Unit Price:</strong></span>
+                                    <span> ${rawMaterial.unitCost}</span>
+                                  </h6>
+                                </Col>
+                                <Col sm={2}>
+                                  <Button variant={"secondary"}
+                                          onClick={() => this.addRawMaterial(rawMaterial)}>Add</Button>
+                                </Col>
+                              </Row>
+                            </ListGroup.Item>
+                          )}
+                        </ListGroup>
+                        :
+                        <ListGroup className={"mt-3 po-raw-material-list"}><ListGroup.Item>No raw materials found.</ListGroup.Item></ListGroup>
+                      }
                       {isError.selectedRawMaterials.length > 0 && (
                         <Form.Control.Feedback
                           type={"invalid"}>{isError.selectedRawMaterials}</Form.Control.Feedback>
@@ -372,7 +439,7 @@ export default class CreatePurchaseOrder extends ApplicationContainer {
               <Form.Group>
                 <Form.Label className={"m-0"}><strong>Raw Material</strong></Form.Label>
                 <Form.Control plaintext readOnly
-                              defaultValue={this.state.rawMaterialQuantityModal.selectedRawMaterial.name}
+                              defaultValue={this.state.rawMaterialQuantityModal.selectedRawMaterial.rawMaterialName}
                               className={"p-0"}/>
               </Form.Group>
               <Form.Group>
