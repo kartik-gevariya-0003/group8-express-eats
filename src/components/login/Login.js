@@ -15,6 +15,13 @@ class Login extends PlainHeaderComponent {
   constructor(props) {
     super(props)
 
+    const user = JSON.parse(localStorage.getItem('user'));
+    if (user && user.token) {
+      this.props.history.push({
+        pathname: '/home'
+      });
+    }
+
     this.state = {
       email: '',
       password: '',
