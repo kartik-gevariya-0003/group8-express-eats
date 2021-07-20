@@ -6,7 +6,7 @@
 import React from "react";
 import {Button, Card, Col, Form, Row} from "react-bootstrap";
 import axios from "axios";
-import {GET_RAW_MATERIAL_BY_ID, GET_VENDORS, PUT_RAW_MATERIAL} from "../../config";
+import {GET_RAW_MATERIAL_BY_ID, GET_VENDORS, UPDATE_RAW_MATERIAL} from "../../config";
 import {toast} from "react-toastify";
 import Select from "react-select";
 import ApplicationContainer from "../ApplicationContainer";
@@ -203,7 +203,7 @@ class UpdateRawMaterial extends ApplicationContainer {
                 const headers = {
                     'Authorization': 'Bearer ' + user.token
                 }
-                axios.put(PUT_RAW_MATERIAL, putData, {headers : headers}).then((response) => {
+                axios.put(UPDATE_RAW_MATERIAL, putData, {headers : headers}).then((response) => {
                     this.setState({loading: false});
                     toast.success("Raw Material updated successfully.");
                     this.props.history.push({

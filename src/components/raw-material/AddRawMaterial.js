@@ -8,7 +8,7 @@ import {Button, Card, Col, Form, Row,} from "react-bootstrap";
 import ApplicationContainer from "../ApplicationContainer";
 import axios from 'axios';
 import Select from "react-select";
-import {ADD_RAW_MATERIAL, GET_VENDORS} from "../../config";
+import {ADD_RAW_MATERIAL, CREATE_RAW_MATERIAL, GET_VENDORS} from "../../config";
 import {toast} from "react-toastify";
 
 export class AddRawMaterial extends ApplicationContainer {
@@ -169,7 +169,7 @@ export class AddRawMaterial extends ApplicationContainer {
           'Authorization': 'Bearer ' + user.token
         }
         //POST API call for adding new raw material details in the system
-        axios.post(ADD_RAW_MATERIAL, postData, {headers:headers}).then((response) => {
+        axios.post(CREATE_RAW_MATERIAL, postData, {headers:headers}).then((response) => {
           this.setState({loading: false});
           toast.success("Raw Material created successfully.");
           this.props.history.push({
