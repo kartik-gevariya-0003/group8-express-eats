@@ -22,8 +22,9 @@ import axios from "axios";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { ToastContainer } from "react-toastify";
+import ApplicationContainer from "../ApplicationContainer";
 
-export default class FoodItems extends Component {
+export default class FoodItems extends ApplicationContainer {
   constructor(props) {
     super(props);
     this.state = {
@@ -44,20 +45,26 @@ export default class FoodItems extends Component {
   async deleteFoodItem(id) {
     let state = { ...this.state };
 
-    state.foodItemsDB = state.foodItemsDB.filter((x) => {
-      return x.id !== id;
-    });
-    this.closeModal();
-    this.setState(state);
     await axios
       .delete("http://localhost:3001/delete-food-item/" + id)
       .then((response) => {
         toast.success("Food Item deleted successfully!");
+        state.foodItemsDB = state.foodItemsDB.filter((x) => {
+          return x.id !== id;
+        });
+
+        this.setState(state);
+        this.closeModal();
       })
       .catch((error) => {
-        toast.error(
-          "There was some problem deleting the food item. Please try again later."
-        );
+        if (error.response.status === 401) {
+          toast.error("Food Item exists in an Open Maunfacturing Order.");
+        } else {
+          toast.error(
+            "There was some problem deleting the food item. Please try again later."
+          );
+        }
+        this.closeModal();
       });
   }
 
@@ -72,7 +79,7 @@ export default class FoodItems extends Component {
     let state = { ...this.state };
     state.deleteFoodItemModal.show = true;
     state.deleteFoodItemModal.id = foodItem.id;
-    state.deleteFoodItemModal.name = foodItem.name;
+    state.deleteFoodItemModal.foodItemName = foodItem.foodItemName;
     this.setState(state);
   };
 
@@ -89,15 +96,18 @@ export default class FoodItems extends Component {
   }
   loadFoodItems = async () => {
     let state = { ...this.state };
-
+    this.setState({ loading: true });
     await axios
       .get("http://localhost:3001/get-food-items")
       .then((result) => {
+        this.setState({ loading: false });
         state.foodItemsDB = result.data.foodItems;
         state.foodItemsDB.forEach((foodItem) => {
-          foodItem.imageFile = new Buffer.from(
-            foodItem.imageFile.data
-          ).toString("base64");
+          if (foodItem.imageFile) {
+            foodItem.imageFile = new Buffer.from(
+              foodItem.imageFile.data
+            ).toString("base64");
+          }
         });
         state.originalFoodItemsList = state.foodItemsDB;
       })
@@ -119,22 +129,22 @@ export default class FoodItems extends Component {
   render() {
     return (
       <section>
-        <ToastContainer
-          position="top-center"
-          autoClose={3000}
-          hideProgressBar
-          newestOnTop={false}
-          closeOnClick
-          rtl={false}
-          pauseOnFocusLoss
-          draggable
-          pauseOnHover
-        />
-        <Header />
+        {super.render()}
+        {this.state.loading && (
+          <div className="dialog-background">
+            <div className="dialog-loading-wrapper">
+              <img
+                src={"/confirmation.gif"}
+                alt={"Loading..."}
+                className={"loading-img"}
+              />
+            </div>
+          </div>
+        )}
         <Row className="m-3">
           <Col className={"text-left"}>
             <h2>Food Items</h2>
-            <hr/>
+            <hr />
           </Col>
         </Row>
         <Row className="m-3">
@@ -169,10 +179,15 @@ export default class FoodItems extends Component {
               this.state.foodItemsDB.map((foodItem) => (
                 <Col className="mb-3" key={foodItem.id}>
                   <Card>
-                    <Card.Img
-                      variant="top"
-                      src={`data:image/jpeg;base64,${foodItem.imageFile}`}
-                    />
+                    {foodItem.imageFile ? (
+                      <Card.Img
+                        variant="top"
+                        src={`data:image/jpeg;base64,${foodItem.imageFile}`}
+                      />
+                    ) : (
+                      <></>
+                    )}
+
                     <Card.Body>
                       <Card.Title>{foodItem.foodItemName}</Card.Title>
 
@@ -215,7 +230,7 @@ export default class FoodItems extends Component {
               <Form.Label className={"m-0"}>
                 <strong>
                   Are you sure you want to delete{" "}
-                  {this.state.deleteFoodItemModal.name}?{" "}
+                  {this.state.deleteFoodItemModal.foodItemName}?{" "}
                 </strong>
               </Form.Label>
               <Form.Label className={"m-0"}>

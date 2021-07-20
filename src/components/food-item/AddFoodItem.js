@@ -20,71 +20,14 @@ import ApplicationContainer from "../ApplicationContainer";
 import bsCustomFileInput from "bs-custom-file-input";
 import axios from "axios";
 import { toast } from "react-toastify";
-const rawMaterials = [
-  {
-    id: 1,
-    name: "Bread",
-    unitPrice: 1.5,
-    category: "Grains/Cereals",
-    quantity: 20,
-  },
-  {
-    id: 2,
-    name: "Egg",
-    unitPrice: 0.8,
-    category: "Meat, poultry, fish, and eggs",
-    quantity: 2,
-  },
-  { id: 3, name: "Mayonnaise", unitPrice: 4.5, category: "Oils", quantity: 10 },
-  {
-    id: 4,
-    name: "Tomato",
-    unitPrice: 2.0,
-    category: "Vegetables",
-    quantity: 1,
-  },
-  {
-    id: 5,
-    name: "Meat",
-    unitPrice: 4.3,
-    category: "Meat, poultry, fish, and eggs",
-    quantity: 5,
-  },
-  {
-    id: 6,
-    name: "Lettuce",
-    unitPrice: 8.0,
-    category: "Vegetables",
-    quantity: 25,
-  },
-  {
-    id: 7,
-    name: "Wheat",
-    unitPrice: 10.0,
-    category: "Grains/Cereals",
-    quantity: 40,
-  },
-  {
-    id: 8,
-    name: "Rice",
-    unitPrice: 12.7,
-    category: "Grains/Cereals",
-    quantity: 35,
-  },
-  {
-    id: 9,
-    name: "Sunflower Oil",
-    unitPrice: 24.0,
-    category: "Oils",
-    quantity: 8,
-  },
-];
+let rawMaterials = [];
 
 export default class AddFoodItem extends ApplicationContainer {
   constructor(props) {
     super(props);
 
     this.state = {
+      loading: false,
       rawMaterials: rawMaterials,
       foodItem: {
         foodItemName: "",
@@ -115,16 +58,21 @@ export default class AddFoodItem extends ApplicationContainer {
     };
   }
 
-  componentDidMount() {
+  async componentDidMount() {
     bsCustomFileInput.init();
+    this.setState({ loading: true });
+    await axios.get("http://localhost:3001/raw-materials").then((response) => {
+      rawMaterials = response.data.rawMaterials;
+      this.setState({ rawMaterials: rawMaterials });
+      this.setState({ loading: false });
+    });
   }
   filterRawMaterial = (e) => {
     e.preventDefault();
     const { value } = e.target;
-
     this.setState({
       rawMaterials: rawMaterials.filter((rawMaterial) =>
-        rawMaterial.name.toLowerCase().includes(value.toLowerCase())
+        rawMaterial.rawMaterialName.toLowerCase().includes(value.toLowerCase())
       ),
     });
   };
@@ -220,7 +168,7 @@ export default class AddFoodItem extends ApplicationContainer {
     let totalCost = 0;
     if (state.foodItem.selectedRawMaterials.length > 0) {
       state.foodItem.selectedRawMaterials.forEach((rawMaterial) => {
-        totalCost += rawMaterial.unitPrice * rawMaterial.quantity;
+        totalCost += rawMaterial.unitCost * rawMaterial.quantity;
       });
     }
     state.foodItem.totalCost = parseFloat(totalCost) + parseFloat(cost);
@@ -309,7 +257,7 @@ export default class AddFoodItem extends ApplicationContainer {
         (e) => e.id !== rawMaterial.id
       );
 
-    state.foodItem.totalCost -= rawMaterial.unitPrice * rawMaterial.quantity;
+    state.foodItem.totalCost -= rawMaterial.unitCost * rawMaterial.quantity;
 
     this.validator(
       "rawMaterials",
@@ -341,7 +289,7 @@ export default class AddFoodItem extends ApplicationContainer {
         state.rawMaterialQuantityModal.selectedRawMaterial
       );
       state.foodItem.totalCost +=
-        state.rawMaterialQuantityModal.selectedRawMaterial.unitPrice *
+        state.rawMaterialQuantityModal.selectedRawMaterial.unitCost *
         state.rawMaterialQuantityModal.selectedRawMaterialQuantity;
 
       state.rawMaterialQuantityModal.selectedRawMaterial = "";
@@ -391,7 +339,7 @@ export default class AddFoodItem extends ApplicationContainer {
     let state = { ...this.state };
     let totalCost = this.state.foodItem.selectedRawMaterials.reduce(
       (sum, item) => {
-        return sum + item.unitPrice * item.quantity;
+        return sum + item.unitCost * item.quantity;
       },
       0
     );
@@ -429,17 +377,17 @@ export default class AddFoodItem extends ApplicationContainer {
     return (
       <section>
         {super.render()}
-        <ToastContainer
-          position="top-center"
-          autoClose={3000}
-          hideProgressBar
-          newestOnTop={false}
-          closeOnClick
-          rtl={false}
-          pauseOnFocusLoss
-          draggable
-          pauseOnHover
-        />
+        {this.state.loading && (
+          <div className="dialog-background">
+            <div className="dialog-loading-wrapper">
+              <img
+                src={"/confirmation.gif"}
+                alt={"Loading..."}
+                className={"loading-img"}
+              />
+            </div>
+          </div>
+        )}
         <Row className={"m-3"}>
           <Col sm={5}>
             <Card>
@@ -462,10 +410,12 @@ export default class AddFoodItem extends ApplicationContainer {
                               <Row>
                                 <Col sm={4} className={"pl-3 text-left"}>
                                   <h6>
-                                    <span>{rawMaterial.name}</span>
+                                    <span>{rawMaterial.rawMaterialName}</span>
                                     <br />
                                     <span>
-                                      <small>{rawMaterial.category}</small>
+                                      <small>
+                                        {rawMaterial.unitMeasurement}
+                                      </small>
                                     </span>
                                   </h6>
                                 </Col>
@@ -484,7 +434,7 @@ export default class AddFoodItem extends ApplicationContainer {
                                       <strong>Unit Price</strong>
                                     </span>
                                     <br />
-                                    <span>${rawMaterial.unitPrice}</span>
+                                    <span>${rawMaterial.unitCost}</span>
                                   </h6>
                                 </Col>
                                 <Col sm={1}>
@@ -685,12 +635,13 @@ export default class AddFoodItem extends ApplicationContainer {
                         {this.state.rawMaterials.map((rawMaterial) => (
                           <ListGroup.Item key={rawMaterial.id}>
                             <Row>
+                              {console.log(rawMaterial)}
                               <Col sm={5} className={"pl-3"}>
                                 <h6>
-                                  <span>{rawMaterial.name}</span>
+                                  <span>{rawMaterial.rawMaterialName}</span>
                                   <br />
                                   <span>
-                                    <small>{rawMaterial.category}</small>
+                                    <small>{rawMaterial.unitMeasurement}</small>
                                   </span>
                                 </h6>
                               </Col>
@@ -699,7 +650,7 @@ export default class AddFoodItem extends ApplicationContainer {
                                   <span>
                                     <strong>Unit Price:</strong>
                                   </span>
-                                  <span> ${rawMaterial.unitPrice}</span>
+                                  <span> ${rawMaterial.unitCost}</span>
                                 </h6>
                               </Col>
                               <Col sm={2}>
@@ -745,7 +696,8 @@ export default class AddFoodItem extends ApplicationContainer {
                   plaintext
                   readOnly
                   defaultValue={
-                    this.state.rawMaterialQuantityModal.selectedRawMaterial.name
+                    this.state.rawMaterialQuantityModal.selectedRawMaterial
+                      .rawMaterialName
                   }
                   className={"p-0"}
                 />
