@@ -9,7 +9,13 @@ import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import ApplicationContainer from "../ApplicationContainer";
 import axios from "axios";
 import {toast} from "react-toastify";
-import {GET_PURCHASE_ORDERS, DELETE_PURCHASE_ORDER, PLACE_PURCHASE_ORDER, RECEIVE_PURCHASE_ORDER, ARCHIVE_PURCHASE_ORDER} from "../../config";
+import {
+  ARCHIVE_PURCHASE_ORDER,
+  DELETE_PURCHASE_ORDER,
+  GET_PURCHASE_ORDERS,
+  PLACE_PURCHASE_ORDER,
+  RECEIVE_PURCHASE_ORDER
+} from "../../config";
 
 let openPurchaseOrders = []
 let placedPurchaseOrders = []
@@ -38,32 +44,52 @@ export default class PurchaseOrders extends ApplicationContainer {
   componentDidMount = async () => {
     this.setState({loading: true});
 
-    await axios
-      .get(GET_PURCHASE_ORDERS)
-      .then((response) => {
-        this.setState({loading: false});
+    const user = JSON.parse(localStorage.getItem('user'));
+    if (user && user.token) {
+      const headers = {
+        'Authorization': 'Bearer ' + user.token
+      }
 
-        console.log(response);
+      await axios
+        .get(GET_PURCHASE_ORDERS, {headers: headers})
+        .then((response) => {
+          this.setState({loading: false});
 
-        let allOrders = response.data.purchaseOrders;
+          console.log(response);
 
-        openPurchaseOrders = allOrders.filter(order => { return order.status === 'OPEN'});
-        placedPurchaseOrders = allOrders.filter(order => { return order.status === 'PLACED'});
-        receivedPurchaseOrders = allOrders.filter(order => { return order.status === 'RECEIVED'});
+          let allOrders = response.data.purchaseOrders;
 
-        this.setState({
-          openPurchaseOrders: openPurchaseOrders,
-          placedPurchaseOrders: placedPurchaseOrders,
-          receivedPurchaseOrders: receivedPurchaseOrders
+          openPurchaseOrders = allOrders.filter(order => {
+            return order.status === 'OPEN'
+          });
+          placedPurchaseOrders = allOrders.filter(order => {
+            return order.status === 'PLACED'
+          });
+          receivedPurchaseOrders = allOrders.filter(order => {
+            return order.status === 'RECEIVED'
+          });
+
+          this.setState({
+            openPurchaseOrders: openPurchaseOrders,
+            placedPurchaseOrders: placedPurchaseOrders,
+            receivedPurchaseOrders: receivedPurchaseOrders
+          });
+
+          console.log(this.state);
+        })
+        .catch((error) => {
+          this.setState({loading: false});
+          if (error.response.status === 401) {
+            toast.error('Session is expired. Please login again.');
+            localStorage.removeItem('user');
+            this.props.history.push({
+              pathname: '/login'
+            });
+          } else {
+            toast.error(error.response.data.message);
+          }
         });
-
-        console.log(this.state);
-      })
-      .catch((error) => {
-        this.setState({loading: false});
-        console.error(error);
-        toast.error("Error occurred while fetching purchase orders.");
-      });
+    }
   }
 
   createPurchaseOrder = () => {
@@ -343,7 +369,9 @@ export default class PurchaseOrders extends ApplicationContainer {
                                 </Col>
                                 <Col sm={3} className={"pl-3 text-left"}>
                                   <h6>
-                                    <span>{order.raw_materials.map(rawMaterial => { return rawMaterial.rawMaterialName}).join(", \r\n")}</span>
+                                    <span>{order.raw_materials.map(rawMaterial => {
+                                      return rawMaterial.rawMaterialName
+                                    }).join(", \r\n")}</span>
                                   </h6>
                                 </Col>
                                 <Col sm={2}>
@@ -442,7 +470,9 @@ export default class PurchaseOrders extends ApplicationContainer {
                                 </Col>
                                 <Col sm={3} className={"pl-3 text-left"}>
                                   <h6>
-                                    <span>{order.raw_materials.map(rawMaterial => { return rawMaterial.rawMaterialName}).join(", \r\n")}</span>
+                                    <span>{order.raw_materials.map(rawMaterial => {
+                                      return rawMaterial.rawMaterialName
+                                    }).join(", \r\n")}</span>
                                   </h6>
                                 </Col>
                                 <Col sm={2}>
@@ -539,7 +569,9 @@ export default class PurchaseOrders extends ApplicationContainer {
                                 </Col>
                                 <Col sm={3} className={"pl-3 text-left"}>
                                   <h6>
-                                    <span>{order.raw_materials.map(rawMaterial => { return rawMaterial.rawMaterialName}).join(", \r\n")}</span>
+                                    <span>{order.raw_materials.map(rawMaterial => {
+                                      return rawMaterial.rawMaterialName
+                                    }).join(", \r\n")}</span>
                                   </h6>
                                 </Col>
                                 <Col sm={2}>

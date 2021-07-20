@@ -93,27 +93,33 @@ export default class FoodItems extends ApplicationContainer {
     this.loadFoodItems();
   }
   loadFoodItems = async () => {
-    let state = { ...this.state };
-    this.setState({ loading: true });
-    await axios
-      .get(GET_FOOD_ITEMS)
-      .then((result) => {
-        this.setState({ loading: false });
-        state.foodItemsDB = result.data.foodItems;
-        state.foodItemsDB.forEach((foodItem) => {
-          if (foodItem.imageFile) {
-            foodItem.imageFile = new Buffer.from(
-              foodItem.imageFile.data
-            ).toString("base64");
-          }
+    const user = JSON.parse(localStorage.getItem("user"));
+    if (user && user.token) {
+      const headers = {
+        Authorization: "Bearer " + user.token,
+      };
+      let state = { ...this.state };
+      this.setState({ loading: true });
+      await axios
+        .get(GET_FOOD_ITEMS, { headers: headers })
+        .then((result) => {
+          this.setState({ loading: false });
+          state.foodItemsDB = result.data.foodItems;
+          state.foodItemsDB.forEach((foodItem) => {
+            if (foodItem.imageFile) {
+              foodItem.imageFile = new Buffer.from(
+                foodItem.imageFile.data
+              ).toString("base64");
+            }
+          });
+          state.originalFoodItemsList = state.foodItemsDB;
+        })
+        .catch((error) => {
+          console.error(error);
         });
-        state.originalFoodItemsList = state.foodItemsDB;
-      })
-      .catch((error) => {
-        console.error(error);
-      });
 
-    this.setState(state);
+      this.setState(state);
+    }
   };
 
   searchFoodItems = (value) => {

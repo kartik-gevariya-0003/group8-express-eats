@@ -20,6 +20,7 @@ import "react-toastify/dist/ReactToastify.css";
 import {
   GET_ALL_INVENTORY,
   GET_FOOD_ITEMS,
+  GET_RAW_MATERIALS,
   POST_ADD_FOOD_ITEM_INVENTORY,
   POST_ADD_RAW_MATERIAL_INVENTORY,
 } from "../../config";
@@ -295,43 +296,53 @@ export default class Inventory extends ApplicationContainer {
   );
 
   componentDidMount = async () => {
-    this.setState({ loading: true });
-    await axios.get(GET_ALL_INVENTORY).then((response) => {
-      this.setState({ loading: false });
-      this.setState({
-        foodItems: response.data.foodItemInventories,
-        rawMaterials: response.data.rawMaterialInventories,
+    const user = JSON.parse(localStorage.getItem("user"));
+    if (user && user.token) {
+      const headers = {
+        Authorization: "Bearer " + user.token,
+      };
+      this.setState({ loading: true });
+      await axios
+        .get(GET_ALL_INVENTORY, { headers: headers })
+        .then((response) => {
+          this.setState({ loading: false });
+          this.setState({
+            foodItems: response.data.foodItemInventories,
+            rawMaterials: response.data.rawMaterialInventories,
+          });
+        });
+      this.setState({ loading: true });
+      await axios.get(GET_RAW_MATERIALS).then((response) => {
+        this.setState({ loading: false });
+        this.setState({ rawMaterialList: response.data.rawMaterials });
+        let rawMaterialList = [];
+        response.data.rawMaterials.forEach((listItem) => {
+          if (
+            !this.state.rawMaterials.some(
+              (item) => item.rawMaterialId === listItem.id
+            )
+          ) {
+            rawMaterialList.push(listItem);
+          }
+        });
+        this.setState({ rawMaterialList: rawMaterialList });
       });
-    });
-    this.setState({ loading: true });
-    await axios.get("http://localhost:3001/raw-materials").then((response) => {
-      this.setState({ loading: false });
-      this.setState({ rawMaterialList: response.data.rawMaterials });
-      let rawMaterialList = [];
-      response.data.rawMaterials.forEach((listItem) => {
-        if (
-          !this.state.rawMaterials.some(
-            (item) => item.rawMaterialId === listItem.id
-          )
-        ) {
-          rawMaterialList.push(listItem);
-        }
+      this.setState({ loading: true });
+      await axios.get(GET_FOOD_ITEMS, { headers: headers }).then((response) => {
+        this.setState({ loading: false });
+        let foodItemList = [];
+        response.data.foodItems.forEach((listItem) => {
+          if (
+            !this.state.foodItems.some(
+              (item) => item.foodItemId === listItem.id
+            )
+          ) {
+            foodItemList.push(listItem);
+          }
+        });
+        this.setState({ foodItemList: foodItemList });
       });
-      this.setState({ rawMaterialList: rawMaterialList });
-    });
-    this.setState({ loading: true });
-    await axios.get(GET_FOOD_ITEMS).then((response) => {
-      this.setState({ loading: false });
-      let foodItemList = [];
-      response.data.foodItems.forEach((listItem) => {
-        if (
-          !this.state.foodItems.some((item) => item.foodItemId === listItem.id)
-        ) {
-          foodItemList.push(listItem);
-        }
-      });
-      this.setState({ foodItemList: foodItemList });
-    });
+    }
   };
   render() {
     return (

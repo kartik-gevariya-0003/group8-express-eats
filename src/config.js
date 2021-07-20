@@ -3,6 +3,8 @@ const API_URL =
   process.env.REACT_APP_CONTAINER_1_URL || "http://localhost:3001";
 
 /* Custom Endpoint Constants */
+const LOGIN = API_URL + "/login";
+const REGISTER = API_URL + "/register";
 const GET_VENDORS = API_URL + "/vendors";
 const GET_RAW_MATERIALS = API_URL + "/raw-materials";
 const GET_MANUFACTURING_ORDERS = API_URL + "/get-manufacturing-orders";
@@ -31,6 +33,8 @@ const GET_ALL_INVENTORY = API_URL + "/get-all-inventory-items";
 
 module.exports = {
   API_URL,
+  LOGIN,
+  REGISTER,
   GET_VENDORS,
   GET_RAW_MATERIALS,
   GET_MANUFACTURING_ORDERS,
