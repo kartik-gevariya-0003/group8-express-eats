@@ -10,7 +10,7 @@ import axios from "axios";
 import {
   DELETE_MANUFACTURING_ORDER,
   GET_MANUFACTURING_ORDERS,
-  PUT_CHANGE_MANUFACTURING_ORDER_STATUS
+  CHANGE_MANUFACTURING_ORDER_STATUS
 } from "../../config";
 import {toast} from "react-toastify";
 
@@ -86,7 +86,7 @@ class ManufacturingOrders extends ApplicationContainer {
       const headers = {
         'Authorization': 'Bearer ' + user.token
       }
-      axios.put(PUT_CHANGE_MANUFACTURING_ORDER_STATUS, putData, {headers: headers}).then(() => {
+      axios.put(CHANGE_MANUFACTURING_ORDER_STATUS, putData, {headers: headers}).then(() => {
         this.getManufacturingOrders();
         this.setState({loading: false});
       }).catch(error => {

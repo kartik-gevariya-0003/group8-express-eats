@@ -1,5 +1,5 @@
-/*
-Author: Mansi Gevariya
+/**
+ * Author: Mansi Gevariya
 */
 import "./manufacturing-order.css";
 import React from "react";
@@ -18,7 +18,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSearch, faTrashAlt } from "@fortawesome/free-solid-svg-icons";
 import ApplicationContainer from "../ApplicationContainer";
 import axios from "axios";
-import { GET_FOOD_ITEMS, POST_CREATE_MANUFACTURING_ORDER } from "../../config";
+import { GET_FOOD_ITEMS, CREATE_MANUFACTURING_ORDER } from "../../config";
 import { toast } from "react-toastify";
 
 class CreateManufacturingOrder extends ApplicationContainer {
@@ -185,7 +185,7 @@ class CreateManufacturingOrder extends ApplicationContainer {
           Authorization: "Bearer " + user.token,
         };
         axios
-          .post(POST_CREATE_MANUFACTURING_ORDER, postData, { headers: headers })
+          .post(CREATE_MANUFACTURING_ORDER, postData, { headers: headers })
           .then(() => {
             this.setState({ loading: false });
             toast.success("Manufacturing Order created successfully.");
