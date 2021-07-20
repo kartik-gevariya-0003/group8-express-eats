@@ -122,8 +122,13 @@ export default class PurchaseOrders extends ApplicationContainer {
   deletePurchaseOrder = async (order) => {
     this.setState({loading: true});
 
+    const user = JSON.parse(localStorage.getItem('user'));
+    const headers = {
+      'Authorization': 'Bearer ' + user.token
+    }
+
     await axios
-      .delete(DELETE_PURCHASE_ORDER + "/" + order.orderNumber)
+      .delete(DELETE_PURCHASE_ORDER + "/" + order.orderNumber, {headers: headers})
       .then((response) => {
         this.setState({loading: false});
         toast.success("Purchase Order deleted successfully.");
@@ -136,18 +141,30 @@ export default class PurchaseOrders extends ApplicationContainer {
       })
       .catch((error) => {
         this.setState({loading: false});
-        console.error(error);
-        toast.error("Error occurred while deleting purchase orders.");
-
         this.closeModal();
+
+        if (error.response.status === 401) {
+          toast.error('Session is expired. Please login again.');
+          localStorage.removeItem('user');
+          this.props.history.push({
+            pathname: '/login'
+          });
+        } else {
+          toast.error(error.response.data.message);
+        }
       });
   }
 
   archivePurchaseOrder = async (order) => {
     this.setState({loading: true});
 
+    const user = JSON.parse(localStorage.getItem('user'));
+    const headers = {
+      'Authorization': 'Bearer ' + user.token
+    }
+
     await axios
-      .post(ARCHIVE_PURCHASE_ORDER + "/" + order.orderNumber)
+      .post(ARCHIVE_PURCHASE_ORDER + "/" + order.orderNumber, {}, {headers: headers})
       .then((response) => {
         this.setState({loading: false});
         toast.success("Purchase Order archived successfully.");
@@ -158,18 +175,30 @@ export default class PurchaseOrders extends ApplicationContainer {
       })
       .catch((error) => {
         this.setState({loading: false});
-        console.error(error);
-        toast.error("Error occurred while deleting purchase orders.");
-
         this.closeModal();
+
+        if (error.response.status === 401) {
+          toast.error('Session is expired. Please login again.');
+          localStorage.removeItem('user');
+          this.props.history.push({
+            pathname: '/login'
+          });
+        } else {
+          toast.error(error.response.data.message);
+        }
       });
   }
 
   placePurchaseOrder = async (order) => {
     this.setState({loading: true});
 
+    const user = JSON.parse(localStorage.getItem('user'));
+    const headers = {
+      'Authorization': 'Bearer ' + user.token
+    }
+
     await axios
-      .post(PLACE_PURCHASE_ORDER + "/" + order.orderNumber)
+      .post(PLACE_PURCHASE_ORDER + "/" + order.orderNumber, {}, {headers: headers})
       .then((response) => {
         this.setState({loading: false});
         toast.success("Purchase Order placed successfully.");
@@ -189,18 +218,30 @@ export default class PurchaseOrders extends ApplicationContainer {
       })
       .catch((error) => {
         this.setState({loading: false});
-        console.error(error);
-        toast.error("Error occurred while deleting purchase orders.");
-
         this.closeModal();
+
+        if (error.response.status === 401) {
+          toast.error('Session is expired. Please login again.');
+          localStorage.removeItem('user');
+          this.props.history.push({
+            pathname: '/login'
+          });
+        } else {
+          toast.error(error.response.data.message);
+        }
       });
   }
 
   receivePurchaseOrder = async (order) => {
     this.setState({loading: true});
 
+    const user = JSON.parse(localStorage.getItem('user'));
+    const headers = {
+      'Authorization': 'Bearer ' + user.token
+    }
+
     await axios
-      .post(RECEIVE_PURCHASE_ORDER + "/" + order.orderNumber)
+      .post(RECEIVE_PURCHASE_ORDER + "/" + order.orderNumber, {}, {headers: headers})
       .then((response) => {
         this.setState({loading: false});
         toast.success("Purchase Order received successfully.");
@@ -219,10 +260,17 @@ export default class PurchaseOrders extends ApplicationContainer {
       })
       .catch((error) => {
         this.setState({loading: false});
-        console.error(error);
-        toast.error("Error occurred while deleting purchase orders.");
-
         this.closeModal();
+
+        if (error.response.status === 401) {
+          toast.error('Session is expired. Please login again.');
+          localStorage.removeItem('user');
+          this.props.history.push({
+            pathname: '/login'
+          });
+        } else {
+          toast.error(error.response.data.message);
+        }
       });
   }
 

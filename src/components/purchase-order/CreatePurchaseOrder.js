@@ -48,39 +48,60 @@ export default class CreatePurchaseOrder extends ApplicationContainer {
   componentDidMount = async () => {
     this.setState({loading: true});
 
-    await axios
-      .get(GET_VENDORS)
-      .then((response) => {
-        this.setState({loading: false});
+    const user = JSON.parse(localStorage.getItem('user'));
+    if (user && user.token) {
+      const headers = {
+        'Authorization': 'Bearer ' + user.token
+      }
 
-        vendors = response.data.vendors;
+      await axios
+        .get(GET_VENDORS, {headers: headers})
+        .then((response) => {
+          this.setState({loading: false});
 
-        this.setState({
-          vendors: vendors,
+          vendors = response.data.vendors;
+
+          this.setState({
+            vendors: vendors,
+          });
+        })
+        .catch((error) => {
+          this.setState({loading: false});
+          if (error.response.status === 401) {
+            toast.error('Session is expired. Please login again.');
+            localStorage.removeItem('user');
+            this.props.history.push({
+              pathname: '/login'
+            });
+          } else {
+            toast.error(error.response.data.message);
+          }
         });
-      })
-      .catch((error) => {
-        this.setState({loading: false});
-        console.error(error);
-        toast.error("Error occurred while fetching vendors.");
-      });
 
-    await axios
-      .get(GET_RAW_MATERIALS)
-      .then((response) => {
-        this.setState({loading: false});
+      await axios
+        .get(GET_RAW_MATERIALS, {headers: headers})
+        .then((response) => {
+          this.setState({loading: false});
 
-        rawMaterials = response.data.rawMaterials;
+          rawMaterials = response.data.rawMaterials;
 
-        this.setState({
-          rawMaterials: rawMaterials,
+          this.setState({
+            rawMaterials: rawMaterials,
+          });
+        })
+        .catch((error) => {
+          this.setState({loading: false});
+          if (error.response.status === 401) {
+            toast.error('Session is expired. Please login again.');
+            localStorage.removeItem('user');
+            this.props.history.push({
+              pathname: '/login'
+            });
+          } else {
+            toast.error(error.response.data.message);
+          }
         });
-      })
-      .catch((error) => {
-        this.setState({loading: false});
-        console.error(error);
-        toast.error("Error occurred while fetching raw materials.");
-      });
+    }
   }
 
   componentWillUnmount() {
@@ -121,8 +142,13 @@ export default class CreatePurchaseOrder extends ApplicationContainer {
 
       this.setState({loading: true});
 
+      const user = JSON.parse(localStorage.getItem('user'));
+      const headers = {
+        'Authorization': 'Bearer ' + user.token
+      }
+
       await axios
-        .post(CREATE_PURCHASE_ORDER, bodyData)
+        .post(CREATE_PURCHASE_ORDER, bodyData, {headers: headers})
         .then((response) => {
           this.setState({loading: false});
           toast.success("Purchase Order created successfully.");
@@ -132,8 +158,15 @@ export default class CreatePurchaseOrder extends ApplicationContainer {
         })
         .catch((error) => {
           this.setState({loading: false});
-          console.error(error);
-          toast.error("Purchase Order was not added. Please try again. !");
+          if (error.response.status === 401) {
+            toast.error('Session is expired. Please login again.');
+            localStorage.removeItem('user');
+            this.props.history.push({
+              pathname: '/login'
+            });
+          } else {
+            toast.error(error.response.data.message);
+          }
         });
     }
 
