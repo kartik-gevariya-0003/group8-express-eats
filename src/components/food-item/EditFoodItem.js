@@ -1,4 +1,5 @@
-// Author: Tasneem Yusuf Porbanderwalaimport "./food-item.css";
+// Author: Tasneem Yusuf Porbanderwala
+import "./food-item.css";
 import React from "react";
 import {
   Button,
