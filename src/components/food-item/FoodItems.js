@@ -1,20 +1,34 @@
 // Author: Tasneem Yusuf Porbanderwala
-import {Button, Card, CardDeck, Col, Form, FormControl, InputGroup, Modal, Row,} from "react-bootstrap";
-import React, {Component} from "react";
-import Header from "../headers/Header";
-import {faPencilAlt, faSearch, faTrashAlt,} from "@fortawesome/free-solid-svg-icons";
-import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import {
+  Button,
+  Card,
+  CardDeck,
+  Col,
+  Form,
+  FormControl,
+  InputGroup,
+  Modal,
+  Row,
+} from "react-bootstrap";
+import React from "react";
+import {
+  faPencilAlt,
+  faSearch,
+  faTrashAlt,
+} from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import axios from "axios";
-import {toast, ToastContainer} from "react-toastify";
+import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import {DELETE_FOOD_ITEM, GET_FOOD_ITEMS} from "../../config";
+import ApplicationContainer from "../ApplicationContainer";
+import { DELETE_FOOD_ITEM, GET_FOOD_ITEMS } from "../../config";
 
-export default class FoodItems extends Component {
+export default class FoodItems extends ApplicationContainer {
   constructor(props) {
     super(props);
     this.state = {
-      foodItemsDB: null,
-      originalFoodItemsList: null,
+      foodItemsDB: [],
+      originalFoodItemsList: [],
       deleteFoodItemModal: {
         show: false,
         id: -1,
@@ -28,23 +42,42 @@ export default class FoodItems extends Component {
   };
 
   async deleteFoodItem(id) {
-    let state = { ...this.state };
+    const user = JSON.parse(localStorage.getItem("user"));
+    if (user && user.token) {
+      const headers = {
+        Authorization: "Bearer " + user.token,
+      };
+      let state = { ...this.state };
+      await axios
+        .delete(DELETE_FOOD_ITEM + id, {
+          headers: headers,
+        })
+        .then((response) => {
+          toast.success("Food Item deleted successfully!");
+          state.foodItemsDB = state.foodItemsDB.filter((x) => {
+            return x.id !== id;
+          });
 
-    state.foodItemsDB = state.foodItemsDB.filter((x) => {
-      return x.id !== id;
-    });
-    this.closeModal();
-    this.setState(state);
-    await axios
-      .delete(DELETE_FOOD_ITEM + id)
-      .then((response) => {
-        toast.success("Food Item deleted successfully!");
-      })
-      .catch((error) => {
-        toast.error(
-          "There was some problem deleting the food item. Please try again later."
-        );
-      });
+          this.setState(state);
+          this.closeModal();
+        })
+        .catch((error) => {
+          if (error.response.status === 401) {
+            toast.error("Session is expired. Please login again.");
+            localStorage.removeItem("user");
+            this.props.history.push({
+              pathname: "/login",
+            });
+          } else if (error.response.status === 409) {
+            toast.error("Food Item exists in an Open Manufacturing Order.");
+          } else {
+            toast.error(
+              "There was some problem deleting the food item. Please try again later."
+            );
+          }
+          this.closeModal();
+        });
+    }
   }
 
   goToEditFoodItem = (foodItem) => {
@@ -58,7 +91,7 @@ export default class FoodItems extends Component {
     let state = { ...this.state };
     state.deleteFoodItemModal.show = true;
     state.deleteFoodItemModal.id = foodItem.id;
-    state.deleteFoodItemModal.name = foodItem.name;
+    state.deleteFoodItemModal.foodItemName = foodItem.foodItemName;
     this.setState(state);
   };
 
@@ -74,24 +107,42 @@ export default class FoodItems extends Component {
     this.loadFoodItems();
   }
   loadFoodItems = async () => {
-    let state = { ...this.state };
-
-    await axios
-      .get(GET_FOOD_ITEMS)
-      .then((result) => {
-        state.foodItemsDB = result.data.foodItems;
-        state.foodItemsDB.forEach((foodItem) => {
-          foodItem.imageFile = new Buffer.from(
-            foodItem.imageFile.data
-          ).toString("base64");
+    const user = JSON.parse(localStorage.getItem("user"));
+    if (user && user.token) {
+      const headers = {
+        Authorization: "Bearer " + user.token,
+      };
+      let state = { ...this.state };
+      this.setState({ loading: true });
+      await axios
+        .get(GET_FOOD_ITEMS, { headers: headers })
+        .then((result) => {
+          this.setState({ loading: false });
+          state.foodItemsDB = result.data.foodItems;
+          state.foodItemsDB.forEach((foodItem) => {
+            if (foodItem.imageFile) {
+              foodItem.imageFile = new Buffer.from(
+                foodItem.imageFile.data
+              ).toString("base64");
+            }
+          });
+          state.originalFoodItemsList = state.foodItemsDB;
+        })
+        .catch((error) => {
+          this.setState({ loading: false });
+          if (error.response.status === 401) {
+            toast.error("Session is expired. Please login again.");
+            localStorage.removeItem("user");
+            this.props.history.push({
+              pathname: "/login",
+            });
+          } else {
+            toast.error(error.response.data.message);
+          }
         });
-        state.originalFoodItemsList = state.foodItemsDB;
-      })
-      .catch((error) => {
-        console.error(error);
-      });
 
-    this.setState(state);
+      this.setState(state);
+    }
   };
 
   searchFoodItems = (value) => {
@@ -105,22 +156,22 @@ export default class FoodItems extends Component {
   render() {
     return (
       <section>
-        <ToastContainer
-          position="top-center"
-          autoClose={3000}
-          hideProgressBar
-          newestOnTop={false}
-          closeOnClick
-          rtl={false}
-          pauseOnFocusLoss
-          draggable
-          pauseOnHover
-        />
-        <Header />
+        {super.render()}
+        {this.state.loading && (
+          <div className="dialog-background">
+            <div className="dialog-loading-wrapper">
+              <img
+                src={"/confirmation.gif"}
+                alt={"Loading..."}
+                className={"loading-img"}
+              />
+            </div>
+          </div>
+        )}
         <Row className="m-3">
           <Col className={"text-left"}>
             <h2>Food Items</h2>
-            <hr/>
+            <hr />
           </Col>
         </Row>
         <Row className="m-3">
@@ -150,43 +201,52 @@ export default class FoodItems extends Component {
           </Col>
         </Row>
         <Row className="m-3">
-          <CardDeck className="row row-cols-md-4 row-cols-sm-3 deck">
-            {this.state.foodItemsDB ? (
-              this.state.foodItemsDB.map((foodItem) => (
-                <Col className="mb-3" key={foodItem.id}>
-                  <Card>
-                    <Card.Img
-                      variant="top"
-                      src={`data:image/jpeg;base64,${foodItem.imageFile}`}
-                    />
-                    <Card.Body>
-                      <Card.Title>{foodItem.foodItemName}</Card.Title>
+          {this.state.foodItemsDB.length !== 0 ? (
+            <CardDeck className="row row-cols-md-4 row-cols-sm-3 deck">
+              {this.state.foodItemsDB ? (
+                this.state.foodItemsDB.map((foodItem) => (
+                  <Col className="mb-3" key={foodItem.id}>
+                    <Card>
+                      {foodItem.imageFile ? (
+                        <Card.Img
+                          variant="top"
+                          src={`data:image/jpeg;base64,${foodItem.imageFile}`}
+                        />
+                      ) : (
+                        <></>
+                      )}
 
-                      <FontAwesomeIcon
-                        icon={faPencilAlt}
-                        color={"#035384AA"}
-                        className="float-left"
-                        onClick={() => {
-                          this.goToEditFoodItem(foodItem);
-                        }}
-                      />
+                      <Card.Body>
+                        <Card.Title>{foodItem.foodItemName}</Card.Title>
 
-                      <FontAwesomeIcon
-                        icon={faTrashAlt}
-                        color={"#ba2311"}
-                        onClick={() => {
-                          this.showModal(foodItem);
-                        }}
-                        className="float-right  "
-                      />
-                    </Card.Body>
-                  </Card>
-                </Col>
-              ))
-            ) : (
-              <span>No Food Items to display</span>
-            )}
-          </CardDeck>
+                        <FontAwesomeIcon
+                          icon={faPencilAlt}
+                          color={"#035384AA"}
+                          className="float-left"
+                          onClick={() => {
+                            this.goToEditFoodItem(foodItem);
+                          }}
+                        />
+
+                        <FontAwesomeIcon
+                          icon={faTrashAlt}
+                          color={"#ba2311"}
+                          onClick={() => {
+                            this.showModal(foodItem);
+                          }}
+                          className="float-right  "
+                        />
+                      </Card.Body>
+                    </Card>
+                  </Col>
+                ))
+              ) : (
+                <span>No Food Items to display</span>
+              )}
+            </CardDeck>
+          ) : (
+            <span>No Food Items Available</span>
+          )}
         </Row>
         <Modal
           show={this.state.deleteFoodItemModal.show}
@@ -201,7 +261,7 @@ export default class FoodItems extends Component {
               <Form.Label className={"m-0"}>
                 <strong>
                   Are you sure you want to delete{" "}
-                  {this.state.deleteFoodItemModal.name}?{" "}
+                  {this.state.deleteFoodItemModal.foodItemName}?{" "}
                 </strong>
               </Form.Label>
               <Form.Label className={"m-0"}>
