@@ -1,6 +1,6 @@
-/*
-Author: Mansi Gevariya
-* */
+/**
+ * Author: Mansi Gevariya
+ */
 import React from "react";
 import {Accordion, Button, Card, Col, Form, FormControl, InputGroup, ListGroup, Modal, Row} from "react-bootstrap";
 import {faAngleDown, faAngleUp, faSearch, faTrashAlt} from "@fortawesome/free-solid-svg-icons";
@@ -46,12 +46,18 @@ class ManufacturingOrders extends ApplicationContainer {
   }
 
   componentDidMount() {
-    this.getManufacturingOrders()
+    const user = JSON.parse(localStorage.getItem('user'));
+    if (user && user.token) {
+      const headers = {
+        'Authorization': 'Bearer ' + user.token
+      }
+      this.getManufacturingOrders(headers)
+    }
   }
 
-  getManufacturingOrders = () => {
+  getManufacturingOrders = (headers) => {
     this.setState({loading: true});
-    axios.get(GET_MANUFACTURING_ORDERS).then(result => {
+    axios.get(GET_MANUFACTURING_ORDERS, {headers: headers}).then(result => {
       let manufacturingOrders = result.data['manufacturingOrders'];
       this.originalOrder.openOrders = manufacturingOrders.filter(manufacturingOrder => manufacturingOrder.status === MANUFACTURING_ORDER_STATUS.OPEN)
       this.originalOrder.preppingOrders = manufacturingOrders.filter(manufacturingOrder => manufacturingOrder.status === MANUFACTURING_ORDER_STATUS.PREPPING)
@@ -75,18 +81,24 @@ class ManufacturingOrders extends ApplicationContainer {
       order: item,
       status: status
     }
-    axios.put(PUT_CHANGE_MANUFACTURING_ORDER_STATUS, putData).then(() => {
-      this.getManufacturingOrders();
-      this.setState({loading: false});
-    }).catch(error => {
-      this.setState({loading: false});
-      console.error(error);
-      if (error.response.status === 412) {
-        toast.error("The manufacturing order cannot be moved to Prepping state as there are not enough raw materials in the inventory.");
-      } else {
-        toast.error("Error occurred while changing the status of manufacturing order.");
+    const user = JSON.parse(localStorage.getItem('user'));
+    if (user && user.token) {
+      const headers = {
+        'Authorization': 'Bearer ' + user.token
       }
-    })
+      axios.put(PUT_CHANGE_MANUFACTURING_ORDER_STATUS, putData, {headers: headers}).then(() => {
+        this.getManufacturingOrders();
+        this.setState({loading: false});
+      }).catch(error => {
+        this.setState({loading: false});
+        console.error(error);
+        if (error.response && error.response.status === 412) {
+          toast.error("The manufacturing order cannot be moved to Prepping state as there are not enough raw materials in the inventory.");
+        } else {
+          toast.error("Error occurred while changing the status of manufacturing order.");
+        }
+      })
+    }
   }
 
   openDeleteModal = (item) => {
@@ -119,17 +131,23 @@ class ManufacturingOrders extends ApplicationContainer {
 
   deleteOpenManufacturingOrder = () => {
     let state = this.state
-    this.setState({loading: true});
-    const deleteUrl = DELETE_MANUFACTURING_ORDER + "/" + state.deleteModal.orderNumber;
-    axios.delete(deleteUrl).then(() => {
-      this.closeDeleteModal();
-      this.getManufacturingOrders();
-      this.setState({loading: false});
-    }).catch(error => {
-      this.setState({loading: false});
-      console.error(error);
-      toast.error("Error occurred while fetching purchase orders.");
-    })
+    const user = JSON.parse(localStorage.getItem('user'));
+    if (user && user.token) {
+      const headers = {
+        'Authorization': 'Bearer ' + user.token
+      }
+      this.setState({loading: true});
+      const deleteUrl = DELETE_MANUFACTURING_ORDER + "/" + state.deleteModal.orderNumber;
+      axios.delete(deleteUrl, {headers: headers}).then(() => {
+        this.closeDeleteModal();
+        this.getManufacturingOrders();
+        this.setState({loading: false});
+      }).catch(error => {
+        this.setState({loading: false});
+        console.error(error);
+        toast.error("Error occurred while fetching purchase orders.");
+      })
+    }
   }
 
   archiveManufacturingOrder = () => {
