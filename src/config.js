@@ -2,14 +2,22 @@
 const API_URL = process.env.REACT_APP_CONTAINER_1_URL || 'http://localhost:3001';
 
 /* Custom Endpoint Constants */
+
 const LOGIN = API_URL + "/login";
 const REGISTER = API_URL + "/register";
 const GET_VENDORS = API_URL + "/vendors";
+
 const GET_RAW_MATERIALS = API_URL + "/raw-materials";
+const ADD_RAW_MATERIAL = API_URL + "/add-raw-material";
+const DELETE_RAW_MATERIAL = API_URL + "/delete-raw-material/";
+const PUT_RAW_MATERIAL = API_URL + "/update-raw-material";
+const GET_RAW_MATERIAL_BY_ID = API_URL + "/get-raw-material-by-id/"
+
 const GET_MANUFACTURING_ORDERS = API_URL + "/get-manufacturing-orders";
 const POST_CREATE_MANUFACTURING_ORDER = API_URL + '/create-manufacturing-order';
 const PUT_CHANGE_MANUFACTURING_ORDER_STATUS = API_URL + '/change-manufacturing-order-status';
 const DELETE_MANUFACTURING_ORDER = API_URL + '/delete-manufacturing-order';
+
 const GET_PURCHASE_ORDERS = API_URL + "/purchase-orders"
 const CREATE_PURCHASE_ORDER = API_URL + "/purchase-order";
 const DELETE_PURCHASE_ORDER = API_URL + "/purchase-order";
@@ -29,7 +37,7 @@ module.exports = {
   LOGIN,
   REGISTER,
   GET_VENDORS,
-  GET_RAW_MATERIALS,
+  GET_RAW_MATERIALS, ADD_RAW_MATERIAL, DELETE_RAW_MATERIAL, PUT_RAW_MATERIAL,GET_RAW_MATERIAL_BY_ID,
   GET_PURCHASE_ORDERS, CREATE_PURCHASE_ORDER, DELETE_PURCHASE_ORDER, PLACE_PURCHASE_ORDER, RECEIVE_PURCHASE_ORDER, ARCHIVE_PURCHASE_ORDER,
   API_URL, GET_MANUFACTURING_ORDERS, POST_CREATE_MANUFACTURING_ORDER,
   PUT_CHANGE_MANUFACTURING_ORDER_STATUS, DELETE_MANUFACTURING_ORDER, POST_ADD_FOOD_ITEM,
