@@ -69,7 +69,7 @@ class UpdateRawMaterial extends ApplicationContainer {
         })
     }
 
-    // GET API call
+    // GET API call for raw material by Id
     getRawMaterial(headers) {
         this.setState({loading: true});
         const url = GET_RAW_MATERIAL_BY_ID + this.state.rawMaterial.id
@@ -207,7 +207,7 @@ class UpdateRawMaterial extends ApplicationContainer {
                     this.setState({loading: false});
                     toast.success("Raw Material updated successfully.");
                     this.props.history.push({
-                        pathname: '/raw-materials',
+                        pathname: '/raw-material',
                     });
                 });
             }
