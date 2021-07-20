@@ -1,4 +1,9 @@
 // Author: Karishma Suresh Lalwani
+/*
+* Functionality for displaying all the raw material details in the system
+* which also includes search, edit and delete features.
+* */
+
 import React from "react";
 import {Button, Card, Col, Form, FormControl, InputGroup, ListGroup, Modal, Row} from "react-bootstrap";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
@@ -31,6 +36,7 @@ export default class RawMaterials extends ApplicationContainer {
     }
   }
 
+  // GET API call to fetch all the raw material details in the system
   getRawMaterials = (headers) => {
     axios.get(GET_RAW_MATERIALS, {headers : headers}).then(result => {
       let rawMaterials = result.data['rawMaterials']
@@ -49,6 +55,7 @@ export default class RawMaterials extends ApplicationContainer {
     });
   }
 
+  //DELETE API call to delete a raw material
   deleteRawMaterial(id) {
     const user = JSON.parse(localStorage.getItem('user'));
     if (user && user.token) {
@@ -78,6 +85,7 @@ export default class RawMaterials extends ApplicationContainer {
     this.setState(state);
   };
 
+  // Search-bar functionality
   filterRawMaterial = (e) => {
     e.preventDefault();
     const {value} = e.target;

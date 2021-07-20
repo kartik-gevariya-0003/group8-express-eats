@@ -1,4 +1,8 @@
 // Author: Karishma Suresh Lalwani
+/*
+* Functionality to Edit the raw material details in the system
+* */
+
 import React from "react";
 import {Button, Card, Col, Form, Row} from "react-bootstrap";
 import axios from "axios";
@@ -51,6 +55,7 @@ class UpdateRawMaterial extends ApplicationContainer {
         }
     }
 
+    // GET API call to fetch the vendors
     getVendors(headers) {
         this.setState({loading: true});
         axios.get(GET_VENDORS, {headers : headers}).then(result => {
@@ -64,6 +69,7 @@ class UpdateRawMaterial extends ApplicationContainer {
         })
     }
 
+    // GET API call
     getRawMaterial(headers) {
         this.setState({loading: true});
         const url = GET_RAW_MATERIAL_BY_ID + this.state.rawMaterial.id
@@ -88,6 +94,7 @@ class UpdateRawMaterial extends ApplicationContainer {
         })
     }
 
+    // Form-Validations
     validator = (name, value, errors) => {
         switch (name) {
             case "rawMaterialName":
@@ -166,10 +173,12 @@ class UpdateRawMaterial extends ApplicationContainer {
         this.setState(state);
     }
 
+    // Cancel-button handler
     cancelHandler = (e) => {
         this.props.history.push("/raw-materials");
     };
 
+    //Submit-button handler
     handleSubmit = (e) => {
         e.preventDefault();
         let errors = {...this.state.errors};
@@ -186,6 +195,7 @@ class UpdateRawMaterial extends ApplicationContainer {
             }
         });
 
+        // PUT API call for updating the raw material details
         if (isValid) {
             const putData = this.state.rawMaterial
             const user = JSON.parse(localStorage.getItem('user'));
