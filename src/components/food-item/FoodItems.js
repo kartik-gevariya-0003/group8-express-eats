@@ -7,11 +7,10 @@ import {
   Form,
   FormControl,
   InputGroup,
-  Row,
   Modal,
+  Row,
 } from "react-bootstrap";
-import React, { Component } from "react";
-import Header from "../headers/Header";
+import React from "react";
 import {
   faPencilAlt,
   faSearch,
@@ -21,8 +20,8 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import axios from "axios";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import { ToastContainer } from "react-toastify";
 import ApplicationContainer from "../ApplicationContainer";
+import { DELETE_FOOD_ITEM, GET_FOOD_ITEMS } from "../../config";
 
 export default class FoodItems extends ApplicationContainer {
   constructor(props) {
@@ -44,9 +43,8 @@ export default class FoodItems extends ApplicationContainer {
 
   async deleteFoodItem(id) {
     let state = { ...this.state };
-
     await axios
-      .delete("http://localhost:3001/delete-food-item/" + id)
+      .delete(DELETE_FOOD_ITEM + id)
       .then((response) => {
         toast.success("Food Item deleted successfully!");
         state.foodItemsDB = state.foodItemsDB.filter((x) => {
@@ -58,7 +56,7 @@ export default class FoodItems extends ApplicationContainer {
       })
       .catch((error) => {
         if (error.response.status === 401) {
-          toast.error("Food Item exists in an Open Maunfacturing Order.");
+          toast.error("Food Item exists in an Open Manufacturing Order.");
         } else {
           toast.error(
             "There was some problem deleting the food item. Please try again later."
@@ -98,7 +96,7 @@ export default class FoodItems extends ApplicationContainer {
     let state = { ...this.state };
     this.setState({ loading: true });
     await axios
-      .get("http://localhost:3001/get-food-items")
+      .get(GET_FOOD_ITEMS)
       .then((result) => {
         this.setState({ loading: false });
         state.foodItemsDB = result.data.foodItems;

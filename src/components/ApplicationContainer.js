@@ -1,3 +1,6 @@
+/**
+ * Author: Kartik Gevariya
+ */
 import React, {Component} from 'react';
 import Header from "./headers/Header";
 

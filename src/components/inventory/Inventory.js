@@ -1,5 +1,4 @@
 import React from "react";
-import { ToastContainer } from "react-toastify";
 import ApplicationContainer from "../ApplicationContainer";
 import {
   Button,
@@ -25,33 +24,6 @@ import {
   POST_ADD_RAW_MATERIAL_INVENTORY,
 } from "../../config";
 import axios from "axios";
-// let originalRawMaterialList = [
-//   { rawMaterial: "Milk", quantity: "10" },
-//   { rawMaterial: "Sugar", quantity: "2" },
-//   { rawMaterial: "Apple", quantity: "5" },
-//   { rawMaterial: "Salt", quantity: "20" },
-// ];
-
-// let rawMaterialList = [
-//   { rawMaterial: "Milk", quantity: "10" },
-//   { rawMaterial: "Sugar", quantity: "2" },
-//   { rawMaterial: "Apple", quantity: "5" },
-//   { rawMaterial: "Salt", quantity: "20" },
-// ];
-
-// let originalFoodItems = [
-//   { foodItem: "Sandwich", quantity: "1" },
-//   { foodItem: "Strawberry Tart", quantity: "10" },
-//   { foodItem: "Chocolate Cake", quantity: "2" },
-//   { foodItem: "Spinach Quiche", quantity: "20" },
-// ];
-
-// let foodItems = [
-//   { foodItem: "Sandwich", quantity: "1" },
-//   { foodItem: "Strawberry Tart", quantity: "10" },
-//   { foodItem: "Chocolate Cake", quantity: "2" },
-//   { foodItem: "Spinach Quiche", quantity: "20" },
-// ];
 export default class Inventory extends ApplicationContainer {
   constructor(props) {
     super(props);
@@ -579,7 +551,9 @@ export default class Inventory extends ApplicationContainer {
           </Modal.Header>
           <Modal.Body>
             <Form.Group>
-              <Form.Label>Food Item Name *</Form.Label>
+              <Form.Label>
+                <strong>Food Item Name</strong> *
+              </Form.Label>
               <Select
                 isClearable
                 className={this.state.errors.foodItemName ? "is-invalid" : ""}
@@ -597,7 +571,9 @@ export default class Inventory extends ApplicationContainer {
             </Form.Group>
 
             <Form.Group>
-              <Form.Label>Quantity *</Form.Label>
+              <Form.Label>
+                <strong>Quantity</strong> *
+              </Form.Label>
 
               <Form.Control
                 name="quantity"

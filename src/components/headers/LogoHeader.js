@@ -1,6 +1,7 @@
-/*
-Author: Mansi Gevariya
-* */
+/**
+ * Author: Mansi Gevariya
+ * Author: Kartik Gevariya
+ */
 import "./header.css"
 import {Component} from "react";
 import {Button, Col, Image, Nav, NavDropdown, Row} from "react-bootstrap";
@@ -17,7 +18,7 @@ class LogoHeader extends Component {
       activeLink: window.location.pathname
     }
     this.showUserIcon = this.state.activeLink === '/home';
-    this.showLoginButton = this.state.activeLink === '/';
+    this.showLoginButton = false;
 
     this.logoImageClasses = "logo-image center";
     if (this.showUserIcon) {

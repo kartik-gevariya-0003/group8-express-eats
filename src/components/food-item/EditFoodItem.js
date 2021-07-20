@@ -12,13 +12,19 @@ import {
   Row,
 } from "react-bootstrap";
 import "react-toastify/dist/ReactToastify.css";
-import { ToastContainer } from "react-toastify";
 import { faSearch, faTrashAlt } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import ApplicationContainer from "../ApplicationContainer";
 import bsCustomFileInput from "bs-custom-file-input";
 import axios from "axios";
 import { toast } from "react-toastify";
+import {
+  GET_FOOD_ITEM_BY_ID,
+  GET_FOOD_ITEM_NAME,
+  GET_RAW_MATERIALS,
+  PUT_FOOD_ITEM,
+  PUT_FOOD_ITEM_WITH_IMAGE,
+} from "../../config";
 
 let rawMaterials = [];
 
@@ -56,7 +62,7 @@ export default class EditFoodItem extends ApplicationContainer {
     let state = { ...this.state };
     this.setState({ loading: true });
     await axios
-      .get("http://localhost:3001/get-food-item-by-id/" + this.state.foodItemId)
+      .get(GET_FOOD_ITEM_BY_ID + this.state.foodItemId)
       .then((result) => {
         this.setState({ loading: true });
         state.foodItem = result.data.foodItem;
@@ -74,7 +80,7 @@ export default class EditFoodItem extends ApplicationContainer {
       });
     this.setState(state);
     bsCustomFileInput.init();
-    await axios.get("http://localhost:3001/raw-materials").then((response) => {
+    await axios.get(GET_RAW_MATERIALS).then((response) => {
       rawMaterials = response.data.rawMaterials;
       this.setState({ rawMaterials: rawMaterials });
       this.setState({ loading: false });
@@ -136,11 +142,7 @@ export default class EditFoodItem extends ApplicationContainer {
       };
       if (this.state.isReplaceImage) {
         await axios
-          .put(
-            "http://localhost:3001/update-food-item-with-image",
-            formData,
-            config
-          )
+          .put(PUT_FOOD_ITEM_WITH_IMAGE, formData, config)
           .then((response) => {
             this.props.history.push({
               pathname: "/food-item/confirmation",
@@ -158,7 +160,7 @@ export default class EditFoodItem extends ApplicationContainer {
           });
       } else {
         await axios
-          .put("http://localhost:3001/update-food-item", {
+          .put(PUT_FOOD_ITEM, {
             id: this.state.foodItem.id,
             foodItemName: this.state.foodItem.foodItemName,
             totalCost: this.state.foodItem.totalCost,
@@ -223,11 +225,6 @@ export default class EditFoodItem extends ApplicationContainer {
         if (value.length === 0 || value <= 0) {
           isError.selectedRawMaterialQuantity =
             "Quantity should be greater than 0";
-        } else if (
-          this.state.rawMaterialQuantityModal.selectedRawMaterial.quantity <
-          this.state.rawMaterialQuantityModal.selectedRawMaterialQuantity
-        ) {
-          isError.selectedRawMaterialQuantity = "Insufficient Quantity";
         }
         break;
       case "foodItemName":
@@ -236,10 +233,7 @@ export default class EditFoodItem extends ApplicationContainer {
           isError.foodItemName = "Please enter food item name";
         } else if (value !== this.state.originalFoodItemName) {
           await axios
-            .get(
-              "http://localhost:3001/get-food-item-name/" +
-                this.state.foodItem.foodItemName
-            )
+            .get(GET_FOOD_ITEM_NAME + this.state.foodItem.foodItemName)
             .then((response) => {
               isError.foodItemName = response.data.message;
             })

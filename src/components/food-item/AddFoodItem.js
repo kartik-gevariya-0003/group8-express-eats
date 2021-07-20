@@ -13,13 +13,17 @@ import {
   Row,
 } from "react-bootstrap";
 import "react-toastify/dist/ReactToastify.css";
-import { ToastContainer } from "react-toastify";
 import { faSearch, faTrashAlt } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import ApplicationContainer from "../ApplicationContainer";
 import bsCustomFileInput from "bs-custom-file-input";
 import axios from "axios";
 import { toast } from "react-toastify";
+import {
+  GET_FOOD_ITEM_NAME,
+  GET_RAW_MATERIALS,
+  POST_ADD_FOOD_ITEM,
+} from "../../config";
 let rawMaterials = [];
 
 export default class AddFoodItem extends ApplicationContainer {
@@ -61,7 +65,7 @@ export default class AddFoodItem extends ApplicationContainer {
   async componentDidMount() {
     bsCustomFileInput.init();
     this.setState({ loading: true });
-    await axios.get("http://localhost:3001/raw-materials").then((response) => {
+    await axios.get(GET_RAW_MATERIALS).then((response) => {
       rawMaterials = response.data.rawMaterials;
       this.setState({ rawMaterials: rawMaterials });
       this.setState({ loading: false });
@@ -107,6 +111,7 @@ export default class AddFoodItem extends ApplicationContainer {
       }
     });
     if (isValid) {
+      this.setState({ loading: true });
       const formData = new FormData();
       for (var key in this.state.foodItem) {
         if (key === "selectedRawMaterials") {
@@ -124,8 +129,9 @@ export default class AddFoodItem extends ApplicationContainer {
         },
       };
       await axios
-        .post("http://localhost:3001/add-food-item", formData, config)
+        .post(POST_ADD_FOOD_ITEM, formData, config)
         .then((response) => {
+          this.setState({ loading: false });
           this.props.history.push({
             pathname: "/food-item/confirmation",
             confirmation: {
@@ -182,11 +188,6 @@ export default class AddFoodItem extends ApplicationContainer {
         if (value.length === 0 || value <= 0) {
           isError.selectedRawMaterialQuantity =
             "Quantity should be greater than 0";
-        } else if (
-          this.state.rawMaterialQuantityModal.selectedRawMaterial.quantity <
-          this.state.rawMaterialQuantityModal.selectedRawMaterialQuantity
-        ) {
-          isError.selectedRawMaterialQuantity = "Insufficient Quantity";
         }
         break;
       case "foodItemName":
@@ -195,10 +196,7 @@ export default class AddFoodItem extends ApplicationContainer {
           isError.foodItemName = "Please enter food item name";
         } else {
           await axios
-            .get(
-              "http://localhost:3001/get-food-item-name/" +
-                this.state.foodItem.foodItemName
-            )
+            .get(GET_FOOD_ITEM_NAME + this.state.foodItem.foodItemName)
             .then((response) => {
               isError.foodItemName = response.data.message;
             })

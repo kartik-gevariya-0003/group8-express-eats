@@ -1,3 +1,6 @@
+/**
+ * Author: Kartik Gevariya
+ */
 import React from "react";
 import {Link} from "react-router-dom";
 import {Button, Image} from "react-bootstrap";
