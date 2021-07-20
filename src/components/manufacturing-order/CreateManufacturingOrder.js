@@ -38,15 +38,24 @@ class CreateManufacturingOrder extends ApplicationContainer {
 
   componentDidMount() {
     this.setState({loading: true});
-    axios.get(GET_FOOD_ITEMS).then(result => {
+    const user = JSON.parse(localStorage.getItem('user'));
+    if (user && user.token) {
+      const headers = {
+        'Authorization': 'Bearer ' + user.token
+      }
+      this.getFoodItems(headers)
+    }
+  }
+
+  getFoodItems = (headers) => {
+    axios.get(GET_FOOD_ITEMS, {headers: headers}).then(result => {
       let foodItems = result.data['foodItems'];
       this.originalFoodItems = foodItems;
-      this.setState({foodItems: foodItems});
-      this.setState({loading: false});
+      this.setState({foodItems: foodItems, loading: false});
     }).catch(error => {
       this.setState({loading: false});
       console.error(error);
-      toast.error("Error occurred while fetching purchase orders.");
+      toast.error("Error occurred while fetching food items.");
     })
   }
 
@@ -144,13 +153,19 @@ class CreateManufacturingOrder extends ApplicationContainer {
     if (isValid) {
       this.setState({loading: true});
       const postData = state.order
-      axios.post(POST_CREATE_MANUFACTURING_ORDER, postData).then(() => {
-        this.setState({loading: false});
-        toast.success("Manufacturing Order created successfully.");
-        this.props.history.push({
-          pathname: '/manufacturing-orders',
-        });
-      })
+      const user = JSON.parse(localStorage.getItem('user'));
+      if (user && user.token) {
+        const headers = {
+          'Authorization': 'Bearer ' + user.token
+        }
+        axios.post(POST_CREATE_MANUFACTURING_ORDER, postData, {headers: headers}).then(() => {
+          this.setState({loading: false});
+          toast.success("Manufacturing Order created successfully.");
+          this.props.history.push({
+            pathname: '/manufacturing-orders',
+          });
+        })
+      }
     }
   };
 
