@@ -207,7 +207,7 @@ class UpdateRawMaterial extends ApplicationContainer {
                     this.setState({loading: false});
                     toast.success("Raw Material updated successfully.");
                     this.props.history.push({
-                        pathname: '/raw-material',
+                        pathname: '/raw-materials',
                     });
                 });
             }

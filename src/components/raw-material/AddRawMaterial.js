@@ -173,7 +173,7 @@ export class AddRawMaterial extends ApplicationContainer {
           this.setState({loading: false});
           toast.success("Raw Material created successfully.");
           this.props.history.push({
-            pathname: '/raw-material',
+            pathname: '/raw-materials',
           });
         });
       }
