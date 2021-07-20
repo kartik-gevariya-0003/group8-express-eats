@@ -25,15 +25,17 @@ import {
   POST_ADD_RAW_MATERIAL_INVENTORY,
 } from "../../config";
 import axios from "axios";
+let rawMaterials = [];
+let foodItems = [];
 export default class Inventory extends ApplicationContainer {
   constructor(props) {
     super(props);
     this.state = {
       loading: false,
-      rawMaterials: [], // with inventory
+      rawMaterials: rawMaterials, // with inventory
       rawMaterialList: [], // in the db
       foodItemList: [], // in the db
-      foodItems: [], // with inventory
+      foodItems: foodItems, // with inventory
       addRawMaterialModal: { show: false },
       addFoodItemModal: { show: false },
       errors: {
@@ -56,8 +58,10 @@ export default class Inventory extends ApplicationContainer {
 
   searchRawMaterial = (value) => {
     this.setState({
-      rawMaterials: this.state.rawMaterials.filter((item) =>
-        item.rawMaterialName.toLowerCase().includes(value.toLowerCase())
+      rawMaterials: rawMaterials.filter((item) =>
+        item.raw_material.rawMaterialName
+          .toLowerCase()
+          .includes(value.toLowerCase())
       ),
     });
   };
@@ -65,8 +69,8 @@ export default class Inventory extends ApplicationContainer {
   searchFoodItem = (e) => {
     let value = e.target.value;
     this.setState({
-      foodItems: this.state.foodItems.filter((item) =>
-        item.foodItemName.toLowerCase().includes(value.toLowerCase())
+      foodItems: foodItems.filter((item) =>
+        item.food_item.foodItemName.toLowerCase().includes(value.toLowerCase())
       ),
     });
   };
@@ -124,9 +128,9 @@ export default class Inventory extends ApplicationContainer {
     let state = { ...this.state };
 
     state.newFoodItem.quantity = value;
-    console.log(state.newFoodItem.quantity);
+
     this.validator("foodItemQuantity", value, state.errors);
-    console.log(state.errors);
+
     this.setState(state);
   };
 
@@ -165,7 +169,7 @@ export default class Inventory extends ApplicationContainer {
 
   setRawMaterialName = (value) => {
     let state = { ...this.state };
-    console.log(value);
+
     if (value) {
       state.newRawMaterial.name = value.rawMaterialName;
 
@@ -194,7 +198,7 @@ export default class Inventory extends ApplicationContainer {
     let errors = { ...this.state.errors };
 
     this.validator("rawMaterialName", this.state.newRawMaterial.name, errors);
-    console.log(this.state.newRawMaterial.name);
+
     this.validator(
       "rawMaterialQuantity",
       this.state.newRawMaterial.quantity,
@@ -225,8 +229,9 @@ export default class Inventory extends ApplicationContainer {
             );
             this.closeRawMaterialModal();
             axios.get(GET_ALL_INVENTORY).then((response) => {
+              rawMaterials = response.data.rawMaterialInventories;
               this.setState({
-                rawMaterials: response.data.rawMaterialInventories,
+                rawMaterials: rawMaterials,
               });
               this.setState({ loading: false });
             });
@@ -254,7 +259,6 @@ export default class Inventory extends ApplicationContainer {
     this.setState({
       errors: errors,
     });
-    console.log(this.state.errors);
   };
 
   formatRawMaterial = ({ rawMaterialName }) => (
@@ -268,7 +272,7 @@ export default class Inventory extends ApplicationContainer {
   handleFoodItemModalSubmit = async (e) => {
     e.preventDefault();
     let errors = { ...this.state.errors };
-    console.log(this.state.newFoodItem.quantity.length);
+
     this.validator("foodItemName", this.state.newFoodItem.name, errors);
     this.validator("foodItemQuantity", this.state.newFoodItem.quantity, errors);
 
@@ -298,7 +302,8 @@ export default class Inventory extends ApplicationContainer {
                 headers: headers,
               })
               .then((response) => {
-                this.setState({ foodItems: response.data.foodItemInventories });
+                foodItems = response.data.foodItemInventories;
+                this.setState({ foodItems: foodItems });
               });
             this.setState({ loading: false });
           })
@@ -328,7 +333,6 @@ export default class Inventory extends ApplicationContainer {
 
   formatFoodItem = ({ foodItemName }) => (
     <>
-      {console.log(this.state.foodItemList)}
       <Row>
         <Col>{foodItemName}</Col>
       </Row>
@@ -346,9 +350,11 @@ export default class Inventory extends ApplicationContainer {
         .get(GET_ALL_INVENTORY, { headers: headers })
         .then((response) => {
           this.setState({ loading: false });
+          rawMaterials = response.data.rawMaterialInventories;
+          foodItems = response.data.foodItemInventories;
           this.setState({
-            foodItems: response.data.foodItemInventories,
-            rawMaterials: response.data.rawMaterialInventories,
+            foodItems: foodItems,
+            rawMaterials: rawMaterials,
           });
         })
         .catch((error) => {
@@ -369,10 +375,7 @@ export default class Inventory extends ApplicationContainer {
         .then((response) => {
           this.setState({ loading: false });
           let rawMaterialList = [];
-          console.log(response.data.rawMaterials);
-          response.data.rawMaterials.forEach((item) => {
-            console.log(item);
-          });
+
           response.data.rawMaterials.forEach((listItem) => {
             if (
               !this.state.rawMaterials.some(
@@ -392,7 +395,6 @@ export default class Inventory extends ApplicationContainer {
               pathname: "/login",
             });
           } else {
-            console.log(error);
             toast.error(error.response.data.message);
           }
         });
