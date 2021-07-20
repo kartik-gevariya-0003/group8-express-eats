@@ -1,93 +1,164 @@
-import React, {Component} from "react";
-import {Button, Card, Col, Form, FormControl, Row} from "react-bootstrap";
-import Header from "../headers/Header";
+// Author: Karishma Suresh Lalwani
+import React from "react";
+import {Button, Card, Col, Form, Row} from "react-bootstrap";
+import axios from "axios";
+import {GET_RAW_MATERIAL_BY_ID, GET_VENDORS, PUT_RAW_MATERIAL} from "../../config";
+import {toast} from "react-toastify";
+import Select from "react-select";
+import ApplicationContainer from "../ApplicationContainer";
 
-const rawMaterials = [
-    {
-        rawMaterialName: "Chocolate Syrup",
-        vendorName: "Honeyville Inc.",
-        unitMeasurement: 3,
-        unitCost: 39
-    }
-]
-
-class UpdateRawMaterial extends Component {
+class UpdateRawMaterial extends ApplicationContainer {
     constructor(props) {
         super(props);
         this.state = {
-            rawMaterials: rawMaterials,
-            rawMaterialName: "Chocolate Syrup",
-            vendorName: "Honeyville Inc.",
-            unitMeasurement: 3,
-            unitCost: 39,
-
+            selectedVendors: null,
+            selectedUnitMeasurementCode: null,
+            loading: false,
+            rawMaterial: {
+                id: this.props.location.state,
+                rawMaterialName: "",
+                vendorIds: [],
+                unitCost: "",
+                unitMeasurementCode: "",
+                unitMeasurementValue: ""
+            },
+            vendorOptions: [],
+            unitMeasurementOptions: [
+                {id: 1, value: 'g'},
+                {id: 2, value: 'ml'},
+                {id: 3, value: 'L'},
+                {id: 4, value: 'gal'},
+                {id: 5, value: 'lb'}
+            ],
             errors: {
                 rawMaterialName: "",
-                vendorName: "",
+                vendorIds: [],
                 unitCost: "",
-                unitMeasurement: "",
+                unitMeasurementCode: "",
+                unitMeasurementValue: ""
             },
         };
+    }
+
+    componentDidMount() {
+        this.getVendors();
+        this.getRawMaterial();
+    }
+
+    getVendors() {
+        this.setState({loading: true});
+        axios.get(GET_VENDORS).then(result => {
+            this.setState({loading: false});
+            let vendorOptions = result.data.vendors;
+            this.setState({vendorOptions: vendorOptions});
+        }).catch(error => {
+            this.setState({loading: false});
+            console.log(error)
+            toast.error("Error occurred while fetching vendors.");
+        })
+    }
+
+    getRawMaterial() {
+        this.setState({loading: true});
+        const url = GET_RAW_MATERIAL_BY_ID + this.state.rawMaterial.id
+        axios.get(url).then(result => {
+            this.setState({loading: false});
+            let rawMaterial = result.data.rawMaterial;
+            let unitCodeAndValue = rawMaterial.unitMeasurement.match(/[^\d]+|\d+/g)
+            let rawMaterialData = {
+                rawMaterialName: rawMaterial.rawMaterialName,
+                unitCost: rawMaterial.unitCost,
+                unitMeasurementValue: +unitCodeAndValue[0],
+                unitMeasurementCode: unitCodeAndValue[1],
+                vendorIds: rawMaterial.vendors.map(vendor => vendor.id)
+            }
+            const selectedVendors = this.state.vendorOptions.filter(vendor => rawMaterialData.vendorIds.some(vendorId => vendor.id === vendorId));
+            const selectedUnitMeasurementCode = this.state.unitMeasurementOptions.filter(unitMeasurementOption => unitMeasurementOption.value === rawMaterialData.unitMeasurementCode)[0]
+            this.setState({rawMaterial: rawMaterialData, selectedVendors: selectedVendors, selectedUnitMeasurementCode: selectedUnitMeasurementCode});
+        }).catch(error => {
+            this.setState({loading: false});
+            console.log(error)
+            toast.error("Error occurred while fetching raw material.");
+        })
     }
 
     validator = (name, value, errors) => {
         switch (name) {
             case "rawMaterialName":
-                let alphabetRegex = new RegExp("^[a-zA-Z]*$");
                 errors.rawMaterialName = "";
                 if (!value || value.length === 0) {
-                    errors.rawMaterialName = "Required Field";
+                    errors.rawMaterialName = "Please enter raw material name.";
                 }
                 break;
-            case "vendorName":
-                let alphabetRegex2 = new RegExp("^[a-zA-Z]*$");
-                errors.vendorName = "";
+            case "vendorIds":
+                errors.vendorIds = "";
                 if (!value || value.length === 0) {
-                    errors.vendorName = "Required Field";
+                    errors.vendorIds = "Please select vendors.";
                 }
                 break;
             case "unitCost":
                 errors.unitCost = "";
                 if (!value || value.length === 0) {
-                    errors.unitCost = "Required Field";
+                    errors.unitCost = "Please enter unit cost";
                 }
                 break;
-            case "unitMeasurement":
-                errors.unitMeasurement = "";
+            case "unitMeasurementCode":
+                errors.unitMeasurementCode = "";
                 if (!value || value.length === 0) {
-                    errors.unitMeasurement = "Required Field";
+                    errors.unitMeasurementCode = "Please select a unit of measurement.";
+                }
+                break;
+            case "unitMeasurementValue":
+                errors.unitMeasurementValue = "";
+                if (!value || value.length === 0) {
+                    errors.unitMeasurementValue = "Please enter unit measurement value";
                 }
                 break;
         }
     };
 
-    onRawMaterialNameChange = (value) => {
+    setRawMaterialName = (e) => {
         let state = {...this.state};
-        state.rawMaterialName = value;
-        this.validator("rawMaterialName", value, state.errors);
+        state.rawMaterial.rawMaterialName = e.target.value;
+        this.validator("rawMaterialName", state.rawMaterial.rawMaterialName, state.errors);
         this.setState(state);
     };
 
-    onVendorNameChange = (value) => {
+    setUnitCost = (e) => {
         let state = {...this.state};
-        state.vendorName = value;
-        this.validator("vendorName", state.vendorName, state.errors);
+        state.rawMaterial.unitCost = e.target.value;
+        this.validator("unitCost", state.rawMaterial.unitCost, state.errors);
         this.setState(state);
     };
 
-    onUnitCostChange = (value) => {
+    setUnitMeasurement = (e) => {
         let state = {...this.state};
-        state.unitCost = value;
-        this.validator("unitCost", state.unitCost, state.errors);
+        state.rawMaterial.unitMeasurementValue = e.target.value;
+        this.validator("unitMeasurementValue", state.rawMaterial.unitMeasurementValue, state.errors);
         this.setState(state);
     };
 
-    onUnitMeasurementChange = (value) => {
+    onVendorSelect = (selectedVendor) => {
         let state = {...this.state};
-        state.unitMeasurement = value;
-        this.validator("unitMeasurement", state.unitMeasurement, state.errors);
+        state.rawMaterial.vendorIds = []
+        state.selectedVendors = []
+        if (selectedVendor.length) {
+            selectedVendor.forEach(vendor => {
+                state.selectedVendors.push(vendor)
+                state.rawMaterial.vendorIds.push(vendor.id)
+            })
+        }
+        this.validator('vendorIds', this.state.rawMaterial.vendorIds, state.errors);
         this.setState(state);
-    };
+    }
+
+    onMeasurementSelect = (selectedMeasurement) => {
+        let state = {...this.state};
+        state.selectedUnitMeasurementCode = selectedMeasurement
+        state.rawMaterial.unitMeasurementCode = selectedMeasurement.value;
+        this.validator('unitMeasurementCode', this.state.rawMaterial.unitMeasurementCode, state.errors);
+        this.setState(state);
+    }
 
     cancelHandler = (e) => {
         this.props.history.push("/raw-materials");
@@ -96,10 +167,11 @@ class UpdateRawMaterial extends Component {
     handleSubmit = (e) => {
         e.preventDefault();
         let errors = {...this.state.errors};
-        this.validator("rawMaterialName", this.state.rawMaterialName, errors);
-        this.validator("vendorName", this.state.vendorName, errors);
-        this.validator("unitCost", this.state.unitCost, errors);
-        this.validator("unitMeasurement", this.state.unitMeasurement, errors);
+        this.validator("rawMaterialName", this.state.rawMaterial.rawMaterialName, errors);
+        this.validator("vendorIds", this.state.rawMaterial.vendorIds, errors);
+        this.validator("unitCost", this.state.rawMaterial.unitCost, errors);
+        this.validator("unitMeasurementCode", this.state.rawMaterial.unitMeasurementCode, errors);
+        this.validator("unitMeasurementValue", this.state.rawMaterial.unitMeasurementValue, errors);
 
         let isValid = true;
         Object.values(errors).forEach(error => {
@@ -109,16 +181,15 @@ class UpdateRawMaterial extends Component {
         });
 
         if (isValid) {
-            this.props.history.push({
-                pathname: "/raw-material/confirmation",
-                confirmation: {
-                    message: this.state.rawMaterialName + " Updated Successfully",
-                    redirect: "/raw-materials",
-                    button: "Go to Raw Materials",
-                },
+            const putData = this.state.rawMaterial
+            axios.put(PUT_RAW_MATERIAL, putData).then((response) => {
+                this.setState({loading: false});
+                toast.success("Raw Material updated successfully.");
+                this.props.history.push({
+                    pathname: '/raw-materials',
+                });
             });
         }
-
         this.setState({
             errors: errors,
         });
@@ -127,40 +198,57 @@ class UpdateRawMaterial extends Component {
     render() {
         return (
             <section>
-                <Header/>
-                <Row className={"mt-3 justify-content-center"}>
-                    <Col sm={8}>
+                {this.state.loading &&
+                <div className="dialog-background">
+                    <div className="dialog-loading-wrapper">
+                        <img src={"/confirmation.gif"} alt={"Loading..."} className={"loading-img"}/>
+                    </div>
+                </div>
+                }
+                {super.render()}
+                <Row className="m-3">
+                    <Col className={"text-left"}>
+                        <h2>Update Raw Material</h2>
+                        <hr/>
+                    </Col>
+                </Row>
+                <Row className={"m-3 justify-content-center"}>
+                    <Col sm={10}>
                         <Card>
                             <Card.Body className={"text-left"}>
-                                <Card.Title className={"text-left"}>Edit Raw Material</Card.Title>
-                                <Row className={"mt-5"}>
+                                <Row className={"mt-3"}>
                                     <Col sm={12}>
                                         <Form onSubmit={this.handleSubmit}>
                                             <Form.Group className="mb-3">
                                                 <Row>
                                                     <Col sm={6}>
-                                                        <Form.Label>Name</Form.Label>
-                                                        <Form.Control type="text" value = {this.state.rawMaterialName} name= "rawMaterialName" onChange={(e) => {
-                                                            this.onRawMaterialNameChange(e.target.value);
-                                                        }}
+                                                        <Form.Label>Name *</Form.Label>
+                                                        <Form.Control type="text" name="rawMaterialName"
+                                                                      value={this.state.rawMaterial.rawMaterialName}
+                                                                      onChange={this.setRawMaterialName}
                                                                       className={this.state.errors.rawMaterialName ? "is-invalid" : ""}/>
                                                         {this.state.errors.rawMaterialName.length > 0 && (
                                                             <Form.Control.Feedback type={"invalid"}>
                                                                 {this.state.errors.rawMaterialName}
                                                             </Form.Control.Feedback>
                                                         )}
-
                                                     </Col>
                                                     <Col sm={6}>
-                                                        <Form.Label>Vendor Name</Form.Label>
-                                                        <Form.Control type="text" value = {this.state.vendorName} name="vendorName" onChange={(e) => {
-                                                            this.onVendorNameChange(e.target.value);
-                                                        }}
-                                                                      className={this.state.errors.vendorName ? "is-invalid" : ""}/>
-                                                        {this.state.errors.vendorName.length > 0 && (
-                                                            <Form.Control.Feedback type={"invalid"}>
-                                                                {this.state.errors.vendorName}
-                                                            </Form.Control.Feedback>
+                                                        <Form.Label>Vendor Name *</Form.Label>
+                                                        <Select
+                                                            isClearable
+                                                            isMulti
+                                                            value={ this.state.selectedVendors}
+                                                            className={this.state.errors.vendorIds.length > 0 ? "is-invalid" : ""}
+                                                            options={this.state.vendorOptions}
+                                                            getOptionValue={vendor => vendor.id}
+                                                            getOptionLabel={vendor => `${vendor.vendorName} (${vendor.contactPersonName})`}
+                                                            placeholder="Select Vendor"
+                                                            onChange={this.onVendorSelect}
+                                                        />
+                                                        {this.state.errors.vendorIds.length > 0 && (
+                                                            <Form.Control.Feedback
+                                                                type={"invalid"}>{this.state.errors.vendorIds}</Form.Control.Feedback>
                                                         )}
                                                     </Col>
                                                 </Row>
@@ -168,47 +256,53 @@ class UpdateRawMaterial extends Component {
                                             <Form.Group className="mb-3">
                                                 <Row>
                                                     <Col sm={6}>
-                                                        <Form.Label>Unit Cost</Form.Label>
-                                                        <Form.Control type="number" value = {this.state.unitCost} name="unitCost" onChange={(e) => {
-                                                            this.onUnitCostChange(e.target.value);
-                                                        }}
+                                                        <Form.Label>Unit Cost *</Form.Label>
+                                                        <Form.Control type="float" name="unitCost"
+                                                                      onChange={this.setUnitCost}
+                                                                      value={this.state.rawMaterial.unitCost}
                                                                       className={this.state.errors.unitCost ? "is-invalid" : ""}/>
                                                         {this.state.errors.unitCost.length > 0 && (
                                                             <Form.Control.Feedback type={"invalid"}>
                                                                 {this.state.errors.unitCost}
                                                             </Form.Control.Feedback>
                                                         )}
-
                                                     </Col>
                                                     <Col sm={3}>
-                                                        <Form.Label>Unit Measurement</Form.Label>
-                                                        <Form.Control type="number" value = {this.state.unitMeasurement} name="unitMeasurement" onChange={(e) => {
-                                                            this.onUnitMeasurementChange(e.target.value);
-                                                        }}
-                                                                      className={this.state.errors.unitMeasurement ? "is-invalid" : ""}/>
-                                                        {this.state.errors.unitMeasurement.length > 0 && (
+                                                        <Form.Label>Unit Measurement *</Form.Label>
+                                                        <Form.Control type="number" name="unitMeasurement"
+                                                                      step="0.01"
+                                                                      value={this.state.rawMaterial.unitMeasurementValue}
+                                                                      onChange={this.setUnitMeasurement}
+                                                                      className={this.state.errors.unitMeasurementValue ? "is-invalid" : ""}/>
+                                                        {this.state.errors.unitMeasurementValue.length > 0 && (
                                                             <Form.Control.Feedback type={"invalid"}>
-                                                                {this.state.errors.unitMeasurement}
+                                                                {this.state.errors.unitMeasurementValue}
                                                             </Form.Control.Feedback>
                                                         )}
                                                     </Col>
                                                     <Col sm={3}>
                                                         <Form.Label>&nbsp;</Form.Label>
-                                                        <Form.Control as="select">
-                                                            <option>gm</option>
-                                                            <option>ml</option>
-                                                            <option>L</option>
-                                                            <option>gal</option>
-                                                            <option>lb</option>
-                                                        </Form.Control>
+                                                        <Select
+                                                            isClearable
+                                                            value={this.state.selectedUnitMeasurementCode}
+                                                            className={this.state.errors.unitMeasurementCode ? "is-invalid" : ""}
+                                                            options={this.state.unitMeasurementOptions}
+                                                            getOptionValue={unitMeasurementCode => unitMeasurementCode.value}
+                                                            getOptionLabel={unitMeasurementCode => `${unitMeasurementCode.value}`}
+                                                            placeholder="Select Measurement"
+                                                            onChange={this.onMeasurementSelect}
+                                                        />
+                                                        {this.state.errors.unitMeasurementCode.length > 0 && (
+                                                            <Form.Control.Feedback
+                                                                type={"invalid"}>{this.state.errors.unitMeasurementCode}</Form.Control.Feedback>
+                                                        )}
                                                     </Col>
                                                 </Row>
                                             </Form.Group>
                                             <Form.Group className={"mt-5 mb-3"}>
                                                 <Row>
                                                     <Col sm={6} className={"text-right"}>
-                                                        <Button className={"submit-btn"} variant="primary"
-                                                                type="submit">
+                                                        <Button className={"submit-btn"} variant="primary" type="submit">
                                                             Submit
                                                         </Button>
                                                     </Col>
@@ -227,7 +321,7 @@ class UpdateRawMaterial extends Component {
                     </Col>
                 </Row>
             </section>
-        )
+        );
     }
 }
 
