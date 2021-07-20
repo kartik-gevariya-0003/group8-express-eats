@@ -27,8 +27,8 @@ export default class FoodItems extends ApplicationContainer {
   constructor(props) {
     super(props);
     this.state = {
-      foodItemsDB: null,
-      originalFoodItemsList: null,
+      foodItemsDB: [],
+      originalFoodItemsList: [],
       deleteFoodItemModal: {
         show: false,
         id: -1,
@@ -42,28 +42,42 @@ export default class FoodItems extends ApplicationContainer {
   };
 
   async deleteFoodItem(id) {
-    let state = { ...this.state };
-    await axios
-      .delete(DELETE_FOOD_ITEM + id)
-      .then((response) => {
-        toast.success("Food Item deleted successfully!");
-        state.foodItemsDB = state.foodItemsDB.filter((x) => {
-          return x.id !== id;
-        });
+    const user = JSON.parse(localStorage.getItem("user"));
+    if (user && user.token) {
+      const headers = {
+        Authorization: "Bearer " + user.token,
+      };
+      let state = { ...this.state };
+      await axios
+        .delete(DELETE_FOOD_ITEM + id, {
+          headers: headers,
+        })
+        .then((response) => {
+          toast.success("Food Item deleted successfully!");
+          state.foodItemsDB = state.foodItemsDB.filter((x) => {
+            return x.id !== id;
+          });
 
-        this.setState(state);
-        this.closeModal();
-      })
-      .catch((error) => {
-        if (error.response.status === 401) {
-          toast.error("Food Item exists in an Open Manufacturing Order.");
-        } else {
-          toast.error(
-            "There was some problem deleting the food item. Please try again later."
-          );
-        }
-        this.closeModal();
-      });
+          this.setState(state);
+          this.closeModal();
+        })
+        .catch((error) => {
+          if (error.response.status === 401) {
+            toast.error("Session is expired. Please login again.");
+            localStorage.removeItem("user");
+            this.props.history.push({
+              pathname: "/login",
+            });
+          } else if (error.response.status === 409) {
+            toast.error("Food Item exists in an Open Manufacturing Order.");
+          } else {
+            toast.error(
+              "There was some problem deleting the food item. Please try again later."
+            );
+          }
+          this.closeModal();
+        });
+    }
   }
 
   goToEditFoodItem = (foodItem) => {
@@ -115,7 +129,16 @@ export default class FoodItems extends ApplicationContainer {
           state.originalFoodItemsList = state.foodItemsDB;
         })
         .catch((error) => {
-          console.error(error);
+          this.setState({ loading: false });
+          if (error.response.status === 401) {
+            toast.error("Session is expired. Please login again.");
+            localStorage.removeItem("user");
+            this.props.history.push({
+              pathname: "/login",
+            });
+          } else {
+            toast.error(error.response.data.message);
+          }
         });
 
       this.setState(state);
@@ -178,48 +201,52 @@ export default class FoodItems extends ApplicationContainer {
           </Col>
         </Row>
         <Row className="m-3">
-          <CardDeck className="row row-cols-md-4 row-cols-sm-3 deck">
-            {this.state.foodItemsDB ? (
-              this.state.foodItemsDB.map((foodItem) => (
-                <Col className="mb-3" key={foodItem.id}>
-                  <Card>
-                    {foodItem.imageFile ? (
-                      <Card.Img
-                        variant="top"
-                        src={`data:image/jpeg;base64,${foodItem.imageFile}`}
-                      />
-                    ) : (
-                      <></>
-                    )}
+          {this.state.foodItemsDB.length !== 0 ? (
+            <CardDeck className="row row-cols-md-4 row-cols-sm-3 deck">
+              {this.state.foodItemsDB ? (
+                this.state.foodItemsDB.map((foodItem) => (
+                  <Col className="mb-3" key={foodItem.id}>
+                    <Card>
+                      {foodItem.imageFile ? (
+                        <Card.Img
+                          variant="top"
+                          src={`data:image/jpeg;base64,${foodItem.imageFile}`}
+                        />
+                      ) : (
+                        <></>
+                      )}
 
-                    <Card.Body>
-                      <Card.Title>{foodItem.foodItemName}</Card.Title>
+                      <Card.Body>
+                        <Card.Title>{foodItem.foodItemName}</Card.Title>
 
-                      <FontAwesomeIcon
-                        icon={faPencilAlt}
-                        color={"#035384AA"}
-                        className="float-left"
-                        onClick={() => {
-                          this.goToEditFoodItem(foodItem);
-                        }}
-                      />
+                        <FontAwesomeIcon
+                          icon={faPencilAlt}
+                          color={"#035384AA"}
+                          className="float-left"
+                          onClick={() => {
+                            this.goToEditFoodItem(foodItem);
+                          }}
+                        />
 
-                      <FontAwesomeIcon
-                        icon={faTrashAlt}
-                        color={"#ba2311"}
-                        onClick={() => {
-                          this.showModal(foodItem);
-                        }}
-                        className="float-right  "
-                      />
-                    </Card.Body>
-                  </Card>
-                </Col>
-              ))
-            ) : (
-              <span>No Food Items to display</span>
-            )}
-          </CardDeck>
+                        <FontAwesomeIcon
+                          icon={faTrashAlt}
+                          color={"#ba2311"}
+                          onClick={() => {
+                            this.showModal(foodItem);
+                          }}
+                          className="float-right  "
+                        />
+                      </Card.Body>
+                    </Card>
+                  </Col>
+                ))
+              ) : (
+                <span>No Food Items to display</span>
+              )}
+            </CardDeck>
+          ) : (
+            <span>No Food Items Available</span>
+          )}
         </Row>
         <Modal
           show={this.state.deleteFoodItemModal.show}

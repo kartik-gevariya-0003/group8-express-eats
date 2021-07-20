@@ -39,7 +39,6 @@ const POST_ADD_FOOD_ITEM_INVENTORY = API_URL + "/add-food-item-inventory";
 const GET_ALL_INVENTORY = API_URL + "/get-all-inventory-items";
 
 module.exports = {
-  API_URL,
   LOGIN,
   REGISTER,
   GET_VENDORS,

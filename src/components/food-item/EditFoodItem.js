@@ -59,32 +59,64 @@ export default class EditFoodItem extends ApplicationContainer {
   }
 
   async componentDidMount() {
-    let state = { ...this.state };
-    this.setState({ loading: true });
-    await axios
-      .get(GET_FOOD_ITEM_BY_ID + this.state.foodItemId)
-      .then((result) => {
-        this.setState({ loading: true });
-        state.foodItem = result.data.foodItem;
-        state.foodItem.selectedRawMaterials = [];
-        result.data.foodItem.raw_materials.forEach((rawMaterial) => {
-          state.foodItem.selectedRawMaterials.push({
-            id: rawMaterial.id,
-            rawMaterialName: rawMaterial.rawMaterialName,
-            quantity: rawMaterial.food_item_raw_materials.quantity,
-            unitCost: rawMaterial.unitCost,
+    const user = JSON.parse(localStorage.getItem("user"));
+    if (user && user.token) {
+      const headers = {
+        Authorization: "Bearer " + user.token,
+      };
+      let state = { ...this.state };
+      this.setState({ loading: true });
+      await axios
+        .get(GET_FOOD_ITEM_BY_ID + this.state.foodItemId, { headers: headers })
+        .then((result) => {
+          this.setState({ loading: true });
+          state.foodItem = result.data.foodItem;
+          state.foodItem.selectedRawMaterials = [];
+          result.data.foodItem.raw_materials.forEach((rawMaterial) => {
+            state.foodItem.selectedRawMaterials.push({
+              id: rawMaterial.id,
+              rawMaterialName: rawMaterial.rawMaterialName,
+              quantity: rawMaterial.food_item_raw_materials.quantity,
+              unitCost: rawMaterial.unitCost,
+            });
+            state.foodItem.raw_materials = null;
           });
-          state.foodItem.raw_materials = null;
+          state.originalFoodItemName = state.foodItem.foodItemName;
+        })
+        .catch((error) => {
+          this.setState({ loading: false });
+          if (error.response.status === 401) {
+            toast.error("Session is expired. Please login again.");
+            localStorage.removeItem("user");
+            this.props.history.push({
+              pathname: "/login",
+            });
+          } else {
+            toast.error(error.response.data.message);
+          }
         });
-        state.originalFoodItemName = state.foodItem.foodItemName;
-      });
-    this.setState(state);
-    bsCustomFileInput.init();
-    await axios.get(GET_RAW_MATERIALS).then((response) => {
-      rawMaterials = response.data.rawMaterials;
-      this.setState({ rawMaterials: rawMaterials });
-      this.setState({ loading: false });
-    });
+      this.setState(state);
+      bsCustomFileInput.init();
+      await axios
+        .get(GET_RAW_MATERIALS)
+        .then((response) => {
+          rawMaterials = response.data.rawMaterials;
+          this.setState({ rawMaterials: rawMaterials });
+          this.setState({ loading: false });
+        })
+        .catch((error) => {
+          this.setState({ loading: false });
+          if (error.response.status === 401) {
+            toast.error("Session is expired. Please login again.");
+            localStorage.removeItem("user");
+            this.props.history.push({
+              pathname: "/login",
+            });
+          } else {
+            toast.error(error.response.data.message);
+          }
+        });
+    }
   }
 
   filterRawMaterial = (e) => {
@@ -125,63 +157,90 @@ export default class EditFoodItem extends ApplicationContainer {
       }
     });
     if (isValid) {
-      const formData = new FormData();
-      for (var key in this.state.foodItem) {
-        if (key === "selectedRawMaterials") {
-          this.state.foodItem[key].forEach((item) =>
-            formData.append("selectedRawMaterials[]", JSON.stringify(item))
-          );
+      const user = JSON.parse(localStorage.getItem("user"));
+      if (user && user.token) {
+        const headers = {
+          Authorization: "Bearer " + user.token,
+        };
+        if (this.state.isReplaceImage) {
+          const formData = new FormData();
+          for (var key in this.state.foodItem) {
+            if (key === "selectedRawMaterials") {
+              this.state.foodItem[key].forEach((item) =>
+                formData.append("selectedRawMaterials[]", JSON.stringify(item))
+              );
+            } else {
+              formData.append(key, this.state.foodItem[key]);
+            }
+          }
+          const config = {
+            headers: {
+              "content-type": "multipart/form-data",
+              Authorization: "Bearer " + user.token,
+            },
+          };
+          await axios
+            .put(PUT_FOOD_ITEM_WITH_IMAGE, formData, config)
+            .then((response) => {
+              this.props.history.push({
+                pathname: "/food-item/confirmation",
+                confirmation: {
+                  message:
+                    this.state.foodItem.foodItemName + " Updated Successfully",
+                  redirect: "/food-items",
+                  button: "GO TO FOOD ITEMS",
+                },
+              });
+            })
+            .catch((error) => {
+              if (error.response.status === 401) {
+                toast.error("Session is expired. Please login again.");
+                localStorage.removeItem("user");
+                this.props.history.push({
+                  pathname: "/login",
+                });
+              } else {
+                toast.error("Food Item was not updated. Please try again. !");
+              }
+            });
         } else {
-          formData.append(key, this.state.foodItem[key]);
+          await axios
+            .put(
+              PUT_FOOD_ITEM,
+              {
+                id: this.state.foodItem.id,
+                foodItemName: this.state.foodItem.foodItemName,
+                totalCost: this.state.foodItem.totalCost,
+                manufacturerCost: this.state.foodItem.manufacturerCost,
+                profitMargin: this.state.foodItem.profitMargin,
+                selectedRawMaterials: this.state.foodItem.selectedRawMaterials,
+              },
+              { headers: headers }
+            )
+            .then((response) => {
+              this.props.history.push({
+                pathname: "/food-item/confirmation",
+                confirmation: {
+                  message:
+                    this.state.foodItem.foodItemName + " Updated Successfully",
+                  redirect: "/food-items",
+                  button: "GO TO FOOD ITEMS",
+                },
+              });
+            })
+            .catch((error) => {
+              this.setState({ loading: false });
+              if (error.response.status === 401) {
+                toast.error("Session is expired. Please login again.");
+                localStorage.removeItem("user");
+                this.props.history.push({
+                  pathname: "/login",
+                });
+              } else {
+                toast.error(error.response.data.message);
+              }
+            });
         }
-      }
-      const config = {
-        headers: {
-          "content-type": "multipart/form-data",
-        },
-      };
-      if (this.state.isReplaceImage) {
-        await axios
-          .put(PUT_FOOD_ITEM_WITH_IMAGE, formData, config)
-          .then((response) => {
-            this.props.history.push({
-              pathname: "/food-item/confirmation",
-              confirmation: {
-                message:
-                  this.state.foodItem.foodItemName + " Updated Successfully",
-                redirect: "/food-items",
-                button: "GO TO FOOD ITEMS",
-              },
-            });
-          })
-          .catch((error) => {
-            console.error(error);
-            toast.error("Food Item was not updated. Please try again. !");
-          });
-      } else {
-        await axios
-          .put(PUT_FOOD_ITEM, {
-            id: this.state.foodItem.id,
-            foodItemName: this.state.foodItem.foodItemName,
-            totalCost: this.state.foodItem.totalCost,
-            manufacturerCost: this.state.foodItem.manufacturerCost,
-            profitMargin: this.state.foodItem.profitMargin,
-            selectedRawMaterials: this.state.foodItem.selectedRawMaterials,
-          })
-          .then((response) => {
-            this.props.history.push({
-              pathname: "/food-item/confirmation",
-              confirmation: {
-                message:
-                  this.state.foodItem.foodItemName + " Updated Successfully",
-                redirect: "/food-items",
-                button: "GO TO FOOD ITEMS",
-              },
-            });
-          })
-          .catch((error) => {
-            toast.error(error.message);
-          });
       }
     }
 

@@ -43,6 +43,7 @@ export default class Inventory extends ApplicationContainer {
         foodItemQuantity: "",
       },
       newFoodItem: {
+        id: null,
         name: "",
         quantity: 0,
       },
@@ -107,7 +108,7 @@ export default class Inventory extends ApplicationContainer {
     let state = { ...this.state };
     if (value) {
       state.newFoodItem.name = value.foodItemName;
-
+      state.newFoodItem.id = value.id;
       this.validator("foodItemName", value.foodItemName, state.errors);
 
       this.setState(state);
@@ -208,29 +209,47 @@ export default class Inventory extends ApplicationContainer {
     });
 
     if (isValid) {
-      this.setState({ loading: true });
-      await axios
-        .post(POST_ADD_RAW_MATERIAL_INVENTORY, this.state.newRawMaterial)
-        .then((response) => {
-          toast.success(
-            this.state.newRawMaterial.name + " added successfully!"
-          );
-          this.closeRawMaterialModal();
-          axios.get(GET_ALL_INVENTORY).then((response) => {
-            this.setState({
-              rawMaterials: response.data.rawMaterialInventories,
+      const user = JSON.parse(localStorage.getItem("user"));
+      if (user && user.token) {
+        const headers = {
+          Authorization: "Bearer " + user.token,
+        };
+        this.setState({ loading: true });
+        await axios
+          .post(POST_ADD_RAW_MATERIAL_INVENTORY, this.state.newRawMaterial, {
+            headers: headers,
+          })
+          .then((response) => {
+            toast.success(
+              this.state.newRawMaterial.name + " added successfully!"
+            );
+            this.closeRawMaterialModal();
+            axios.get(GET_ALL_INVENTORY).then((response) => {
+              this.setState({
+                rawMaterials: response.data.rawMaterialInventories,
+              });
+              this.setState({ loading: false });
             });
+          })
+          .catch((error) => {
             this.setState({ loading: false });
+
+            console.error(error);
+            if (error.response.status === 401) {
+              toast.error("Session is expired. Please login again.");
+              localStorage.removeItem("user");
+              this.props.history.push({
+                pathname: "/login",
+              });
+            } else {
+              toast.error(
+                "Raw Material not added to inventory. Please try again later!"
+              );
+            }
+
+            this.closeRawMaterialModal();
           });
-        })
-        .catch((error) => {
-          this.setState({ loading: false });
-          console.error(error);
-          toast.error(
-            "Raw Material not added to inventory. Please try again later!"
-          );
-          this.closeRawMaterialModal();
-        });
+      }
     }
     this.setState({
       errors: errors,
@@ -261,25 +280,46 @@ export default class Inventory extends ApplicationContainer {
     });
 
     if (isValid) {
-      this.setState({ loading: true });
-      axios
-        .post(POST_ADD_FOOD_ITEM_INVENTORY, this.state.newFoodItem)
-        .then((response) => {
-          toast.success(this.state.newFoodItem.name + " added successfully!");
-          this.closeFoodItemModal();
-          axios.get(GET_ALL_INVENTORY).then((response) => {
-            this.setState({ foodItems: response.data.foodItemInventories });
+      const user = JSON.parse(localStorage.getItem("user"));
+      if (user && user.token) {
+        const headers = {
+          Authorization: "Bearer " + user.token,
+        };
+        this.setState({ loading: true });
+        axios
+          .post(POST_ADD_FOOD_ITEM_INVENTORY, this.state.newFoodItem, {
+            headers: headers,
+          })
+          .then((response) => {
+            toast.success(this.state.newFoodItem.name + " added successfully!");
+            this.closeFoodItemModal();
+            axios
+              .get(GET_ALL_INVENTORY, {
+                headers: headers,
+              })
+              .then((response) => {
+                this.setState({ foodItems: response.data.foodItemInventories });
+              });
+            this.setState({ loading: false });
+          })
+          .catch((error) => {
+            this.setState({ loading: false });
+            console.error(error);
+            if (error.response.status === 401) {
+              toast.error("Session is expired. Please login again.");
+              localStorage.removeItem("user");
+              this.props.history.push({
+                pathname: "/login",
+              });
+            } else {
+              toast.error(
+                "Food Item not added to inventory. Please try again later!"
+              );
+            }
+
+            this.closeFoodItemModal();
           });
-          this.setState({ loading: false });
-        })
-        .catch((error) => {
-          this.setState({ loading: false });
-          console.error(error);
-          toast.error(
-            "Food Item not added to inventory. Please try again later!"
-          );
-          this.closeFoodItemModal();
-        });
+      }
     }
     this.setState({
       errors: errors,
@@ -310,38 +350,81 @@ export default class Inventory extends ApplicationContainer {
             foodItems: response.data.foodItemInventories,
             rawMaterials: response.data.rawMaterialInventories,
           });
-        });
-      this.setState({ loading: true });
-      await axios.get(GET_RAW_MATERIALS).then((response) => {
-        this.setState({ loading: false });
-        this.setState({ rawMaterialList: response.data.rawMaterials });
-        let rawMaterialList = [];
-        response.data.rawMaterials.forEach((listItem) => {
-          if (
-            !this.state.rawMaterials.some(
-              (item) => item.rawMaterialId === listItem.id
-            )
-          ) {
-            rawMaterialList.push(listItem);
+        })
+        .catch((error) => {
+          this.setState({ loading: false });
+          if (error.response.status === 401) {
+            toast.error("Session is expired. Please login again.");
+            localStorage.removeItem("user");
+            this.props.history.push({
+              pathname: "/login",
+            });
+          } else {
+            toast.error(error.response.data.message);
           }
         });
-        this.setState({ rawMaterialList: rawMaterialList });
-      });
       this.setState({ loading: true });
-      await axios.get(GET_FOOD_ITEMS, { headers: headers }).then((response) => {
-        this.setState({ loading: false });
-        let foodItemList = [];
-        response.data.foodItems.forEach((listItem) => {
-          if (
-            !this.state.foodItems.some(
-              (item) => item.foodItemId === listItem.id
-            )
-          ) {
-            foodItemList.push(listItem);
+      await axios
+        .get(GET_RAW_MATERIALS)
+        .then((response) => {
+          this.setState({ loading: false });
+          let rawMaterialList = [];
+          console.log(response.data.rawMaterials);
+          response.data.rawMaterials.forEach((item) => {
+            console.log(item);
+          });
+          response.data.rawMaterials.forEach((listItem) => {
+            if (
+              !this.state.rawMaterials.some(
+                (item) => item.raw_material.id === listItem.id
+              )
+            ) {
+              rawMaterialList.push(listItem);
+            }
+          });
+        })
+        .catch((error) => {
+          this.setState({ loading: false });
+          if (error.response.status === 401) {
+            toast.error("Session is expired. Please login again.");
+            localStorage.removeItem("user");
+            this.props.history.push({
+              pathname: "/login",
+            });
+          } else {
+            console.log(error);
+            toast.error(error.response.data.message);
           }
         });
-        this.setState({ foodItemList: foodItemList });
-      });
+      this.setState({ loading: true });
+      await axios
+        .get(GET_FOOD_ITEMS, { headers: headers })
+        .then((response) => {
+          this.setState({ loading: false });
+          let foodItemList = [];
+          response.data.foodItems.forEach((listItem) => {
+            if (
+              !this.state.foodItems.some(
+                (item) => item.foodItemId === listItem.id
+              )
+            ) {
+              foodItemList.push(listItem);
+            }
+          });
+          this.setState({ foodItemList: foodItemList });
+        })
+        .catch((error) => {
+          this.setState({ loading: false });
+          if (error.response.status === 401) {
+            toast.error("Session is expired. Please login again.");
+            localStorage.removeItem("user");
+            this.props.history.push({
+              pathname: "/login",
+            });
+          } else {
+            toast.error(error.response.data.message);
+          }
+        });
     }
   };
   render() {

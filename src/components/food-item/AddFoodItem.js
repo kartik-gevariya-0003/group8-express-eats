@@ -111,41 +111,45 @@ export default class AddFoodItem extends ApplicationContainer {
       }
     });
     if (isValid) {
-      this.setState({ loading: true });
-      const formData = new FormData();
-      for (var key in this.state.foodItem) {
-        if (key === "selectedRawMaterials") {
-          this.state.foodItem[key].forEach((item) =>
-            formData.append("selectedRawMaterials[]", JSON.stringify(item))
-          );
-        } else {
-          formData.append(key, this.state.foodItem[key]);
+      const user = JSON.parse(localStorage.getItem("user"));
+      if (user && user.token) {
+        this.setState({ loading: true });
+        const formData = new FormData();
+        for (var key in this.state.foodItem) {
+          if (key === "selectedRawMaterials") {
+            this.state.foodItem[key].forEach((item) =>
+              formData.append("selectedRawMaterials[]", JSON.stringify(item))
+            );
+          } else {
+            formData.append(key, this.state.foodItem[key]);
+          }
         }
-      }
-
-      const config = {
-        headers: {
-          "content-type": "multipart/form-data",
-        },
-      };
-      await axios
-        .post(POST_ADD_FOOD_ITEM, formData, config)
-        .then((response) => {
-          this.setState({ loading: false });
-          this.props.history.push({
-            pathname: "/food-item/confirmation",
-            confirmation: {
-              message:
-                this.state.foodItem.foodItemName + " Created Successfully",
-              redirect: "/food-items",
-              button: "GO TO FOOD ITEMS",
-            },
+        const config = {
+          headers: {
+            "content-type": "multipart/form-data",
+            Authorization: "Bearer " + user.token,
+          },
+        };
+        await axios
+          .post(POST_ADD_FOOD_ITEM, formData, config)
+          .then((response) => {
+            this.setState({ loading: false });
+            this.props.history.push({
+              pathname: "/food-item/confirmation",
+              confirmation: {
+                message:
+                  this.state.foodItem.foodItemName + " Created Successfully",
+                redirect: "/food-items",
+                button: "GO TO FOOD ITEMS",
+              },
+            });
+          })
+          .catch((error) => {
+            console.error(error);
+            toast.error("Food Item was not added. Please try again. !");
+            this.setState({ loading: false });
           });
-        })
-        .catch((error) => {
-          console.error(error);
-          toast.error("Food Item was not added. Please try again. !");
-        });
+      }
     }
 
     this.setState({
@@ -195,16 +199,30 @@ export default class AddFoodItem extends ApplicationContainer {
         if (!value || value.length === 0) {
           isError.foodItemName = "Please enter food item name";
         } else {
-          await axios
-            .get(GET_FOOD_ITEM_NAME + this.state.foodItem.foodItemName)
-            .then((response) => {
-              isError.foodItemName = response.data.message;
-            })
-            .catch((error) => {
-              console.error(error);
-            });
+          const user = JSON.parse(localStorage.getItem("user"));
+          if (user && user.token) {
+            const headers = {
+              Authorization: "Bearer " + user.token,
+            };
+            await axios
+              .get(GET_FOOD_ITEM_NAME + this.state.foodItem.foodItemName, {
+                headers: headers,
+              })
+              .then((response) => {
+                isError.foodItemName = response.data.message;
+              })
+              .catch((error) => {
+                this.setState({ loading: false });
+                if (error.response.status === 401) {
+                  toast.error("Session is expired. Please login again.");
+                  localStorage.removeItem("user");
+                  this.props.history.push({
+                    pathname: "/login",
+                  });
+                }
+              });
+          }
         }
-
         break;
       case "rawMaterials":
         isError.selectedRawMaterials = "";
