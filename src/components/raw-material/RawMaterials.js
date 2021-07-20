@@ -22,11 +22,17 @@ export default class RawMaterials extends ApplicationContainer {
   }
 
   componentDidMount() {
-    this.getRawMaterials();
+    const user = JSON.parse(localStorage.getItem('user'));
+    if (user && user.token) {
+      const headers = {
+        'Authorization': 'Bearer ' + user.token
+      }
+      this.getRawMaterials(headers)
+    }
   }
 
-  getRawMaterials = () => {
-    axios.get(GET_RAW_MATERIALS).then(result => {
+  getRawMaterials = (headers) => {
+    axios.get(GET_RAW_MATERIALS, {headers : headers}).then(result => {
       let rawMaterials = result.data['rawMaterials']
       this.setState({rawMaterialList: rawMaterials})
     })
@@ -44,10 +50,16 @@ export default class RawMaterials extends ApplicationContainer {
   }
 
   deleteRawMaterial(id) {
-    axios.delete(DELETE_RAW_MATERIAL + id).then(result => {
-      this.getRawMaterials()
-      this.closeModal();
-    })
+    const user = JSON.parse(localStorage.getItem('user'));
+    if (user && user.token) {
+      const headers = {
+        'Authorization': 'Bearer ' + user.token
+      }
+      axios.delete(DELETE_RAW_MATERIAL + id, {headers : headers}).then(result => {
+        this.getRawMaterials()
+        this.closeModal();
+      })
+    }
   }
 
   showModal = (rawMaterial) => {

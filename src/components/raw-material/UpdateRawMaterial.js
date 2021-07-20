@@ -41,13 +41,19 @@ class UpdateRawMaterial extends ApplicationContainer {
     }
 
     componentDidMount() {
-        this.getVendors();
-        this.getRawMaterial();
+        const user = JSON.parse(localStorage.getItem('user'));
+        if (user && user.token) {
+            const headers = {
+                'Authorization': 'Bearer ' + user.token
+            }
+            this.getVendors(headers);
+            this.getRawMaterial(headers);
+        }
     }
 
-    getVendors() {
+    getVendors(headers) {
         this.setState({loading: true});
-        axios.get(GET_VENDORS).then(result => {
+        axios.get(GET_VENDORS, {headers : headers}).then(result => {
             this.setState({loading: false});
             let vendorOptions = result.data.vendors;
             this.setState({vendorOptions: vendorOptions});
@@ -58,10 +64,10 @@ class UpdateRawMaterial extends ApplicationContainer {
         })
     }
 
-    getRawMaterial() {
+    getRawMaterial(headers) {
         this.setState({loading: true});
         const url = GET_RAW_MATERIAL_BY_ID + this.state.rawMaterial.id
-        axios.get(url).then(result => {
+        axios.get(url, {headers : headers}).then(result => {
             this.setState({loading: false});
             let rawMaterial = result.data.rawMaterial;
             let unitCodeAndValue = rawMaterial.unitMeasurement.match(/[^\d]+|\d+/g)
@@ -182,13 +188,19 @@ class UpdateRawMaterial extends ApplicationContainer {
 
         if (isValid) {
             const putData = this.state.rawMaterial
-            axios.put(PUT_RAW_MATERIAL, putData).then((response) => {
-                this.setState({loading: false});
-                toast.success("Raw Material updated successfully.");
-                this.props.history.push({
-                    pathname: '/raw-materials',
+            const user = JSON.parse(localStorage.getItem('user'));
+            if (user && user.token) {
+                const headers = {
+                    'Authorization': 'Bearer ' + user.token
+                }
+                axios.put(PUT_RAW_MATERIAL, putData, {headers : headers}).then((response) => {
+                    this.setState({loading: false});
+                    toast.success("Raw Material updated successfully.");
+                    this.props.history.push({
+                        pathname: '/raw-materials',
+                    });
                 });
-            });
+            }
         }
         this.setState({
             errors: errors,

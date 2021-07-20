@@ -40,12 +40,18 @@ export class AddRawMaterial extends ApplicationContainer {
   }
 
   componentDidMount() {
-    this.getVendors();
+    const user = JSON.parse(localStorage.getItem('user'));
+    if (user && user.token) {
+      const headers = {
+        'Authorization': 'Bearer ' + user.token
+      }
+      this.getVendors(headers)
+    }
   }
 
-  getVendors() {
+  getVendors(headers) {
     this.setState({loading: true});
-    axios.get(GET_VENDORS).then(result => {
+    axios.get(GET_VENDORS, {headers:headers}).then(result => {
       this.setState({loading: false});
       let vendorOptions = result.data.vendors;
       this.setState({vendorOptions: vendorOptions});
@@ -149,13 +155,19 @@ export class AddRawMaterial extends ApplicationContainer {
 
     if (isValid) {
       const postData = this.state.rawMaterial
-      axios.post(ADD_RAW_MATERIAL, postData).then((response) => {
-        this.setState({loading: false});
-        toast.success("Raw Material created successfully.");
-        this.props.history.push({
-          pathname: '/raw-materials',
+      const user = JSON.parse(localStorage.getItem('user'));
+      if (user && user.token) {
+        const headers = {
+          'Authorization': 'Bearer ' + user.token
+        }
+        axios.post(ADD_RAW_MATERIAL, postData, {headers:headers}).then((response) => {
+          this.setState({loading: false});
+          toast.success("Raw Material created successfully.");
+          this.props.history.push({
+            pathname: '/raw-materials',
+          });
         });
-      });
+      }
     }
     this.setState({
       errors: errors,
