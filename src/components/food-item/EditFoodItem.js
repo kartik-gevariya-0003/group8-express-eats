@@ -1,4 +1,5 @@
-// Author: Tasneem Yusuf Porbanderwalaimport "./food-item.css";
+// Author: Tasneem Yusuf Porbanderwala
+import "./food-item.css";
 import React from "react";
 import {
   Button,
@@ -12,79 +13,27 @@ import {
   Row,
 } from "react-bootstrap";
 import "react-toastify/dist/ReactToastify.css";
-import { ToastContainer } from "react-toastify";
 import { faSearch, faTrashAlt } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import ApplicationContainer from "../ApplicationContainer";
 import bsCustomFileInput from "bs-custom-file-input";
 import axios from "axios";
 import { toast } from "react-toastify";
-import {GET_FOOD_ITEM_BY_ID, GET_FOOD_ITEM_NAME, PUT_FOOD_ITEM, PUT_FOOD_ITEM_WITH_IMAGE} from "../../config";
+import {
+  GET_FOOD_ITEM_BY_ID,
+  GET_FOOD_ITEM_NAME,
+  GET_RAW_MATERIALS,
+  PUT_FOOD_ITEM,
+  PUT_FOOD_ITEM_WITH_IMAGE,
+} from "../../config";
 
-const rawMaterials = [
-  {
-    id: 1,
-    name: "Bread",
-    unitPrice: 1.5,
-    category: "Grains/Cereals",
-    quantity: 20,
-  },
-  {
-    id: 2,
-    name: "Egg",
-    unitPrice: 0.8,
-    category: "Meat, poultry, fish, and eggs",
-    quantity: 2,
-  },
-  { id: 3, name: "Mayonnaise", unitPrice: 4.5, category: "Oils", quantity: 10 },
-  {
-    id: 4,
-    name: "Tomato",
-    unitPrice: 2.0,
-    category: "Vegetables",
-    quantity: 1,
-  },
-  {
-    id: 5,
-    name: "Meat",
-    unitPrice: 4.3,
-    category: "Meat, poultry, fish, and eggs",
-    quantity: 5,
-  },
-  {
-    id: 6,
-    name: "Lettuce",
-    unitPrice: 8.0,
-    category: "Vegetables",
-    quantity: 25,
-  },
-  {
-    id: 7,
-    name: "Wheat",
-    unitPrice: 10.0,
-    category: "Grains/Cereals",
-    quantity: 40,
-  },
-  {
-    id: 8,
-    name: "Rice",
-    unitPrice: 12.7,
-    category: "Grains/Cereals",
-    quantity: 35,
-  },
-  {
-    id: 9,
-    name: "Sunflower Oil",
-    unitPrice: 24.0,
-    category: "Oils",
-    quantity: 8,
-  },
-];
+let rawMaterials = [];
 
 export default class EditFoodItem extends ApplicationContainer {
   constructor(props) {
     super(props);
     this.state = {
+      loading: false,
       rawMaterials: rawMaterials,
       foodItemId: this.props.location.state,
       originalFoodItemName: "",
@@ -111,34 +60,72 @@ export default class EditFoodItem extends ApplicationContainer {
   }
 
   async componentDidMount() {
-    let state = { ...this.state };
-    await axios
-      .get(GET_FOOD_ITEM_BY_ID + this.state.foodItemId)
-      .then((result) => {
-        state.foodItem = result.data.foodItem;
-        state.foodItem.selectedRawMaterials = [];
-        result.data.foodItem.raw_materials.forEach((rawMaterial) => {
-          state.foodItem.selectedRawMaterials.push({
-            id: rawMaterial.id,
-            name: rawMaterial.rawMaterialName,
-            quantity: rawMaterial.food_item_raw_materials.quantity,
-            unitPrice: rawMaterial.unitCost,
+    const user = JSON.parse(localStorage.getItem("user"));
+    if (user && user.token) {
+      const headers = {
+        Authorization: "Bearer " + user.token,
+      };
+      let state = { ...this.state };
+      this.setState({ loading: true });
+      await axios
+        .get(GET_FOOD_ITEM_BY_ID + this.state.foodItemId, { headers: headers })
+        .then((result) => {
+          this.setState({ loading: true });
+          state.foodItem = result.data.foodItem;
+          state.foodItem.selectedRawMaterials = [];
+          result.data.foodItem.raw_materials.forEach((rawMaterial) => {
+            state.foodItem.selectedRawMaterials.push({
+              id: rawMaterial.id,
+              rawMaterialName: rawMaterial.rawMaterialName,
+              quantity: rawMaterial.food_item_raw_materials.quantity,
+              unitCost: rawMaterial.unitCost,
+            });
+            state.foodItem.raw_materials = null;
           });
-          state.foodItem.raw_materials = null;
+          state.originalFoodItemName = state.foodItem.foodItemName;
+        })
+        .catch((error) => {
+          this.setState({ loading: false });
+          if (error.response.status === 401) {
+            toast.error("Session is expired. Please login again.");
+            localStorage.removeItem("user");
+            this.props.history.push({
+              pathname: "/login",
+            });
+          } else {
+            toast.error(error.response.data.message);
+          }
         });
-        state.originalFoodItemName = state.foodItem.foodItemName;
-      });
-    this.setState(state);
-    bsCustomFileInput.init();
+      this.setState(state);
+      bsCustomFileInput.init();
+      await axios
+        .get(GET_RAW_MATERIALS)
+        .then((response) => {
+          rawMaterials = response.data.rawMaterials;
+          this.setState({ rawMaterials: rawMaterials });
+          this.setState({ loading: false });
+        })
+        .catch((error) => {
+          this.setState({ loading: false });
+          if (error.response.status === 401) {
+            toast.error("Session is expired. Please login again.");
+            localStorage.removeItem("user");
+            this.props.history.push({
+              pathname: "/login",
+            });
+          } else {
+            toast.error(error.response.data.message);
+          }
+        });
+    }
   }
 
   filterRawMaterial = (e) => {
     e.preventDefault();
     const { value } = e.target;
-
     this.setState({
       rawMaterials: rawMaterials.filter((rawMaterial) =>
-        rawMaterial.name.toLowerCase().includes(value.toLowerCase())
+        rawMaterial.rawMaterialName.toLowerCase().includes(value.toLowerCase())
       ),
     });
   };
@@ -163,7 +150,6 @@ export default class EditFoodItem extends ApplicationContainer {
       isError
     );
     this.validator("profitMargin", this.state.foodItem.profitMargin, isError);
-    // this.validator("imageFile", this.state.foodItem.imageFile, isError);
     let isValid = true;
     Object.values(isError).forEach((error) => {
       if (error.length > 0) {
@@ -171,67 +157,90 @@ export default class EditFoodItem extends ApplicationContainer {
       }
     });
     if (isValid) {
-      const formData = new FormData();
-      for (var key in this.state.foodItem) {
-        if (key === "selectedRawMaterials") {
-          this.state.foodItem[key].forEach((item) =>
-            formData.append("selectedRawMaterials[]", JSON.stringify(item))
-          );
+      const user = JSON.parse(localStorage.getItem("user"));
+      if (user && user.token) {
+        const headers = {
+          Authorization: "Bearer " + user.token,
+        };
+        if (this.state.isReplaceImage) {
+          const formData = new FormData();
+          for (var key in this.state.foodItem) {
+            if (key === "selectedRawMaterials") {
+              this.state.foodItem[key].forEach((item) =>
+                formData.append("selectedRawMaterials[]", JSON.stringify(item))
+              );
+            } else {
+              formData.append(key, this.state.foodItem[key]);
+            }
+          }
+          const config = {
+            headers: {
+              "content-type": "multipart/form-data",
+              Authorization: "Bearer " + user.token,
+            },
+          };
+          await axios
+            .put(PUT_FOOD_ITEM_WITH_IMAGE, formData, config)
+            .then((response) => {
+              this.props.history.push({
+                pathname: "/food-item/confirmation",
+                confirmation: {
+                  message:
+                    this.state.foodItem.foodItemName + " Updated Successfully",
+                  redirect: "/food-items",
+                  button: "GO TO FOOD ITEMS",
+                },
+              });
+            })
+            .catch((error) => {
+              if (error.response.status === 401) {
+                toast.error("Session is expired. Please login again.");
+                localStorage.removeItem("user");
+                this.props.history.push({
+                  pathname: "/login",
+                });
+              } else {
+                toast.error("Food Item was not updated. Please try again. !");
+              }
+            });
         } else {
-          formData.append(key, this.state.foodItem[key]);
+          await axios
+            .put(
+              PUT_FOOD_ITEM,
+              {
+                id: this.state.foodItem.id,
+                foodItemName: this.state.foodItem.foodItemName,
+                totalCost: this.state.foodItem.totalCost,
+                manufacturerCost: this.state.foodItem.manufacturerCost,
+                profitMargin: this.state.foodItem.profitMargin,
+                selectedRawMaterials: this.state.foodItem.selectedRawMaterials,
+              },
+              { headers: headers }
+            )
+            .then((response) => {
+              this.props.history.push({
+                pathname: "/food-item/confirmation",
+                confirmation: {
+                  message:
+                    this.state.foodItem.foodItemName + " Updated Successfully",
+                  redirect: "/food-items",
+                  button: "GO TO FOOD ITEMS",
+                },
+              });
+            })
+            .catch((error) => {
+              this.setState({ loading: false });
+              if (error.response.status === 401) {
+                toast.error("Session is expired. Please login again.");
+                localStorage.removeItem("user");
+                this.props.history.push({
+                  pathname: "/login",
+                });
+              } else {
+                toast.error(error.response.data.message);
+              }
+            });
         }
-      }
-      const config = {
-        headers: {
-          "content-type": "multipart/form-data",
-        },
-      };
-      if (this.state.isReplaceImage) {
-        await axios
-          .put(
-            PUT_FOOD_ITEM_WITH_IMAGE,
-            formData,
-            config
-          )
-          .then((response) => {
-            this.props.history.push({
-              pathname: "/food-item/confirmation",
-              confirmation: {
-                message:
-                  this.state.foodItem.foodItemName + " Updated Successfully",
-                redirect: "/food-items",
-                button: "GO TO FOOD ITEMS",
-              },
-            });
-          })
-          .catch((error) => {
-            console.error(error);
-            toast.error("Food Item was not updated. Please try again. !");
-          });
-      } else {
-        await axios
-          .put(PUT_FOOD_ITEM, {
-            id: this.state.foodItem.id,
-            foodItemName: this.state.foodItem.foodItemName,
-            totalCost: this.state.foodItem.totalCost,
-            manufacturerCost: this.state.foodItem.manufacturerCost,
-            profitMargin: this.state.foodItem.profitMargin,
-            selectedRawMaterials: this.state.foodItem.selectedRawMaterials,
-          })
-          .then((response) => {
-            this.props.history.push({
-              pathname: "/food-item/confirmation",
-              confirmation: {
-                message:
-                  this.state.foodItem.foodItemName + " Updated Successfully",
-                redirect: "/food-items",
-                button: "GO TO FOOD ITEMS",
-              },
-            });
-          })
-          .catch((error) => {
-            toast.error(error.message);
-          });
       }
     }
 
@@ -255,12 +264,13 @@ export default class EditFoodItem extends ApplicationContainer {
 
   onManufacturerCostChange = (cost) => {
     let state = { ...this.state };
+    console.log(cost);
     this.validator("manufacturerCost", cost, this.state.isError);
     state.foodItem.manufacturerCost = cost;
     let totalCost = 0;
     if (state.foodItem.selectedRawMaterials.length > 0) {
       state.foodItem.selectedRawMaterials.forEach((rawMaterial) => {
-        totalCost += rawMaterial.unitPrice * rawMaterial.quantity;
+        totalCost += rawMaterial.unitCost * rawMaterial.quantity;
       });
     }
     state.foodItem.totalCost = parseFloat(totalCost) + parseFloat(cost);
@@ -274,11 +284,6 @@ export default class EditFoodItem extends ApplicationContainer {
         if (value.length === 0 || value <= 0) {
           isError.selectedRawMaterialQuantity =
             "Quantity should be greater than 0";
-        } else if (
-          this.state.rawMaterialQuantityModal.selectedRawMaterial.quantity <
-          this.state.rawMaterialQuantityModal.selectedRawMaterialQuantity
-        ) {
-          isError.selectedRawMaterialQuantity = "Insufficient Quantity";
         }
         break;
       case "foodItemName":
@@ -287,10 +292,7 @@ export default class EditFoodItem extends ApplicationContainer {
           isError.foodItemName = "Please enter food item name";
         } else if (value !== this.state.originalFoodItemName) {
           await axios
-            .get(
-              GET_FOOD_ITEM_NAME +
-                this.state.foodItem.foodItemName
-            )
+            .get(GET_FOOD_ITEM_NAME + this.state.foodItem.foodItemName)
             .then((response) => {
               isError.foodItemName = response.data.message;
             })
@@ -351,7 +353,7 @@ export default class EditFoodItem extends ApplicationContainer {
         (e) => e.id !== rawMaterial.id
       );
 
-    state.foodItem.totalCost -= rawMaterial.unitPrice * rawMaterial.quantity;
+    state.foodItem.totalCost -= rawMaterial.unitCost * rawMaterial.quantity;
 
     this.validator(
       "rawMaterials",
@@ -383,7 +385,7 @@ export default class EditFoodItem extends ApplicationContainer {
         state.rawMaterialQuantityModal.selectedRawMaterial
       );
       state.foodItem.totalCost +=
-        state.rawMaterialQuantityModal.selectedRawMaterial.unitPrice *
+        state.rawMaterialQuantityModal.selectedRawMaterial.unitCost *
         state.rawMaterialQuantityModal.selectedRawMaterialQuantity;
 
       state.rawMaterialQuantityModal.selectedRawMaterial = "";
@@ -434,7 +436,7 @@ export default class EditFoodItem extends ApplicationContainer {
     let state = { ...this.state };
     let totalCost = this.state.foodItem.selectedRawMaterials.reduce(
       (sum, item) => {
-        return sum + item.unitPrice * item.quantity;
+        return sum + item.unitCost * item.quantity;
       },
       0
     );
@@ -474,17 +476,17 @@ export default class EditFoodItem extends ApplicationContainer {
     return (
       <section>
         {super.render()}
-        <ToastContainer
-          position="top-center"
-          autoClose={3000}
-          hideProgressBar
-          newestOnTop={false}
-          closeOnClick
-          rtl={false}
-          pauseOnFocusLoss
-          draggable
-          pauseOnHover
-        />
+        {this.state.loading && (
+          <div className="dialog-background">
+            <div className="dialog-loading-wrapper">
+              <img
+                src={"/confirmation.gif"}
+                alt={"Loading..."}
+                className={"loading-img"}
+              />
+            </div>
+          </div>
+        )}
         <Row className={"m-3"}>
           <Col sm={5}>
             <Card>
@@ -507,10 +509,12 @@ export default class EditFoodItem extends ApplicationContainer {
                               <Row>
                                 <Col sm={4} className={"pl-3 text-left"}>
                                   <h6>
-                                    <span>{rawMaterial.name}</span>
+                                    <span>{rawMaterial.rawMaterialName}</span>
                                     <br />
                                     <span>
-                                      <small>{rawMaterial.category}</small>
+                                      <small>
+                                        {rawMaterial.unitMeasurement}
+                                      </small>
                                     </span>
                                   </h6>
                                 </Col>
@@ -529,7 +533,7 @@ export default class EditFoodItem extends ApplicationContainer {
                                       <strong>Unit Price</strong>
                                     </span>
                                     <br />
-                                    <span>${rawMaterial.unitPrice}</span>
+                                    <span>${rawMaterial.unitCost}</span>
                                   </h6>
                                 </Col>
                                 <Col sm={1}>
@@ -736,10 +740,10 @@ export default class EditFoodItem extends ApplicationContainer {
                             <Row>
                               <Col sm={5} className={"pl-3"}>
                                 <h6>
-                                  <span>{rawMaterial.name}</span>
+                                  <span>{rawMaterial.rawMaterialName}</span>
                                   <br />
                                   <span>
-                                    <small>{rawMaterial.category}</small>
+                                    <small>{rawMaterial.unitMeasurement}</small>
                                   </span>
                                 </h6>
                               </Col>
@@ -748,7 +752,7 @@ export default class EditFoodItem extends ApplicationContainer {
                                   <span>
                                     <strong>Unit Price:</strong>
                                   </span>
-                                  <span> ${rawMaterial.unitPrice}</span>
+                                  <span> ${rawMaterial.unitCost}</span>
                                 </h6>
                               </Col>
                               <Col sm={2}>
@@ -794,7 +798,8 @@ export default class EditFoodItem extends ApplicationContainer {
                   plaintext
                   readOnly
                   defaultValue={
-                    this.state.rawMaterialQuantityModal.selectedRawMaterial.name
+                    this.state.rawMaterialQuantityModal.selectedRawMaterial
+                      .rawMaterialName
                   }
                   className={"p-0"}
                 />
@@ -845,7 +850,11 @@ export default class EditFoodItem extends ApplicationContainer {
               <Form.Label className={"m-0"}>
                 <strong>
                   Are you sure you want to delete{" "}
-                  {this.state.deleteRawMaterialModal.rawMaterial.name}?{" "}
+                  {
+                    this.state.deleteRawMaterialModal.rawMaterial
+                      .rawMaterialName
+                  }
+                  ?{" "}
                 </strong>
               </Form.Label>
             </Form.Group>

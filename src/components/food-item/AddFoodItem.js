@@ -13,79 +13,25 @@ import {
   Row,
 } from "react-bootstrap";
 import "react-toastify/dist/ReactToastify.css";
-import { ToastContainer } from "react-toastify";
 import { faSearch, faTrashAlt } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import ApplicationContainer from "../ApplicationContainer";
 import bsCustomFileInput from "bs-custom-file-input";
 import axios from "axios";
 import { toast } from "react-toastify";
-import {GET_FOOD_ITEM_NAME, POST_ADD_FOOD_ITEM} from "../../config";
-const rawMaterials = [
-  {
-    id: 1,
-    name: "Bread",
-    unitPrice: 1.5,
-    category: "Grains/Cereals",
-    quantity: 20,
-  },
-  {
-    id: 2,
-    name: "Egg",
-    unitPrice: 0.8,
-    category: "Meat, poultry, fish, and eggs",
-    quantity: 2,
-  },
-  { id: 3, name: "Mayonnaise", unitPrice: 4.5, category: "Oils", quantity: 10 },
-  {
-    id: 4,
-    name: "Tomato",
-    unitPrice: 2.0,
-    category: "Vegetables",
-    quantity: 1,
-  },
-  {
-    id: 5,
-    name: "Meat",
-    unitPrice: 4.3,
-    category: "Meat, poultry, fish, and eggs",
-    quantity: 5,
-  },
-  {
-    id: 6,
-    name: "Lettuce",
-    unitPrice: 8.0,
-    category: "Vegetables",
-    quantity: 25,
-  },
-  {
-    id: 7,
-    name: "Wheat",
-    unitPrice: 10.0,
-    category: "Grains/Cereals",
-    quantity: 40,
-  },
-  {
-    id: 8,
-    name: "Rice",
-    unitPrice: 12.7,
-    category: "Grains/Cereals",
-    quantity: 35,
-  },
-  {
-    id: 9,
-    name: "Sunflower Oil",
-    unitPrice: 24.0,
-    category: "Oils",
-    quantity: 8,
-  },
-];
+import {
+  GET_FOOD_ITEM_NAME,
+  GET_RAW_MATERIALS,
+  POST_ADD_FOOD_ITEM,
+} from "../../config";
+let rawMaterials = [];
 
 export default class AddFoodItem extends ApplicationContainer {
   constructor(props) {
     super(props);
 
     this.state = {
+      loading: false,
       rawMaterials: rawMaterials,
       foodItem: {
         foodItemName: "",
@@ -116,16 +62,30 @@ export default class AddFoodItem extends ApplicationContainer {
     };
   }
 
-  componentDidMount() {
+  async componentDidMount() {
     bsCustomFileInput.init();
+    this.setState({ loading: true });
+    const user = JSON.parse(localStorage.getItem("user"));
+    if (user && user.token) {
+      await axios
+        .get(GET_RAW_MATERIALS, {
+          headers: {
+            Authorization: "Bearer " + user.token,
+          },
+        })
+        .then((response) => {
+          rawMaterials = response.data.rawMaterials;
+          this.setState({ rawMaterials: rawMaterials });
+          this.setState({ loading: false });
+        });
+    }
   }
   filterRawMaterial = (e) => {
     e.preventDefault();
     const { value } = e.target;
-
     this.setState({
       rawMaterials: rawMaterials.filter((rawMaterial) =>
-        rawMaterial.name.toLowerCase().includes(value.toLowerCase())
+        rawMaterial.rawMaterialName.toLowerCase().includes(value.toLowerCase())
       ),
     });
   };
@@ -160,39 +120,45 @@ export default class AddFoodItem extends ApplicationContainer {
       }
     });
     if (isValid) {
-      const formData = new FormData();
-      for (var key in this.state.foodItem) {
-        if (key === "selectedRawMaterials") {
-          this.state.foodItem[key].forEach((item) =>
-            formData.append("selectedRawMaterials[]", JSON.stringify(item))
-          );
-        } else {
-          formData.append(key, this.state.foodItem[key]);
+      const user = JSON.parse(localStorage.getItem("user"));
+      if (user && user.token) {
+        this.setState({ loading: true });
+        const formData = new FormData();
+        for (var key in this.state.foodItem) {
+          if (key === "selectedRawMaterials") {
+            this.state.foodItem[key].forEach((item) =>
+              formData.append("selectedRawMaterials[]", JSON.stringify(item))
+            );
+          } else {
+            formData.append(key, this.state.foodItem[key]);
+          }
         }
-      }
-
-      const config = {
-        headers: {
-          "content-type": "multipart/form-data",
-        },
-      };
-      await axios
-        .post(POST_ADD_FOOD_ITEM, formData, config)
-        .then((response) => {
-          this.props.history.push({
-            pathname: "/food-item/confirmation",
-            confirmation: {
-              message:
-                this.state.foodItem.foodItemName + " Created Successfully",
-              redirect: "/food-items",
-              button: "GO TO FOOD ITEMS",
-            },
+        const config = {
+          headers: {
+            "content-type": "multipart/form-data",
+            Authorization: "Bearer " + user.token,
+          },
+        };
+        console.log(this.state.foodItem);
+        await axios
+          .post(POST_ADD_FOOD_ITEM, formData, config)
+          .then((response) => {
+            this.setState({ loading: false });
+            this.props.history.push({
+              pathname: "/food-item/confirmation",
+              confirmation: {
+                message:
+                  this.state.foodItem.foodItemName + " Created Successfully",
+                redirect: "/food-items",
+                button: "GO TO FOOD ITEMS",
+              },
+            });
+          })
+          .catch((error) => {
+            toast.error("Food Item was not added. Please try again. !");
+            this.setState({ loading: false });
           });
-        })
-        .catch((error) => {
-          console.error(error);
-          toast.error("Food Item was not added. Please try again. !");
-        });
+      }
     }
 
     this.setState({
@@ -221,7 +187,7 @@ export default class AddFoodItem extends ApplicationContainer {
     let totalCost = 0;
     if (state.foodItem.selectedRawMaterials.length > 0) {
       state.foodItem.selectedRawMaterials.forEach((rawMaterial) => {
-        totalCost += rawMaterial.unitPrice * rawMaterial.quantity;
+        totalCost += rawMaterial.unitCost * rawMaterial.quantity;
       });
     }
     state.foodItem.totalCost = parseFloat(totalCost) + parseFloat(cost);
@@ -235,11 +201,6 @@ export default class AddFoodItem extends ApplicationContainer {
         if (value.length === 0 || value <= 0) {
           isError.selectedRawMaterialQuantity =
             "Quantity should be greater than 0";
-        } else if (
-          this.state.rawMaterialQuantityModal.selectedRawMaterial.quantity <
-          this.state.rawMaterialQuantityModal.selectedRawMaterialQuantity
-        ) {
-          isError.selectedRawMaterialQuantity = "Insufficient Quantity";
         }
         break;
       case "foodItemName":
@@ -247,19 +208,30 @@ export default class AddFoodItem extends ApplicationContainer {
         if (!value || value.length === 0) {
           isError.foodItemName = "Please enter food item name";
         } else {
-          await axios
-            .get(
-              GET_FOOD_ITEM_NAME +
-                this.state.foodItem.foodItemName
-            )
-            .then((response) => {
-              isError.foodItemName = response.data.message;
-            })
-            .catch((error) => {
-              console.error(error);
-            });
+          const user = JSON.parse(localStorage.getItem("user"));
+          if (user && user.token) {
+            const headers = {
+              Authorization: "Bearer " + user.token,
+            };
+            await axios
+              .get(GET_FOOD_ITEM_NAME + this.state.foodItem.foodItemName, {
+                headers: headers,
+              })
+              .then((response) => {
+                isError.foodItemName = response.data.message;
+              })
+              .catch((error) => {
+                this.setState({ loading: false });
+                if (error.response.status === 401) {
+                  toast.error("Session is expired. Please login again.");
+                  localStorage.removeItem("user");
+                  this.props.history.push({
+                    pathname: "/login",
+                  });
+                }
+              });
+          }
         }
-
         break;
       case "rawMaterials":
         isError.selectedRawMaterials = "";
@@ -310,7 +282,7 @@ export default class AddFoodItem extends ApplicationContainer {
         (e) => e.id !== rawMaterial.id
       );
 
-    state.foodItem.totalCost -= rawMaterial.unitPrice * rawMaterial.quantity;
+    state.foodItem.totalCost -= rawMaterial.unitCost * rawMaterial.quantity;
 
     this.validator(
       "rawMaterials",
@@ -342,7 +314,7 @@ export default class AddFoodItem extends ApplicationContainer {
         state.rawMaterialQuantityModal.selectedRawMaterial
       );
       state.foodItem.totalCost +=
-        state.rawMaterialQuantityModal.selectedRawMaterial.unitPrice *
+        state.rawMaterialQuantityModal.selectedRawMaterial.unitCost *
         state.rawMaterialQuantityModal.selectedRawMaterialQuantity;
 
       state.rawMaterialQuantityModal.selectedRawMaterial = "";
@@ -392,7 +364,7 @@ export default class AddFoodItem extends ApplicationContainer {
     let state = { ...this.state };
     let totalCost = this.state.foodItem.selectedRawMaterials.reduce(
       (sum, item) => {
-        return sum + item.unitPrice * item.quantity;
+        return sum + item.unitCost * item.quantity;
       },
       0
     );
@@ -430,17 +402,17 @@ export default class AddFoodItem extends ApplicationContainer {
     return (
       <section>
         {super.render()}
-        <ToastContainer
-          position="top-center"
-          autoClose={3000}
-          hideProgressBar
-          newestOnTop={false}
-          closeOnClick
-          rtl={false}
-          pauseOnFocusLoss
-          draggable
-          pauseOnHover
-        />
+        {this.state.loading && (
+          <div className="dialog-background">
+            <div className="dialog-loading-wrapper">
+              <img
+                src={"/confirmation.gif"}
+                alt={"Loading..."}
+                className={"loading-img"}
+              />
+            </div>
+          </div>
+        )}
         <Row className={"m-3"}>
           <Col sm={5}>
             <Card>
@@ -455,7 +427,7 @@ export default class AddFoodItem extends ApplicationContainer {
                     <section className={"mt-5"}>
                       <strong>Selected Raw Materials</strong>
                       <ListGroup
-                        className={"mt-3 po-selected-raw-material-list"}
+                        className={"mt-3 fi-selected-raw-material-list"}
                       >
                         {this.state.foodItem.selectedRawMaterials.map(
                           (rawMaterial) => (
@@ -463,10 +435,12 @@ export default class AddFoodItem extends ApplicationContainer {
                               <Row>
                                 <Col sm={4} className={"pl-3 text-left"}>
                                   <h6>
-                                    <span>{rawMaterial.name}</span>
+                                    <span>{rawMaterial.rawMaterialName}</span>
                                     <br />
                                     <span>
-                                      <small>{rawMaterial.category}</small>
+                                      <small>
+                                        {rawMaterial.unitMeasurement}
+                                      </small>
                                     </span>
                                   </h6>
                                 </Col>
@@ -485,7 +459,7 @@ export default class AddFoodItem extends ApplicationContainer {
                                       <strong>Unit Price</strong>
                                     </span>
                                     <br />
-                                    <span>${rawMaterial.unitPrice}</span>
+                                    <span>${rawMaterial.unitCost}</span>
                                   </h6>
                                 </Col>
                                 <Col sm={1}>
@@ -679,19 +653,20 @@ export default class AddFoodItem extends ApplicationContainer {
                       <ListGroup
                         className={
                           isError.selectedRawMaterials.length > 0
-                            ? "is-invalid mt-3 po-raw-material-list"
-                            : "mt-3 po-raw-material-list"
+                            ? "is-invalid mt-3 fi-raw-material-list"
+                            : "mt-3 fi-raw-material-list"
                         }
                       >
                         {this.state.rawMaterials.map((rawMaterial) => (
                           <ListGroup.Item key={rawMaterial.id}>
                             <Row>
+                              {console.log(rawMaterial)}
                               <Col sm={5} className={"pl-3"}>
                                 <h6>
-                                  <span>{rawMaterial.name}</span>
+                                  <span>{rawMaterial.rawMaterialName}</span>
                                   <br />
                                   <span>
-                                    <small>{rawMaterial.category}</small>
+                                    <small>{rawMaterial.unitMeasurement}</small>
                                   </span>
                                 </h6>
                               </Col>
@@ -700,7 +675,7 @@ export default class AddFoodItem extends ApplicationContainer {
                                   <span>
                                     <strong>Unit Price:</strong>
                                   </span>
-                                  <span> ${rawMaterial.unitPrice}</span>
+                                  <span> ${rawMaterial.unitCost}</span>
                                 </h6>
                               </Col>
                               <Col sm={2}>
@@ -746,7 +721,8 @@ export default class AddFoodItem extends ApplicationContainer {
                   plaintext
                   readOnly
                   defaultValue={
-                    this.state.rawMaterialQuantityModal.selectedRawMaterial.name
+                    this.state.rawMaterialQuantityModal.selectedRawMaterial
+                      .rawMaterialName
                   }
                   className={"p-0"}
                 />
