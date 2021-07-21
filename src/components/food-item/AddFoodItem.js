@@ -139,7 +139,6 @@ export default class AddFoodItem extends ApplicationContainer {
             Authorization: "Bearer " + user.token,
           },
         };
-        console.log(this.state.foodItem);
         await axios
           .post(POST_ADD_FOOD_ITEM, formData, config)
           .then((response) => {

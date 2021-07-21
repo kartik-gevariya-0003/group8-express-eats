@@ -1,10 +1,14 @@
 // Author: Karishma Suresh Lalwani
+/*
+* Functionality to Add new raw material details in the system
+* */
+
 import React from "react";
 import {Button, Card, Col, Form, Row,} from "react-bootstrap";
 import ApplicationContainer from "../ApplicationContainer";
 import axios from 'axios';
 import Select from "react-select";
-import {ADD_RAW_MATERIAL, GET_VENDORS} from "../../config";
+import {ADD_RAW_MATERIAL, CREATE_RAW_MATERIAL, GET_VENDORS} from "../../config";
 import {toast} from "react-toastify";
 
 export class AddRawMaterial extends ApplicationContainer {
@@ -49,6 +53,7 @@ export class AddRawMaterial extends ApplicationContainer {
     }
   }
 
+  // GET API call to fetch the vendor
   getVendors(headers) {
     this.setState({loading: true});
     axios.get(GET_VENDORS, {headers:headers}).then(result => {
@@ -58,6 +63,7 @@ export class AddRawMaterial extends ApplicationContainer {
     })
   }
 
+  //Form-validations
   validator = (name, value, errors) => {
     switch (name) {
       case "rawMaterialName":
@@ -133,10 +139,12 @@ export class AddRawMaterial extends ApplicationContainer {
     this.setState(state);
   }
 
+  //Cancel-button handler
   cancelHandler = (e) => {
     this.props.history.push("/raw-materials");
   };
 
+  //Submit-button handler
   handleSubmit = (e) => {
     e.preventDefault();
     let errors = {...this.state.errors};
@@ -160,7 +168,8 @@ export class AddRawMaterial extends ApplicationContainer {
         const headers = {
           'Authorization': 'Bearer ' + user.token
         }
-        axios.post(ADD_RAW_MATERIAL, postData, {headers:headers}).then((response) => {
+        //POST API call for adding new raw material details in the system
+        axios.post(CREATE_RAW_MATERIAL, postData, {headers:headers}).then((response) => {
           this.setState({loading: false});
           toast.success("Raw Material created successfully.");
           this.props.history.push({

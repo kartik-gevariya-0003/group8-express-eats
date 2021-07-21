@@ -10,7 +10,7 @@ import axios from "axios";
 import {
   DELETE_MANUFACTURING_ORDER,
   GET_MANUFACTURING_ORDERS,
-  PUT_CHANGE_MANUFACTURING_ORDER_STATUS
+  CHANGE_MANUFACTURING_ORDER_STATUS
 } from "../../config";
 import {toast} from "react-toastify";
 
@@ -70,8 +70,15 @@ class ManufacturingOrders extends ApplicationContainer {
       })
     }).catch(error => {
       this.setState({loading: false});
-      console.error(error);
-      toast.error("Error occurred while fetching manufacturing orders.");
+      if (error.response.status === 401) {
+        toast.error('Session is expired. Please login again.');
+        localStorage.removeItem('user');
+        this.props.history.push({
+          pathname: '/login'
+        });
+      } else {
+        toast.error(error.response.data.message);
+      }
     })
   }
 
@@ -86,7 +93,7 @@ class ManufacturingOrders extends ApplicationContainer {
       const headers = {
         'Authorization': 'Bearer ' + user.token
       }
-      axios.put(PUT_CHANGE_MANUFACTURING_ORDER_STATUS, putData, {headers: headers}).then(() => {
+      axios.put(CHANGE_MANUFACTURING_ORDER_STATUS, putData, {headers: headers}).then(() => {
         this.getManufacturingOrders();
         this.setState({loading: false});
       }).catch(error => {
@@ -95,7 +102,15 @@ class ManufacturingOrders extends ApplicationContainer {
         if (error.response && error.response.status === 412) {
           toast.error("The manufacturing order cannot be moved to Prepping state as there are not enough raw materials in the inventory.");
         } else {
-          toast.error("Error occurred while changing the status of manufacturing order.");
+          if (error.response.status === 401) {
+            toast.error('Session is expired. Please login again.');
+            localStorage.removeItem('user');
+            this.props.history.push({
+              pathname: '/login'
+            });
+          } else {
+            toast.error(error.response.data.message);
+          }
         }
       })
     }
@@ -144,8 +159,15 @@ class ManufacturingOrders extends ApplicationContainer {
         this.setState({loading: false});
       }).catch(error => {
         this.setState({loading: false});
-        console.error(error);
-        toast.error("Error occurred while fetching purchase orders.");
+        if (error.response.status === 401) {
+          toast.error('Session is expired. Please login again.');
+          localStorage.removeItem('user');
+          this.props.history.push({
+            pathname: '/login'
+          });
+        } else {
+          toast.error(error.response.data.message);
+        }
       })
     }
   }
