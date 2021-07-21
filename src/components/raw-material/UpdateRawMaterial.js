@@ -62,6 +62,7 @@ class UpdateRawMaterial extends ApplicationContainer {
             this.setState({loading: false});
             let vendorOptions = result.data.vendors;
             this.setState({vendorOptions: vendorOptions});
+            this.getRawMaterial(headers);
         }).catch(error => {
             this.setState({loading: false});
             console.log(error)
@@ -73,20 +74,26 @@ class UpdateRawMaterial extends ApplicationContainer {
     getRawMaterial(headers) {
         this.setState({loading: true});
         const url = GET_RAW_MATERIAL_BY_ID + this.state.rawMaterial.id
-        axios.get(url, {headers : headers}).then(result => {
+        axios.get(url, {headers: headers}).then(result => {
             this.setState({loading: false});
             let rawMaterial = result.data.rawMaterial;
-            let unitCodeAndValue = rawMaterial.unitMeasurement.match(/[^\d]+|\d+/g)
+            let unitCode = rawMaterial.unitMeasurement.replace(/[^0-9.]*/g, "")
+            let unitValue = rawMaterial.unitMeasurement.replace(/[0-9.]*/g, "")
             let rawMaterialData = {
+                id: rawMaterial.id,
                 rawMaterialName: rawMaterial.rawMaterialName,
                 unitCost: rawMaterial.unitCost,
-                unitMeasurementValue: +unitCodeAndValue[0],
-                unitMeasurementCode: unitCodeAndValue[1],
+                unitMeasurementValue: +unitCode,
+                unitMeasurementCode: unitValue,
                 vendorIds: rawMaterial.vendors.map(vendor => vendor.id)
             }
             const selectedVendors = this.state.vendorOptions.filter(vendor => rawMaterialData.vendorIds.some(vendorId => vendor.id === vendorId));
             const selectedUnitMeasurementCode = this.state.unitMeasurementOptions.filter(unitMeasurementOption => unitMeasurementOption.value === rawMaterialData.unitMeasurementCode)[0]
-            this.setState({rawMaterial: rawMaterialData, selectedVendors: selectedVendors, selectedUnitMeasurementCode: selectedUnitMeasurementCode});
+            this.setState({
+                rawMaterial: rawMaterialData,
+                selectedVendors: selectedVendors,
+                selectedUnitMeasurementCode: selectedUnitMeasurementCode
+            });
         }).catch(error => {
             this.setState({loading: false});
             console.log(error)
