@@ -72,6 +72,9 @@ class CreateManufacturingOrder extends ApplicationContainer {
     this.props.history.push("/manufacturing-orders");
   };
 
+  /**
+   * Function to search food items from food items list
+   **/
   filterFoodItems(event) {
     event.preventDefault();
     const {value} = event.target;
@@ -101,6 +104,9 @@ class CreateManufacturingOrder extends ApplicationContainer {
     this.setState(state);
   };
 
+  /**
+   * Validator function to validate user input
+   **/
   validator = (name, value, isError) => {
     switch (name) {
       case "modalFoodItemQuantity":
@@ -124,14 +130,13 @@ class CreateManufacturingOrder extends ApplicationContainer {
   calculateTotalCost = () => {
     let state = {...this.state};
     state.order.totalPrice = this.state.order.selectedFoodItems.reduce(
-      (sum, item) => {
-        return sum + item.totalCost * +item.quantity;
-      },
-      0
-    );
+      (sum, item) => {return sum + item.totalCost * +item.quantity;}, 0);
     this.setState(state);
   };
 
+  /**
+   * Function to add the food item to the order, it will add the food item along with its quantity to the order
+   **/
   addFoodItemToOrder = (e) => {
     e.preventDefault();
     let state = {...this.state};
@@ -157,6 +162,9 @@ class CreateManufacturingOrder extends ApplicationContainer {
     this.calculateTotalCost();
   };
 
+  /**
+   * Submit handler which calls the POST API to create manufacturing order
+   **/
   onSubmit(e) {
     e.preventDefault();
     let isError = {...this.state.isError};
@@ -169,9 +177,7 @@ class CreateManufacturingOrder extends ApplicationContainer {
       }
     });
 
-    this.setState({
-      isError: isError,
-    });
+    this.setState({isError: isError});
 
     if (isValid) {
       this.setState({loading: true});
@@ -230,7 +236,7 @@ class CreateManufacturingOrder extends ApplicationContainer {
 
   render() {
     return (
-      <section>
+      <section className={"pb-5"}>
         {this.state.loading && (
           <div className="dialog-background">
             <div className="dialog-loading-wrapper">

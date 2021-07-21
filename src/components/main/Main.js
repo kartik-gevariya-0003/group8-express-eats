@@ -31,7 +31,9 @@ class Main extends PlainHeaderComponent {
             <Col sm={6} className={"mt-4"}>
               <h2>All-in-one Food Manufacturing Platform for your supply chain management needs</h2>
               <br/>
-              <p>Setup Vendors, Raw Materials, Food Items and manage Purchase Orders, Manufacturing Orders and keep track of your Inventory - everything you need to easily manage your supply chain, within one interface.</p>
+              <p>Setup Vendors, Raw Materials, Food Items and manage Purchase Orders, Manufacturing Orders and keep
+                track of your Inventory - everything you need to easily manage your supply chain, within one
+                interface.</p>
               <Link to={"/login"}>
                 <Button variant={"info mt-3 mr-2"}>Login / Register</Button>
               </Link>

@@ -20,6 +20,7 @@ export default class ApplicationContainer extends Component {
       });
     }
   }
+
   render() {
     return (
       <Header {...this.props}/>

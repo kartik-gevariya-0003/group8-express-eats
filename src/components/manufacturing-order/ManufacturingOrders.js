@@ -7,11 +7,7 @@ import {faAngleDown, faAngleUp, faSearch, faTrashAlt} from "@fortawesome/free-so
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import ApplicationContainer from "../ApplicationContainer";
 import axios from "axios";
-import {
-  DELETE_MANUFACTURING_ORDER,
-  GET_MANUFACTURING_ORDERS,
-  CHANGE_MANUFACTURING_ORDER_STATUS
-} from "../../config";
+import {CHANGE_MANUFACTURING_ORDER_STATUS, DELETE_MANUFACTURING_ORDER, GET_MANUFACTURING_ORDERS} from "../../config";
 import {toast} from "react-toastify";
 
 const MANUFACTURING_ORDER_STATUS = {
@@ -55,6 +51,9 @@ class ManufacturingOrders extends ApplicationContainer {
     }
   }
 
+  /**
+   * Function to get manufacturing order list by making a GET call
+   **/
   getManufacturingOrders = (headers) => {
     this.setState({loading: true});
     axios.get(GET_MANUFACTURING_ORDERS, {headers: headers}).then(result => {
@@ -82,6 +81,9 @@ class ManufacturingOrders extends ApplicationContainer {
     })
   }
 
+  /**
+   * Function to change the status of a manufacturing order by making a PUT call
+   **/
   changeOrderStatus = (item, status) => {
     this.setState({loading: true});
     const putData = {
@@ -144,6 +146,9 @@ class ManufacturingOrders extends ApplicationContainer {
     this.setState(state)
   }
 
+  /**
+   * Function to delete a manufacturing order by making a DELETE call.
+   **/
   deleteOpenManufacturingOrder = () => {
     let state = this.state
     const user = JSON.parse(localStorage.getItem('user'));
@@ -180,6 +185,9 @@ class ManufacturingOrders extends ApplicationContainer {
     this.closeArchiveModal();
   }
 
+  /**
+   * Function to search a manufacturing order
+   **/
   searchOrder = (event) => {
     let searchText = event.target.value
     let openOrders = this.originalOrder.openOrders;
@@ -217,7 +225,7 @@ class ManufacturingOrders extends ApplicationContainer {
 
   render() {
     return (
-      <section>
+      <section className={"pb-5"}>
         {this.state.loading &&
         <div className="dialog-background">
           <div className="dialog-loading-wrapper">
@@ -548,7 +556,8 @@ class ManufacturingOrders extends ApplicationContainer {
             <Modal.Body>
               <Form.Group>
                 <Form.Label className={"m-0"}>
-                  Are you sure you want to archive the order with order number {this.state.archiveModal.orderNumber}?{" "}
+                  Are you sure you want to archive the order with order
+                  number {this.state.archiveModal.orderNumber}?{" "}
                 </Form.Label>
               </Form.Group>
             </Modal.Body>
