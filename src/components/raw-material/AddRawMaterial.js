@@ -60,7 +60,19 @@ export class AddRawMaterial extends ApplicationContainer {
       this.setState({loading: false});
       let vendorOptions = result.data.vendors;
       this.setState({vendorOptions: vendorOptions});
-    })
+    }).catch((error) => {
+      this.setState({loading: false});
+      if (error.response && error.response.status === 401) {
+        toast.error('Session is expired. Please login again.');
+        localStorage.removeItem('user');
+        this.props.history.push({
+          pathname: '/login'
+        });
+      } else {
+        const errorMessage = (error.response && error.response.data && error.response.data.message) || "Error occurred while fetching vendors."
+        toast.error(errorMessage);
+      }
+    });
   }
 
   //Form-validations
@@ -175,6 +187,18 @@ export class AddRawMaterial extends ApplicationContainer {
           this.props.history.push({
             pathname: '/raw-materials',
           });
+        }).catch((error) => {
+          this.setState({loading: false});
+          if (error.response && error.response.status === 401) {
+            toast.error('Session is expired. Please login again.');
+            localStorage.removeItem('user');
+            this.props.history.push({
+              pathname: '/login'
+            });
+          } else {
+            const errorMessage = (error.response && error.response.data && error.response.data.message) || "Error occurred while creating raw materials."
+            toast.error(errorMessage);
+          }
         });
       }
     }

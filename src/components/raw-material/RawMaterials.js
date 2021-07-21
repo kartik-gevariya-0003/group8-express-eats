@@ -40,6 +40,7 @@ export default class RawMaterials extends ApplicationContainer {
   getRawMaterials = (headers) => {
     axios.get(GET_RAW_MATERIALS, {headers : headers}).then(result => {
       let rawMaterials = result.data['rawMaterials']
+      this.originalRawMaterialsList = rawMaterials;
       this.setState({rawMaterialList: rawMaterials})
     })
   }
@@ -90,8 +91,8 @@ export default class RawMaterials extends ApplicationContainer {
     e.preventDefault();
     const {value} = e.target;
     this.setState({
-      rawMaterialList: this.state.rawMaterialList.filter((rawMaterial) =>
-          rawMaterial.name.toLowerCase().includes(value.toLowerCase())
+      rawMaterialList: this.state.originalRawMaterialsList.filter((rawMaterial) =>
+          rawMaterial.rawMaterialName.toLowerCase().includes(value.toLowerCase())
       ),
     });
   };
