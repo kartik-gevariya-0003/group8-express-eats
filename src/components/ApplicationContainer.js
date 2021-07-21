@@ -1,6 +1,10 @@
 /**
  * Author: Kartik Gevariya
  */
+
+/**
+ * This component is root component for all pages that will be displayed after login.
+ */
 import React, {Component} from 'react';
 import Header from "./headers/Header";
 

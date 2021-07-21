@@ -1,3 +1,10 @@
+/**
+ * Author: Karishma Suresh Lalwani
+ * Author: Kartik Gevariya
+ * Author: Mansi Gevariya
+ * Author: Rotesh Chhabra
+ * Author: Tasneem Yusuf Porbanderwala
+ */
 import "./App.css";
 import {Route, Switch} from "react-router-dom";
 import * as PropTypes from "prop-types";

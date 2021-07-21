@@ -1,6 +1,10 @@
 /**
  * Author: Kartik Gevariya
  */
+
+/**
+ * This component is main landing page when manufacturer opens this application.
+ */
 import './main.css'
 import PlainHeaderComponent from "../PlainHeaderComponent";
 import ParticlesBg from "particles-bg";
@@ -21,7 +25,7 @@ class Main extends PlainHeaderComponent {
         <ParticlesBg type="cobweb" bg={true} color={"#88CACA"}/>
         <Container fluid={"sm"}>
           <Row className={"justify-content-center mt-5 ml-0 mr-0"}>
-            <h1 className={"logo-name"}/>
+            <p className={"logo-name"}/>
           </Row>
           <Row className={"justify-content-center text-center mt-5"}>
             <Col sm={6} className={"mt-4"}>

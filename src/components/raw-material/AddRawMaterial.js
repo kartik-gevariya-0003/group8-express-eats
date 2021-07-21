@@ -8,7 +8,7 @@ import {Button, Card, Col, Form, Row,} from "react-bootstrap";
 import ApplicationContainer from "../ApplicationContainer";
 import axios from 'axios';
 import Select from "react-select";
-import {ADD_RAW_MATERIAL, CREATE_RAW_MATERIAL, GET_VENDORS} from "../../config";
+import {CREATE_RAW_MATERIAL, GET_VENDORS} from "../../config";
 import {toast} from "react-toastify";
 
 export class AddRawMaterial extends ApplicationContainer {
@@ -56,7 +56,7 @@ export class AddRawMaterial extends ApplicationContainer {
   // GET API call to fetch the vendor
   getVendors(headers) {
     this.setState({loading: true});
-    axios.get(GET_VENDORS, {headers:headers}).then(result => {
+    axios.get(GET_VENDORS, {headers: headers}).then(result => {
       this.setState({loading: false});
       let vendorOptions = result.data.vendors;
       this.setState({vendorOptions: vendorOptions});
@@ -169,7 +169,7 @@ export class AddRawMaterial extends ApplicationContainer {
           'Authorization': 'Bearer ' + user.token
         }
         //POST API call for adding new raw material details in the system
-        axios.post(CREATE_RAW_MATERIAL, postData, {headers:headers}).then((response) => {
+        axios.post(CREATE_RAW_MATERIAL, postData, {headers: headers}).then((response) => {
           this.setState({loading: false});
           toast.success("Raw Material created successfully.");
           this.props.history.push({
@@ -185,125 +185,125 @@ export class AddRawMaterial extends ApplicationContainer {
 
   render() {
     return (
-        <section>
-          {this.state.loading &&
-          <div className="dialog-background">
-            <div className="dialog-loading-wrapper">
-              <img src={"/confirmation.gif"} alt={"Loading..."} className={"loading-img"}/>
-            </div>
+      <section>
+        {this.state.loading &&
+        <div className="dialog-background">
+          <div className="dialog-loading-wrapper">
+            <img src={"/confirmation.gif"} alt={"Loading..."} className={"loading-img"}/>
           </div>
-          }
-          {super.render()}
-          <Row className="m-3">
-            <Col className={"text-left"}>
-              <h2>New Raw Material</h2>
-              <hr/>
-            </Col>
-          </Row>
-          <Row className={"m-3 justify-content-center"}>
-            <Col sm={10}>
-              <Card>
-                <Card.Body className={"text-left"}>
-                  <Row className={"mt-3"}>
-                    <Col sm={12}>
-                      <Form onSubmit={this.handleSubmit}>
-                        <Form.Group className="mb-3">
-                          <Row>
-                            <Col sm={6}>
-                              <Form.Label>Name *</Form.Label>
-                              <Form.Control type="text" name="rawMaterialName"
-                                            onChange={this.setRawMaterialName}
-                                            className={this.state.errors.rawMaterialName ? "is-invalid" : ""}/>
-                              {this.state.errors.rawMaterialName.length > 0 && (
-                                  <Form.Control.Feedback type={"invalid"}>
-                                    {this.state.errors.rawMaterialName}
-                                  </Form.Control.Feedback>
-                              )}
-                            </Col>
-                            <Col sm={6}>
-                              <Form.Label>Vendor Name *</Form.Label>
-                              <Select
-                                  isClearable
-                                  isMulti
-                                  className={this.state.errors.vendorIds.length > 0 ? "is-invalid" : ""}
-                                  options={this.state.vendorOptions}
-                                  getOptionValue={vendor => vendor.id}
-                                  getOptionLabel={vendor => `${vendor.vendorName} (${vendor.contactPersonName})`}
-                                  placeholder="Select Vendor"
-                                  onChange={this.onVendorSelect}
-                              />
-                              {this.state.errors.vendorIds.length > 0 && (
-                                  <Form.Control.Feedback
-                                      type={"invalid"}>{this.state.errors.vendorIds}</Form.Control.Feedback>
-                              )}
-                            </Col>
-                          </Row>
-                        </Form.Group>
-                        <Form.Group className="mb-3">
-                          <Row>
-                            <Col sm={6}>
-                              <Form.Label>Unit Cost *</Form.Label>
-                              <Form.Control type="float" name="unitCost"
-                                            onChange={this.setUnitCost}
-                                            className={this.state.errors.unitCost ? "is-invalid" : ""}/>
-                              {this.state.errors.unitCost.length > 0 && (
-                                  <Form.Control.Feedback type={"invalid"}>
-                                    {this.state.errors.unitCost}
-                                  </Form.Control.Feedback>
-                              )}
-                            </Col>
-                            <Col sm={3}>
-                              <Form.Label>Unit Measurement *</Form.Label>
-                              <Form.Control type="number" name="unitMeasurement"
-                                            step=".01"
-                                            onChange={this.setUnitMeasurement}
-                                            className={this.state.errors.unitMeasurementValue ? "is-invalid" : ""}/>
-                              {this.state.errors.unitMeasurementValue.length > 0 && (
-                                  <Form.Control.Feedback type={"invalid"}>
-                                    {this.state.errors.unitMeasurementValue}
-                                  </Form.Control.Feedback>
-                              )}
-                            </Col>
-                            <Col sm={3}>
-                              <Form.Label>&nbsp;</Form.Label>
-                              <Select
-                                  isClearable
-                                  className={this.state.errors.unitMeasurementCode ? "is-invalid" : ""}
-                                  options={this.state.unitMeasurementOptions}
-                                  getOptionValue={unitMeasurementCode => unitMeasurementCode.value}
-                                  getOptionLabel={unitMeasurementCode => `${unitMeasurementCode.value}`}
-                                  placeholder="Select Measurement"
-                                  onChange={this.onMeasurementSelect}
-                              />
-                              {this.state.errors.unitMeasurementCode.length > 0 && (
-                                  <Form.Control.Feedback
-                                      type={"invalid"}>{this.state.errors.unitMeasurementCode}</Form.Control.Feedback>
-                              )}
-                            </Col>
-                          </Row>
-                        </Form.Group>
-                        <Form.Group className={"mt-5 mb-3"}>
-                          <Row>
-                            <Col sm={6} className={"text-right"}>
-                              <Button className={"submit-btn"} variant="primary" type="submit">
-                                Submit
-                              </Button>
-                            </Col>
-                            <Col sm={6} className={"submit-btn"}>
-                              <Button variant="danger" onClick={this.cancelHandler}>
-                                Cancel
-                              </Button>
-                            </Col>
-                          </Row>
-                        </Form.Group>
-                      </Form>
-                    </Col>
-                  </Row>
-                </Card.Body>
-              </Card>
-            </Col>
-          </Row>
-        </section>
+        </div>
+        }
+        {super.render()}
+        <Row className="m-3">
+          <Col className={"text-left"}>
+            <h2>New Raw Material</h2>
+            <hr/>
+          </Col>
+        </Row>
+        <Row className={"m-3 justify-content-center"}>
+          <Col sm={10}>
+            <Card>
+              <Card.Body className={"text-left"}>
+                <Row className={"mt-3"}>
+                  <Col sm={12}>
+                    <Form onSubmit={this.handleSubmit}>
+                      <Form.Group className="mb-3">
+                        <Row>
+                          <Col sm={6}>
+                            <Form.Label>Name *</Form.Label>
+                            <Form.Control type="text" name="rawMaterialName"
+                                          onChange={this.setRawMaterialName}
+                                          className={this.state.errors.rawMaterialName ? "is-invalid" : ""}/>
+                            {this.state.errors.rawMaterialName.length > 0 && (
+                              <Form.Control.Feedback type={"invalid"}>
+                                {this.state.errors.rawMaterialName}
+                              </Form.Control.Feedback>
+                            )}
+                          </Col>
+                          <Col sm={6}>
+                            <Form.Label>Vendor Name *</Form.Label>
+                            <Select
+                              isClearable
+                              isMulti
+                              className={this.state.errors.vendorIds.length > 0 ? "is-invalid" : ""}
+                              options={this.state.vendorOptions}
+                              getOptionValue={vendor => vendor.id}
+                              getOptionLabel={vendor => `${vendor.vendorName} (${vendor.contactPersonName})`}
+                              placeholder="Select Vendor"
+                              onChange={this.onVendorSelect}
+                            />
+                            {this.state.errors.vendorIds.length > 0 && (
+                              <Form.Control.Feedback
+                                type={"invalid"}>{this.state.errors.vendorIds}</Form.Control.Feedback>
+                            )}
+                          </Col>
+                        </Row>
+                      </Form.Group>
+                      <Form.Group className="mb-3">
+                        <Row>
+                          <Col sm={6}>
+                            <Form.Label>Unit Cost *</Form.Label>
+                            <Form.Control type="float" name="unitCost"
+                                          onChange={this.setUnitCost}
+                                          className={this.state.errors.unitCost ? "is-invalid" : ""}/>
+                            {this.state.errors.unitCost.length > 0 && (
+                              <Form.Control.Feedback type={"invalid"}>
+                                {this.state.errors.unitCost}
+                              </Form.Control.Feedback>
+                            )}
+                          </Col>
+                          <Col sm={3}>
+                            <Form.Label>Unit Measurement *</Form.Label>
+                            <Form.Control type="number" name="unitMeasurement"
+                                          step=".01"
+                                          onChange={this.setUnitMeasurement}
+                                          className={this.state.errors.unitMeasurementValue ? "is-invalid" : ""}/>
+                            {this.state.errors.unitMeasurementValue.length > 0 && (
+                              <Form.Control.Feedback type={"invalid"}>
+                                {this.state.errors.unitMeasurementValue}
+                              </Form.Control.Feedback>
+                            )}
+                          </Col>
+                          <Col sm={3}>
+                            <Form.Label>&nbsp;</Form.Label>
+                            <Select
+                              isClearable
+                              className={this.state.errors.unitMeasurementCode ? "is-invalid" : ""}
+                              options={this.state.unitMeasurementOptions}
+                              getOptionValue={unitMeasurementCode => unitMeasurementCode.value}
+                              getOptionLabel={unitMeasurementCode => `${unitMeasurementCode.value}`}
+                              placeholder="Select Measurement"
+                              onChange={this.onMeasurementSelect}
+                            />
+                            {this.state.errors.unitMeasurementCode.length > 0 && (
+                              <Form.Control.Feedback
+                                type={"invalid"}>{this.state.errors.unitMeasurementCode}</Form.Control.Feedback>
+                            )}
+                          </Col>
+                        </Row>
+                      </Form.Group>
+                      <Form.Group className={"mt-5 mb-3"}>
+                        <Row>
+                          <Col sm={6} className={"text-right"}>
+                            <Button className={"submit-btn"} variant="primary" type="submit">
+                              Submit
+                            </Button>
+                          </Col>
+                          <Col sm={6} className={"submit-btn"}>
+                            <Button variant="danger" onClick={this.cancelHandler}>
+                              Cancel
+                            </Button>
+                          </Col>
+                        </Row>
+                      </Form.Group>
+                    </Form>
+                  </Col>
+                </Row>
+              </Card.Body>
+            </Card>
+          </Col>
+        </Row>
+      </section>
     );
   }
 }

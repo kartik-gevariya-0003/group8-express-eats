@@ -1,6 +1,11 @@
 /**
  * Author: Kartik Gevariya
  */
+
+/**
+ * This component is responsible for creating purchase order functionality.
+ * It allows user to select vendor & raw materials and shows order summary.
+ */
 import './purchase-order.css';
 import React from 'react';
 import {Button, Card, Col, Form, FormControl, InputGroup, ListGroup, Modal, Row} from "react-bootstrap";
@@ -67,14 +72,15 @@ export default class CreatePurchaseOrder extends ApplicationContainer {
         })
         .catch((error) => {
           this.setState({loading: false});
-          if (error.response.status === 401) {
+          if (error.response && error.response.status === 401) {
             toast.error('Session is expired. Please login again.');
             localStorage.removeItem('user');
             this.props.history.push({
               pathname: '/login'
             });
           } else {
-            toast.error(error.response.data.message);
+            const errorMessage = (error.response && error.response.data && error.response.data.message) || "Error occurred while getting vendors."
+            toast.error(errorMessage);
           }
         });
 
@@ -91,14 +97,15 @@ export default class CreatePurchaseOrder extends ApplicationContainer {
         })
         .catch((error) => {
           this.setState({loading: false});
-          if (error.response.status === 401) {
+          if (error.response && error.response.status === 401) {
             toast.error('Session is expired. Please login again.');
             localStorage.removeItem('user');
             this.props.history.push({
               pathname: '/login'
             });
           } else {
-            toast.error(error.response.data.message);
+            const errorMessage = (error.response && error.response.data && error.response.data.message) || "Error occurred while getting raw materials."
+            toast.error(errorMessage);
           }
         });
     }
@@ -158,14 +165,15 @@ export default class CreatePurchaseOrder extends ApplicationContainer {
         })
         .catch((error) => {
           this.setState({loading: false});
-          if (error.response.status === 401) {
+          if (error.response && error.response.status === 401) {
             toast.error('Session is expired. Please login again.');
             localStorage.removeItem('user');
             this.props.history.push({
               pathname: '/login'
             });
           } else {
-            toast.error(error.response.data.message);
+            const errorMessage = (error.response && error.response.data && error.response.data.message) || "Error occurred while creating order."
+            toast.error(errorMessage);
           }
         });
     }
