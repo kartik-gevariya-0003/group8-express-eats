@@ -66,8 +66,15 @@ class CreateManufacturingOrder extends ApplicationContainer {
       })
       .catch((error) => {
         this.setState({ loading: false });
-        console.error(error);
-        toast.error("Error occurred while fetching food items.");
+        if (error.response.status === 401) {
+          toast.error('Session is expired. Please login again.');
+          localStorage.removeItem('user');
+          this.props.history.push({
+            pathname: '/login'
+          });
+        } else {
+          toast.error(error.response.data.message);
+        }
       });
   };
 
@@ -192,7 +199,18 @@ class CreateManufacturingOrder extends ApplicationContainer {
             this.props.history.push({
               pathname: "/manufacturing-orders",
             });
-          });
+          }).catch((error) => {
+          if (error.response.status === 401) {
+            this.setState({ loading: false });
+            toast.error('Session is expired. Please login again.');
+            localStorage.removeItem('user');
+            this.props.history.push({
+              pathname: '/login'
+            });
+          } else {
+            toast.error(error.response.data.message);
+          }
+        });
       }
     }
   }
