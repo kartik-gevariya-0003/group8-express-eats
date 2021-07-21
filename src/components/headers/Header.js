@@ -8,6 +8,7 @@ import {Image, Nav, Navbar, NavDropdown} from "react-bootstrap";
 import {faUserCircle} from "@fortawesome/free-solid-svg-icons";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {toast} from "react-toastify";
+import {withRouter} from "react-router-dom";
 
 class Header extends Component {
   constructor(props) {
@@ -90,4 +91,4 @@ class Header extends Component {
   }
 }
 
-export default Header;
+export default withRouter(Header) ;
