@@ -320,7 +320,7 @@ export default class PurchaseOrders extends ApplicationContainer {
 
   render() {
     return (
-      <section>
+      <section className={"pb-5"}>
         {this.state.loading &&
         <div className="dialog-background">
           <div className="dialog-loading-wrapper">

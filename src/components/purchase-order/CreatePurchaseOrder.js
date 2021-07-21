@@ -15,7 +15,7 @@ import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import ApplicationContainer from "../ApplicationContainer";
 import {toast} from "react-toastify";
 import axios from "axios";
-import {GET_VENDORS, GET_RAW_MATERIALS, CREATE_PURCHASE_ORDER} from "../../config";
+import {CREATE_PURCHASE_ORDER, GET_RAW_MATERIALS, GET_VENDORS} from "../../config";
 
 let vendors = [];
 let rawMaterials = [];
@@ -309,7 +309,7 @@ export default class CreatePurchaseOrder extends ApplicationContainer {
     const {isError} = this.state;
 
     return (
-      <section>
+      <section className={"pb-5"}>
         {this.state.loading &&
         <div className="dialog-background">
           <div className="dialog-loading-wrapper">
@@ -462,7 +462,8 @@ export default class CreatePurchaseOrder extends ApplicationContainer {
                           )}
                         </ListGroup>
                         :
-                        <ListGroup className={"mt-3 po-raw-material-list"}><ListGroup.Item>No raw materials found.</ListGroup.Item></ListGroup>
+                        <ListGroup className={"mt-3 po-raw-material-list"}><ListGroup.Item>No raw materials
+                          found.</ListGroup.Item></ListGroup>
                       }
                       {isError.selectedRawMaterials.length > 0 && (
                         <Form.Control.Feedback
