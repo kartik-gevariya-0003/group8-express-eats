@@ -1,9 +1,14 @@
+/**
+ * Author: Mansi Gevariya
+ * Author: Kartik Gevariya
+ */
 import "./header.css"
 import {Component} from "react";
 import {Button, Col, Image, Nav, NavDropdown, Row} from "react-bootstrap";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faUserCircle} from "@fortawesome/free-solid-svg-icons";
 import {Link} from "react-router-dom";
+import {toast} from "react-toastify";
 
 class LogoHeader extends Component {
 
@@ -14,7 +19,7 @@ class LogoHeader extends Component {
       activeLink: window.location.pathname
     }
     this.showUserIcon = this.state.activeLink === '/home';
-    this.showLoginButton = this.state.activeLink === '/';
+    this.showLoginButton = false;
 
     this.logoImageClasses = "logo-image center";
     if (this.showUserIcon) {
@@ -24,7 +29,9 @@ class LogoHeader extends Component {
     }
   }
 
-  navigateToLogin = () => {
+  invalidateSession = () => {
+    localStorage.removeItem('user');
+    toast.success('User logged out successfully.');
     this.props.history.push({
       pathname: '/login'
     });
@@ -43,7 +50,7 @@ class LogoHeader extends Component {
                   <NavDropdown title={navDropDownTitle} id="navbarScrollingDropdown" className="dropdown-toggle-custom">
                     <NavDropdown.Item>Profile</NavDropdown.Item>
                     <NavDropdown.Divider/>
-                    <NavDropdown.Item href={"/login"}>Log out</NavDropdown.Item>
+                    <NavDropdown.Item onClick={this.invalidateSession}>Log out</NavDropdown.Item>
                   </NavDropdown>
                 </Nav>
               )}

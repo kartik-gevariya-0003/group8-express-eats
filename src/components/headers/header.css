@@ -1,10 +1,13 @@
+/**
+ * Author: Kartik Gevariya
+ */
 .logo-name {
     font-family: fantasy;
     color: #119696;
 }
 
 .logo-image {
-    width: 200px;
+    width: 150px;
 }
 
 .logo-name-small {

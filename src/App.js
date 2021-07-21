@@ -16,13 +16,13 @@ import Home from "./components/home/Home";
 import Main from "./components/main/Main";
 import Login from "./components/login/Login";
 import Inventory from "./components/inventory/Inventory";
-import AddRawMaterialInventory from "./components/inventory/AddRawMaterialInventory";
-import AddFoodItemInventory from "./components/inventory/AddFoodItemInventory";
 import EditFoodItem from "./components/food-item/EditFoodItem";
 import RawMaterials from "./components/raw-material/RawMaterials";
 import AddRawMaterial from "./components/raw-material/AddRawMaterial";
 import UpdateRawMaterial from "./components/raw-material/UpdateRawMaterial";
 import Register from "./components/register/Register";
+import React from "react";
+import Footer from "./components/footer/Footer";
 
 Route.propTypes = {
   component: PropTypes.any,
@@ -66,16 +66,7 @@ function App() {
 
         <Route exact path="/inventory/confirmation" component={Confirmation} />
         <Route exact path="/inventory" component={Inventory} />
-        <Route
-          exact
-          path="/inventory/add-raw-material-inventory"
-          component={AddRawMaterialInventory}
-        />
-        <Route
-          exact
-          path="/inventory/add-food-item-inventory"
-          component={AddFoodItemInventory}
-        />
+
         <Route exact path="/edit-food-item" component={EditFoodItem} />
         <Route exact path="/vendors" component={Vendor} />
         <Route exact path="/vendors/create" component={CreateVendor} />
@@ -87,6 +78,11 @@ function App() {
           exact
           path="/raw-material/update"
           component={UpdateRawMaterial}
+        />
+        <Route
+          exact
+          path="/raw-material/confirmation"
+          component={Confirmation}
         />
       </Switch>
     </div>

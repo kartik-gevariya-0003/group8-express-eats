@@ -1,8 +1,13 @@
+/**
+ * Author: Mansi Gevariya
+ * Author: Kartik Gevariya
+ */
 import "./header.css"
 import {Component} from "react";
 import {Image, Nav, Navbar, NavDropdown} from "react-bootstrap";
 import {faUserCircle} from "@fortawesome/free-solid-svg-icons";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import {toast} from "react-toastify";
 
 class Header extends Component {
   constructor(props) {
@@ -23,6 +28,14 @@ class Header extends Component {
 
   handleLinkClick(item, event) {
     this.setState({activeLink: item.id});
+  }
+
+  invalidateSession = () => {
+    localStorage.removeItem('user');
+    toast.success('User logged out successfully.');
+    this.props.history.push({
+      pathname: '/login'
+    });
   }
 
   render() {
@@ -68,7 +81,7 @@ class Header extends Component {
             >
               <NavDropdown.Item>Profile</NavDropdown.Item>
               <NavDropdown.Divider/>
-              <NavDropdown.Item href={"/login"}>Log out</NavDropdown.Item>
+              <NavDropdown.Item onClick={this.invalidateSession}>Log out</NavDropdown.Item>
             </NavDropdown>
           </Nav>
         </Navbar.Collapse>

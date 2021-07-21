@@ -1,3 +1,6 @@
+/**
+ * Author: Kartik Gevariya
+ */
 import "./home.css";
 import React from "react";
 import {Link} from "react-router-dom";
@@ -14,6 +17,18 @@ import PlainHeaderComponent from "../PlainHeaderComponent";
 import {Col, Image, Row} from "react-bootstrap";
 
 class Home extends PlainHeaderComponent {
+  constructor(props) {
+    super(props);
+    this.props = props;
+
+    const user = JSON.parse(localStorage.getItem('user'));
+    if (!user || !user.token) {
+      this.props.history.push({
+        pathname: '/login'
+      });
+    }
+  }
+
   render() {
     return (
       <section>

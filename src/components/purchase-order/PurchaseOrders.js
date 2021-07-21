@@ -1,42 +1,25 @@
+/**
+ * Author: Kartik Gevariya
+ */
 import './purchase-order.css';
 import React from 'react';
-import {Accordion, Button, Card, Col, Form, FormControl, InputGroup, ListGroup, Row} from "react-bootstrap";
+import {Accordion, Button, Card, Col, Form, FormControl, InputGroup, ListGroup, Modal, Row} from "react-bootstrap";
 import {faAngleDown, faAngleUp, faSearch, faTrashAlt} from "@fortawesome/free-solid-svg-icons";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import ApplicationContainer from "../ApplicationContainer";
+import axios from "axios";
+import {toast} from "react-toastify";
+import {
+  ARCHIVE_PURCHASE_ORDER,
+  DELETE_PURCHASE_ORDER,
+  GET_PURCHASE_ORDERS,
+  PLACE_PURCHASE_ORDER,
+  RECEIVE_PURCHASE_ORDER
+} from "../../config";
 
-let openPurchaseOrders = [
-  {orderNumber: "PO-1234567891", price: "20.5", vendor: "Rifraf", rawMaterials: ["Bread", "Mayonnaise"]},
-  {
-    orderNumber: "PO-1234567992",
-    price: "113.0",
-    vendor: "Honeyville Inc.",
-    rawMaterials: ["Meat", "Lettuce", "Sunflower Oil", "Mayonnaise", "Tomato"]
-  },
-  {orderNumber: "PO-1234567793", price: "36.8", vendor: "Milne MicroDried", rawMaterials: ["Egg", "Wheat", "Rice"]}
-]
-
-let placedPurchaseOrders = [
-  {orderNumber: "PO-1234567894", price: "6.5", vendor: "Glory Bee", rawMaterials: ["Bread"]},
-  {orderNumber: "PO-1234567995", price: "10.3", vendor: "Real Good Dairy", rawMaterials: ["Egg", "Lettuce", "Tomato"]},
-  {
-    orderNumber: "PO-1234567796",
-    price: "30.6",
-    vendor: "Honeyville Inc.",
-    rawMaterials: ["Mayonnaise", "Lettuce", "Rice"]
-  }
-]
-
-let receivedPurchaseOrders = [
-  {orderNumber: "PO-1234567897", price: "17.0", vendor: "Pilotworks Brooklyn", rawMaterials: ["Wheat", "Mayonnaise"]},
-  {
-    orderNumber: "PO-1234567998",
-    price: "45.5",
-    vendor: "Rifraf",
-    rawMaterials: ["Mayonnaise", "Bread", "Wheat", "Meat"]
-  },
-  {orderNumber: "PO-1234567799", price: "8.8", vendor: "Real Good Dairy", rawMaterials: ["Rice"]}
-]
+let openPurchaseOrders = []
+let placedPurchaseOrders = []
+let receivedPurchaseOrders = []
 
 export default class PurchaseOrders extends ApplicationContainer {
 
@@ -50,6 +33,62 @@ export default class PurchaseOrders extends ApplicationContainer {
       isOpenOrderAccordionOpen: true,
       isPlacedOrderAccordionOpen: true,
       isReceivedOrderAccordionOpen: true,
+      loading: false,
+      deleteModal: {
+        show: false,
+        order: {}
+      }
+    }
+  }
+
+  componentDidMount = async () => {
+    this.setState({loading: true});
+
+    const user = JSON.parse(localStorage.getItem('user'));
+    if (user && user.token) {
+      const headers = {
+        'Authorization': 'Bearer ' + user.token
+      }
+
+      await axios
+        .get(GET_PURCHASE_ORDERS, {headers: headers})
+        .then((response) => {
+          this.setState({loading: false});
+
+          console.log(response);
+
+          let allOrders = response.data.purchaseOrders;
+
+          openPurchaseOrders = allOrders.filter(order => {
+            return order.status === 'OPEN'
+          });
+          placedPurchaseOrders = allOrders.filter(order => {
+            return order.status === 'PLACED'
+          });
+          receivedPurchaseOrders = allOrders.filter(order => {
+            return order.status === 'RECEIVED'
+          });
+
+          this.setState({
+            openPurchaseOrders: openPurchaseOrders,
+            placedPurchaseOrders: placedPurchaseOrders,
+            receivedPurchaseOrders: receivedPurchaseOrders
+          });
+
+          console.log(this.state);
+        })
+        .catch((error) => {
+          this.setState({loading: false});
+          if (error.response.status === 401) {
+            toast.error('Session is expired. Please login again.');
+            localStorage.removeItem('user');
+            this.props.history.push({
+              pathname: '/login'
+            });
+          } else {
+            toast.error(error.response.data.message);
+          }
+        });
     }
   }
 
@@ -70,49 +109,169 @@ export default class PurchaseOrders extends ApplicationContainer {
     });
   }
 
-  deletePurchaseOrder = (order) => {
-    openPurchaseOrders = openPurchaseOrders.filter(openOrder => openOrder.orderNumber.toLowerCase() !== order.orderNumber.toLowerCase());
-    this.setState({
-      openPurchaseOrders: this.state.openPurchaseOrders.filter(openOrder => openOrder.orderNumber.toLowerCase() !== order.orderNumber.toLowerCase())
-    });
+  deletePurchaseOrderConfirmation = (order) => {
+    let state = {...this.state};
+
+    state.deleteModal.order = order;
+
+    this.setState(state);
+
+    this.showModal();
   }
 
-  archivePurchaseOrder = (order) => {
-    receivedPurchaseOrders = receivedPurchaseOrders.filter(openOrder => openOrder.orderNumber.toLowerCase() !== order.orderNumber.toLowerCase());
-    this.setState({
-      receivedPurchaseOrders: this.state.receivedPurchaseOrders.filter(openOrder => openOrder.orderNumber.toLowerCase() !== order.orderNumber.toLowerCase())
-    });
+  deletePurchaseOrder = async (order) => {
+    this.setState({loading: true});
+
+    const user = JSON.parse(localStorage.getItem('user'));
+    const headers = {
+      'Authorization': 'Bearer ' + user.token
+    }
+
+    await axios
+      .delete(DELETE_PURCHASE_ORDER + "/" + order.orderNumber, {headers: headers})
+      .then((response) => {
+        this.setState({loading: false});
+        toast.success("Purchase Order deleted successfully.");
+        openPurchaseOrders = openPurchaseOrders.filter(openOrder => openOrder.orderNumber.toLowerCase() !== order.orderNumber.toLowerCase());
+        this.setState({
+          openPurchaseOrders: this.state.openPurchaseOrders.filter(openOrder => openOrder.orderNumber.toLowerCase() !== order.orderNumber.toLowerCase())
+        });
+
+        this.closeModal();
+      })
+      .catch((error) => {
+        this.setState({loading: false});
+        this.closeModal();
+
+        if (error.response.status === 401) {
+          toast.error('Session is expired. Please login again.');
+          localStorage.removeItem('user');
+          this.props.history.push({
+            pathname: '/login'
+          });
+        } else {
+          toast.error(error.response.data.message);
+        }
+      });
   }
 
-  placePurchaseOrder = (order) => {
-    let openOrders = [...this.state.openPurchaseOrders];
-    let placedOrders = [...this.state.placedPurchaseOrders];
+  archivePurchaseOrder = async (order) => {
+    this.setState({loading: true});
 
-    openOrders = openOrders.filter(openOrder => openOrder.orderNumber.toLowerCase() !== order.orderNumber.toLowerCase());
-    placedOrders.unshift(order);
-    console.log(placedOrders);
-    this.setState({
-      openPurchaseOrders: openOrders,
-      placedPurchaseOrders: placedOrders
-    });
+    const user = JSON.parse(localStorage.getItem('user'));
+    const headers = {
+      'Authorization': 'Bearer ' + user.token
+    }
 
-    openPurchaseOrders = openPurchaseOrders.filter(openOrder => openOrder.orderNumber.toLowerCase() !== order.orderNumber.toLowerCase());
-    placedPurchaseOrders.unshift(order);
+    await axios
+      .post(ARCHIVE_PURCHASE_ORDER + "/" + order.orderNumber, {}, {headers: headers})
+      .then((response) => {
+        this.setState({loading: false});
+        toast.success("Purchase Order archived successfully.");
+        receivedPurchaseOrders = receivedPurchaseOrders.filter(openOrder => openOrder.orderNumber.toLowerCase() !== order.orderNumber.toLowerCase());
+        this.setState({
+          receivedPurchaseOrders: this.state.receivedPurchaseOrders.filter(openOrder => openOrder.orderNumber.toLowerCase() !== order.orderNumber.toLowerCase())
+        });
+      })
+      .catch((error) => {
+        this.setState({loading: false});
+        this.closeModal();
+
+        if (error.response.status === 401) {
+          toast.error('Session is expired. Please login again.');
+          localStorage.removeItem('user');
+          this.props.history.push({
+            pathname: '/login'
+          });
+        } else {
+          toast.error(error.response.data.message);
+        }
+      });
   }
 
-  receivePurchaseOrder = (order) => {
-    let placedOrders = [...this.state.placedPurchaseOrders];
-    let receivedOrders = [...this.state.receivedPurchaseOrders];
+  placePurchaseOrder = async (order) => {
+    this.setState({loading: true});
 
-    placedOrders = placedOrders.filter(openOrder => openOrder.orderNumber.toLowerCase() !== order.orderNumber.toLowerCase());
-    receivedOrders.unshift(order);
-    this.setState({
-      placedPurchaseOrders: placedOrders,
-      receivedPurchaseOrders: receivedOrders
-    });
+    const user = JSON.parse(localStorage.getItem('user'));
+    const headers = {
+      'Authorization': 'Bearer ' + user.token
+    }
 
-    placedPurchaseOrders = placedPurchaseOrders.filter(openOrder => openOrder.orderNumber.toLowerCase() !== order.orderNumber.toLowerCase());
-    receivedPurchaseOrders.unshift(order);
+    await axios
+      .post(PLACE_PURCHASE_ORDER + "/" + order.orderNumber, {}, {headers: headers})
+      .then((response) => {
+        this.setState({loading: false});
+        toast.success("Purchase Order placed successfully.");
+        let openOrders = [...this.state.openPurchaseOrders];
+        let placedOrders = [...this.state.placedPurchaseOrders];
+
+        openOrders = openOrders.filter(openOrder => openOrder.orderNumber.toLowerCase() !== order.orderNumber.toLowerCase());
+        placedOrders.unshift(order);
+        console.log(placedOrders);
+        this.setState({
+          openPurchaseOrders: openOrders,
+          placedPurchaseOrders: placedOrders
+        });
+
+        openPurchaseOrders = openPurchaseOrders.filter(openOrder => openOrder.orderNumber.toLowerCase() !== order.orderNumber.toLowerCase());
+        placedPurchaseOrders.unshift(order);
+      })
+      .catch((error) => {
+        this.setState({loading: false});
+        this.closeModal();
+
+        if (error.response.status === 401) {
+          toast.error('Session is expired. Please login again.');
+          localStorage.removeItem('user');
+          this.props.history.push({
+            pathname: '/login'
+          });
+        } else {
+          toast.error(error.response.data.message);
+        }
+      });
+  }
+
+  receivePurchaseOrder = async (order) => {
+    this.setState({loading: true});
+
+    const user = JSON.parse(localStorage.getItem('user'));
+    const headers = {
+      'Authorization': 'Bearer ' + user.token
+    }
+
+    await axios
+      .post(RECEIVE_PURCHASE_ORDER + "/" + order.orderNumber, {}, {headers: headers})
+      .then((response) => {
+        this.setState({loading: false});
+        toast.success("Purchase Order received successfully.");
+        let placedOrders = [...this.state.placedPurchaseOrders];
+        let receivedOrders = [...this.state.receivedPurchaseOrders];
+
+        placedOrders = placedOrders.filter(openOrder => openOrder.orderNumber.toLowerCase() !== order.orderNumber.toLowerCase());
+        receivedOrders.unshift(order);
+        this.setState({
+          placedPurchaseOrders: placedOrders,
+          receivedPurchaseOrders: receivedOrders
+        });
+
+        placedPurchaseOrders = placedPurchaseOrders.filter(openOrder => openOrder.orderNumber.toLowerCase() !== order.orderNumber.toLowerCase());
+        receivedPurchaseOrders.unshift(order);
+      })
+      .catch((error) => {
+        this.setState({loading: false});
+        this.closeModal();
+
+        if (error.response.status === 401) {
+          toast.error('Session is expired. Please login again.');
+          localStorage.removeItem('user');
+          this.props.history.push({
+            pathname: '/login'
+          });
+        } else {
+          toast.error(error.response.data.message);
+        }
+      });
   }
 
   toggleOpenOrderAccordion = event => {
@@ -133,13 +292,37 @@ export default class PurchaseOrders extends ApplicationContainer {
     this.setState(state);
   }
 
+  showModal = () => {
+    let state = {...this.state};
+
+    state.deleteModal.show = true;
+
+    this.setState(state);
+  }
+
+  closeModal = () => {
+    let state = {...this.state};
+
+    state.deleteModal.show = false;
+
+    this.setState(state);
+  }
+
   render() {
     return (
       <section>
+        {this.state.loading &&
+        <div className="dialog-background">
+          <div className="dialog-loading-wrapper">
+            <img src={"/confirmation.gif"} alt={"Loading..."} className={"loading-img"}/>
+          </div>
+        </div>
+        }
         {super.render()}
         <Row className="m-3">
           <Col className={"text-left"}>
             <h2>Purchase Orders</h2>
+            <hr/>
           </Col>
         </Row>
         <Row className="m-3">
@@ -229,24 +412,26 @@ export default class PurchaseOrders extends ApplicationContainer {
                                 </Col>
                                 <Col sm={2} className={"pl-3"}>
                                   <h6>
-                                    <span>{order.vendor}</span>
+                                    <span>{order.vendor.vendorName}</span>
                                   </h6>
                                 </Col>
                                 <Col sm={3} className={"pl-3 text-left"}>
                                   <h6>
-                                    <span>{order.rawMaterials.join(", \r\n")}</span>
+                                    <span>{order.raw_materials.map(rawMaterial => {
+                                      return rawMaterial.rawMaterialName
+                                    }).join(", \r\n")}</span>
                                   </h6>
                                 </Col>
                                 <Col sm={2}>
                                   <h6>
-                                    <span>{order.price}</span>
+                                    <span>{order.totalCost}</span>
                                   </h6>
                                 </Col>
                                 <Col sm={3}>
                                   <Button variant={"warning"} className={"mr-5"}
                                           onClick={() => this.placePurchaseOrder(order)}>Place Order</Button>
                                   <FontAwesomeIcon icon={faTrashAlt} color={"#BC3347CC"}
-                                                   onClick={() => this.deletePurchaseOrder(order)}/>
+                                                   onClick={() => this.deletePurchaseOrderConfirmation(order)}/>
                                 </Col>
                               </Row>
                             </ListGroup.Item>
@@ -328,17 +513,19 @@ export default class PurchaseOrders extends ApplicationContainer {
                                 </Col>
                                 <Col sm={2} className={"pl-3"}>
                                   <h6>
-                                    <span>{order.vendor}</span>
+                                    <span>{order.vendor.vendorName}</span>
                                   </h6>
                                 </Col>
                                 <Col sm={3} className={"pl-3 text-left"}>
                                   <h6>
-                                    <span>{order.rawMaterials.join(", \r\n")}</span>
+                                    <span>{order.raw_materials.map(rawMaterial => {
+                                      return rawMaterial.rawMaterialName
+                                    }).join(", \r\n")}</span>
                                   </h6>
                                 </Col>
                                 <Col sm={2}>
                                   <h6>
-                                    <span>{order.price}</span>
+                                    <span>{order.totalCost}</span>
                                   </h6>
                                 </Col>
                                 <Col sm={3}>
@@ -425,17 +612,19 @@ export default class PurchaseOrders extends ApplicationContainer {
                                 </Col>
                                 <Col sm={2} className={"pl-3"}>
                                   <h6>
-                                    <span>{order.vendor}</span>
+                                    <span>{order.vendor.vendorName}</span>
                                   </h6>
                                 </Col>
                                 <Col sm={3} className={"pl-3 text-left"}>
                                   <h6>
-                                    <span>{order.rawMaterials.join(", \r\n")}</span>
+                                    <span>{order.raw_materials.map(rawMaterial => {
+                                      return rawMaterial.rawMaterialName
+                                    }).join(", \r\n")}</span>
                                   </h6>
                                 </Col>
                                 <Col sm={2}>
                                   <h6>
-                                    <span>{order.price}</span>
+                                    <span>{order.totalCost}</span>
                                   </h6>
                                 </Col>
                                 <Col sm={3}>
@@ -456,6 +645,34 @@ export default class PurchaseOrders extends ApplicationContainer {
             </Accordion>
           </Col>
         </Row>
+        <Modal show={this.state.deleteModal.show} animation={false} onHide={this.closeModal}>
+          <Modal.Header closeButton>
+            <Modal.Title>Confirmation</Modal.Title>
+          </Modal.Header>
+          <Modal.Body>
+            <Form.Group>
+              <Form.Label className={"m-0"}>
+                <strong>
+                  Are you sure you want to delete {this.state.deleteModal.order.orderNumber}?{" "}
+                </strong>
+              </Form.Label>
+              <Form.Label className={"m-0"}>
+                All related raw materials will be deleted too.
+              </Form.Label>
+            </Form.Group>
+          </Modal.Body>
+          <Modal.Footer>
+            <Button
+              variant="success"
+              onClick={() => this.deletePurchaseOrder(this.state.deleteModal.order)}
+            >
+              Yes
+            </Button>
+            <Button variant="secondary" onClick={this.closeModal}>
+              No
+            </Button>
+          </Modal.Footer>
+        </Modal>
       </section>
     );
   }

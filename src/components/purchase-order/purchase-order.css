@@ -1,3 +1,6 @@
+/**
+ * Author: Kartik Gevariya
+ */
 .po-raw-material-list {
     height: auto;
     max-height: 430px;
@@ -22,4 +25,8 @@
 
 .po-list-header {
     background: rgba(0, 0, 0, 0.03);
+}
+
+.is-invalid.po-raw-material-list {
+    border-color: #BC3347CC;
 }

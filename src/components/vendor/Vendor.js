@@ -15,46 +15,18 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPen, faSearch, faTrashAlt } from "@fortawesome/free-solid-svg-icons";
 import Header from "../headers/Header";
 import ApplicationContainer from "../ApplicationContainer";
-
-let vendorDetails = [
-  {
-    vendorName: "Food Factory",
-    contactPersonName: "John",
-    address: "Abbey Road",
-    email: "john@foodfactory.com",
-    contactNumber: 9876543210,
-  },
-  {
-    vendorName: "Healthy Foods",
-    contactPersonName: "Mark",
-    address: "Abbott Drive",
-    email: "mark@healthyfoods.com",
-    contactNumber: 9876543210,
-  },
-  {
-    vendorName: "Pizza Point",
-    contactPersonName: "Kylie",
-    address: "Acron Road",
-    email: "pizzapoint@gmail.com",
-    contactNumber: 9876543210,
-  },
-  {
-    vendorName: "Honeyville Inc",
-    contactPersonName: "Travis",
-    address: "Abbey Road",
-    email: "travis@honeyville.com",
-    contactNumber: 9876543210,
-  },
-];
+import axios from "axios";
+import { DELETE_VENDOR, GET_VENDORS } from "../../config";
 
 export default class Vendor extends ApplicationContainer {
   constructor(props) {
     super(props);
 
     this.state = {
-      vendors: vendorDetails,
+      vendorList: [],
       deleteModal: {
         show: false,
+        id: -1,
         vendorName: "",
       },
     };
@@ -66,52 +38,77 @@ export default class Vendor extends ApplicationContainer {
   //   vendorName: "",
   // });
 
+  componentDidMount() {
+    const user = JSON.parse(localStorage.getItem("user"));
+    if (user && user.token) {
+      const headers = {
+        Authorization: "Bearer " + user.token,
+      };
+      this.getVendors(headers);
+    }
+  }
+
+  getVendors = (headers) => {
+    axios.get(GET_VENDORS, { headers: headers }).then((result) => {
+      let vendors = result.data["vendors"];
+      this.setState({ vendorList: vendors });
+    });
+  };
+
   createVendor = () => {
     this.props.history.push("/vendors/create");
   };
 
-  editVendor = () => {
-    this.props.history.push("/vendor/edit");
+  editVendor = (vendor) => {
+    this.props.history.push({ pathname: "/vendor/edit", state: vendor.id });
   };
 
   filterVendors = (e) => {
     e.preventDefault();
     const { value } = e.target;
-    // setVendor(
-    //   vendorDetails.filter((vendor) =>
-    //     vendor.vendorName.toLowerCase().includes(value.toLowerCase())
-    //   )
-    // );
 
     this.setState({
-      vendors: vendorDetails.filter((vendor) =>
+      vendorList: this.state.vendorList.filter((vendor) =>
         vendor.vendorName.toLowerCase().includes(value.toLowerCase())
       ),
     });
   };
 
-  deleteVendor = (deleteVendor) => {
-    vendorDetails = vendorDetails.filter(
-      (vendor) =>
-        vendor.vendorName.toLowerCase() !==
-        deleteVendor.vendorName.toLowerCase()
-    );
-    // setVendor(
-    //   vendors.filter(
-    //     (vendor) =>
-    //       vendor.vendorName.toLowerCase() !==
-    //       deleteVendor.vendorName.toLowerCase()
-    //   )
-    // );
-    this.setState({
-      vendors: this.state.vendors.filter(
-        (vendor) =>
-          vendor.vendorName.toLowerCase() !==
-          deleteVendor.vendorName.toLowerCase()
-      ),
-    });
-    this.closeModal();
-  };
+  // deleteVendor = (deleteVendor) => {
+  //   vendorDetails = vendorDetails.filter(
+  //     (vendor) =>
+  //       vendor.vendorName.toLowerCase() !==
+  //       deleteVendor.vendorName.toLowerCase()
+  //   );
+  //   // setVendor(
+  //   //   vendors.filter(
+  //   //     (vendor) =>
+  //   //       vendor.vendorName.toLowerCase() !==
+  //   //       deleteVendor.vendorName.toLowerCase()
+  //   //   )
+  //   // );
+  //   this.setState({
+  //     vendors: this.state.vendors.filter(
+  //       (vendor) =>
+  //         vendor.vendorName.toLowerCase() !==
+  //         deleteVendor.vendorName.toLowerCase()
+  //     ),
+  //   });
+  //   this.closeModal();
+  // };
+
+  deleteVendor(id) {
+    const user = JSON.parse(localStorage.getItem("user"));
+    if (user && user.token) {
+      const headers = {
+        Authorization: "Bearer " + user.token,
+      };
+      axios.delete(DELETE_VENDOR + id, { headers: headers }).then((result) => {
+        this.getVendors();
+        this.closeModal();
+      });
+    }
+  }
 
   deleteVendorConfirmation = (deleteVendor) => {
     let state = { ...this.state.deleteModal };
@@ -138,35 +135,51 @@ export default class Vendor extends ApplicationContainer {
   };
   // console.log(this.state.deleteModal);
 
-  showModal = () => {
-    // setDeleteModal((prevState) => {
-    //   return {
-    //     ...prevState,
-    //     show: true,
-    //   };
-    // });
+  // showModal = () => {
+  //   // setDeleteModal((prevState) => {
+  //   //   return {
+  //   //     ...prevState,
+  //   //     show: true,
+  //   //   };
+  //   // });
 
-    console.log(this.state.deleteModal.vendorName);
-    this.setState({
-      deleteModal: {
-        show: true,
-      },
-    });
+  //   console.log(this.state.deleteModal.vendorName);
+  //   this.setState({
+  //     deleteModal: {
+  //       show: true,
+  //     },
+  //   });
+  // };
+
+  showModal = (vendor) => {
+    let state = { ...this.state };
+    state.deleteModal.show = true;
+    state.deleteModal.id = vendor.id;
+    state.deleteModal.name = vendor.name;
+    this.setState(state);
   };
 
-  closeModal = () => {
-    // setDeleteModal((prevState) => {
-    //   return {
-    //     ...prevState,
-    //     show: false,
-    //   };
-    // });
+  // closeModal = () => {
+  //   // setDeleteModal((prevState) => {
+  //   //   return {
+  //   //     ...prevState,
+  //   //     show: false,
+  //   //   };
+  //   // });
 
-    this.setState({
-      deleteModal: {
-        show: false,
-      },
-    });
+  //   this.setState({
+  //     deleteModal: {
+  //       show: false,
+  //     },
+  //   });
+  // };
+
+  closeModal = () => {
+    let state = { ...this.state };
+    state.deleteModal.show = false;
+    state.deleteModal.id = -1;
+    state.deleteModal.name = "";
+    this.setState(state);
   };
 
   render() {
@@ -294,9 +307,7 @@ export default class Vendor extends ApplicationContainer {
                                 <FontAwesomeIcon
                                   icon={faTrashAlt}
                                   color={"#BC3347CC"}
-                                  onClick={() =>
-                                    this.deleteVendorConfirmation(vendor)
-                                  }
+                                  onClick={() => this.showModal(vendor)}
                                 />
                               </Col>
                             </Row>

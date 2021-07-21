@@ -1,124 +1,161 @@
+/**
+ * Author: Mansi Gevariya
+ */
 import React from "react";
-import {Accordion, Button, Card, Col, Form, FormControl, InputGroup, ListGroup, Row} from "react-bootstrap";
+import {Accordion, Button, Card, Col, Form, FormControl, InputGroup, ListGroup, Modal, Row} from "react-bootstrap";
 import {faAngleDown, faAngleUp, faSearch, faTrashAlt} from "@fortawesome/free-solid-svg-icons";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import ApplicationContainer from "../ApplicationContainer";
+import axios from "axios";
+import {
+  DELETE_MANUFACTURING_ORDER,
+  GET_MANUFACTURING_ORDERS,
+  CHANGE_MANUFACTURING_ORDER_STATUS
+} from "../../config";
+import {toast} from "react-toastify";
+
+const MANUFACTURING_ORDER_STATUS = {
+  OPEN: 'OPEN',
+  PREPPING: 'PREPPING',
+  PACKAGED: 'PACKAGED',
+  ARCHIVED: 'ARCHIVED'
+}
 
 class ManufacturingOrders extends ApplicationContainer {
 
   constructor(props) {
     super(props);
-    this.originalOrder = {
-      openOrders: [
-        {
-          orderNumber: "#10BN1233",
-          price: '$160.65',
-          foodItems: [{name: 'Egg Sandwich', quantity: 23}, {name: 'Pepperoni Pizza', quantity: 3}]
-        },
-        {
-          orderNumber: "#10BN1234",
-          price: '$125.43',
-          foodItems: [{name: 'Cheese Burger', quantity: 3}, {name: 'Fish and Chips', quantity: 1}]
-        },
-        {
-          orderNumber: "#10BN1235",
-          price: '$134.12',
-          foodItems: [{name: 'Cheese Burger', quantity: 1}, {name: 'Dim Sums', quantity: 5}]
-        },
-      ],
-      preppingOrders: [
-        {
-          orderNumber: "#10PR1733",
-          price: '$432.15',
-          foodItems: [{name: 'Tacos', quantity: 23}, {name: 'Pepperoni Pizza', quantity: 3}, {
-            name: 'Greek Salad',
-            quantity: 4
-          }]
-        },
-        {
-          orderNumber: "#10PR6523",
-          price: '$343.86',
-          foodItems: [{name: 'Tom Yum Kung', quantity: 8}, {name: 'Greek Salad', quantity: 10}]
-        },
-        {
-          orderNumber: "#10PR2235",
-          price: '$323.43',
-          foodItems: [{name: 'Tom Yum Kung', quantity: 8}, {name: 'Sushi', quantity: 10}]
-        },
-      ],
-      packagedOrders: [
-        {
-          orderNumber: "#10PC4323",
-          price: '$896.65',
-          foodItems: [{name: 'Sushi', quantity: 18}, {name: 'Greek Salad', quantity: 10}]
-        },
-        {
-          orderNumber: "#10PC8565",
-          price: '$234.42',
-          foodItems: [{name: 'Tom Yum Kung', quantity: 8}, {name: 'Pepperoni Pizza', quantity: 10}]
-        },
-        {
-          orderNumber: "#10PC2124",
-          price: '$654.21',
-          foodItems: [{name: 'Tom Yum Kung', quantity: 34}, {name: 'Dim Sums', quantity: 32}]
-        },
-      ]
-    }
+    this.originalOrder = {}
     this.state = {
-      openOrders: this.originalOrder.openOrders,
-      preppingOrders: this.originalOrder.preppingOrders,
-      packagedOrders: this.originalOrder.packagedOrders,
+      openOrders: [],
+      preppingOrders: [],
+      packagedOrders: [],
       isOpenOrderAccordionOpen: true,
       isPreppingOrderAccordionOpen: true,
-      isPackagedOrderAccordionOpen: true
+      isPackagedOrderAccordionOpen: true,
+      loading: false,
+      deleteModal: {
+        show: false,
+        orderNumber: null
+      },
+      archiveModal: {
+        show: false,
+        orderNumber: null
+      }
     }
   }
 
-  updateOriginalOrders(item, status) {
-    if (status === 'Open') {
-      this.originalOrder.openOrders = this.originalOrder.openOrders.filter(openOrder => openOrder.orderNumber !== item.orderNumber)
-    }
-    if (status === 'Prepping') {
-      this.originalOrder.preppingOrders.unshift(item)
-      this.originalOrder.openOrders = this.originalOrder.openOrders.filter(openOrder => openOrder.orderNumber !== item.orderNumber)
-    } else if (status === 'Packaged') {
-      this.originalOrder.packagedOrders.unshift(item)
-      this.originalOrder.preppingOrders = this.originalOrder.preppingOrders.filter(preppingOrders => preppingOrders.orderNumber !== item.orderNumber)
-    } else if (status === 'Archived') {
-      this.originalOrder.packagedOrders = this.originalOrder.packagedOrders.filter(packagedOrder => packagedOrder.orderNumber !== item.orderNumber)
+  componentDidMount() {
+    const user = JSON.parse(localStorage.getItem('user'));
+    if (user && user.token) {
+      const headers = {
+        'Authorization': 'Bearer ' + user.token
+      }
+      this.getManufacturingOrders(headers)
     }
   }
 
-  moveToPrepping(item, event) {
-    let preppingOrders = this.state.preppingOrders;
-    let openOrders = this.state.openOrders;
-    preppingOrders.unshift(item)
-    openOrders = openOrders.filter(openOrder => openOrder.orderNumber !== item.orderNumber)
-    this.setState({openOrders, preppingOrders})
-    this.updateOriginalOrders(item, 'Prepping')
+  getManufacturingOrders = (headers) => {
+    this.setState({loading: true});
+    axios.get(GET_MANUFACTURING_ORDERS, {headers: headers}).then(result => {
+      let manufacturingOrders = result.data['manufacturingOrders'];
+      this.originalOrder.openOrders = manufacturingOrders.filter(manufacturingOrder => manufacturingOrder.status === MANUFACTURING_ORDER_STATUS.OPEN)
+      this.originalOrder.preppingOrders = manufacturingOrders.filter(manufacturingOrder => manufacturingOrder.status === MANUFACTURING_ORDER_STATUS.PREPPING)
+      this.originalOrder.packagedOrders = manufacturingOrders.filter(manufacturingOrder => manufacturingOrder.status === MANUFACTURING_ORDER_STATUS.PACKAGED)
+      this.setState({
+        openOrders: this.originalOrder.openOrders,
+        preppingOrders: this.originalOrder.preppingOrders,
+        packagedOrders: this.originalOrder.packagedOrders,
+        loading: false
+      })
+    }).catch(error => {
+      this.setState({loading: false});
+      console.error(error);
+      toast.error("Error occurred while fetching manufacturing orders.");
+    })
   }
 
-  moveToPackaged(item, event) {
-    let packagedOrders = this.state.packagedOrders;
-    let preppingOrders = this.state.preppingOrders;
-    packagedOrders.unshift(item)
-    preppingOrders = preppingOrders.filter(preppingOrder => preppingOrder.orderNumber !== item.orderNumber)
-    this.setState({preppingOrders, packagedOrders})
-    this.updateOriginalOrders(item, 'Packaged')
+  changeOrderStatus = (item, status) => {
+    this.setState({loading: true});
+    const putData = {
+      order: item,
+      status: status
+    }
+    const user = JSON.parse(localStorage.getItem('user'));
+    if (user && user.token) {
+      const headers = {
+        'Authorization': 'Bearer ' + user.token
+      }
+      axios.put(CHANGE_MANUFACTURING_ORDER_STATUS, putData, {headers: headers}).then(() => {
+        this.getManufacturingOrders();
+        this.setState({loading: false});
+      }).catch(error => {
+        this.setState({loading: false});
+        console.error(error);
+        if (error.response && error.response.status === 412) {
+          toast.error("The manufacturing order cannot be moved to Prepping state as there are not enough raw materials in the inventory.");
+        } else {
+          toast.error("Error occurred while changing the status of manufacturing order.");
+        }
+      })
+    }
   }
 
-  deleteOpenManufacturingOrder = (item) => {
-    let openOrders = this.state.openOrders;
-    openOrders = openOrders.filter(openOrder => openOrder.orderNumber !== item.orderNumber)
-    this.setState({openOrders})
-    this.updateOriginalOrders(item, 'Open');
+  openDeleteModal = (item) => {
+    let state = this.state;
+    state.deleteModal.show = true;
+    state.deleteModal.orderNumber = item.orderNumber
+    this.setState(state)
   }
 
-  archiveManufacturingOrder = (item) => {
-    let packagedOrders = this.state.packagedOrders;
-    packagedOrders = packagedOrders.filter(packagedOrder => packagedOrder.orderNumber !== item.orderNumber)
-    this.setState({packagedOrders})
-    this.updateOriginalOrders(item, 'Archived');
+  closeDeleteModal = () => {
+    let state = this.state;
+    state.deleteModal.show = false;
+    state.deleteModal.orderNumber = null;
+    this.setState(state)
+  }
+
+  openArchiveModal = (item) => {
+    let state = this.state;
+    state.archiveModal.show = true;
+    state.archiveModal.orderNumber = item.orderNumber
+    this.setState(state)
+  }
+
+  closeArchiveModal = () => {
+    let state = this.state;
+    state.archiveModal.show = false;
+    state.archiveModal.orderNumber = null;
+    this.setState(state)
+  }
+
+  deleteOpenManufacturingOrder = () => {
+    let state = this.state
+    const user = JSON.parse(localStorage.getItem('user'));
+    if (user && user.token) {
+      const headers = {
+        'Authorization': 'Bearer ' + user.token
+      }
+      this.setState({loading: true});
+      const deleteUrl = DELETE_MANUFACTURING_ORDER + "/" + state.deleteModal.orderNumber;
+      axios.delete(deleteUrl, {headers: headers}).then(() => {
+        this.closeDeleteModal();
+        this.getManufacturingOrders();
+        this.setState({loading: false});
+      }).catch(error => {
+        this.setState({loading: false});
+        console.error(error);
+        toast.error("Error occurred while fetching purchase orders.");
+      })
+    }
+  }
+
+  archiveManufacturingOrder = () => {
+    const archivedOrder = {
+      orderNumber: this.state.archiveModal.orderNumber
+    }
+    this.changeOrderStatus(archivedOrder, MANUFACTURING_ORDER_STATUS.ARCHIVED)
+    this.closeArchiveModal();
   }
 
   searchOrder = (event) => {
@@ -134,23 +171,23 @@ class ManufacturingOrders extends ApplicationContainer {
     this.setState({openOrders, preppingOrders, packagedOrders})
   }
 
-  goToCreateManufacturingOrder = (event) => {
+  goToCreateManufacturingOrder = () => {
     this.props.history.push('/manufacturing-order/create')
   }
 
-  toggleOpenOrderAccordion = event => {
+  toggleOpenOrderAccordion = () => {
     let state = {...this.state};
     state.isOpenOrderAccordionOpen = !state.isOpenOrderAccordionOpen;
     this.setState(state);
   }
 
-  togglePreppingOrderAccordion = event => {
+  togglePreppingOrderAccordion = () => {
     let state = {...this.state};
     state.isPreppingOrderAccordionOpen = !state.isPreppingOrderAccordionOpen;
     this.setState(state);
   }
 
-  togglePackagedOrderAccordion = event => {
+  togglePackagedOrderAccordion = () => {
     let state = {...this.state};
     state.isPackagedOrderAccordionOpen = !state.isPackagedOrderAccordionOpen;
     this.setState(state);
@@ -159,10 +196,18 @@ class ManufacturingOrders extends ApplicationContainer {
   render() {
     return (
       <section>
+        {this.state.loading &&
+        <div className="dialog-background">
+          <div className="dialog-loading-wrapper">
+            <img src={"/confirmation.gif"} alt={"Loading..."} className={"loading-img"}/>
+          </div>
+        </div>
+        }
         {super.render()}
         <Row className="m-3">
           <Col className={"text-left"}>
             <h2>Manufacturing Orders</h2>
+            <hr/>
           </Col>
         </Row>
         <Row className="m-3">
@@ -213,12 +258,12 @@ class ManufacturingOrders extends ApplicationContainer {
                     <ListGroup className={"mt-3"}>
                       <ListGroup.Item>
                         <Row>
-                          <Col sm={2} className={"pl-3 text-left"}>
+                          <Col sm={3} className={"pl-3 text-left"}>
                             <h5>
                               <span><strong>Order Number</strong></span>
                             </h5>
                           </Col>
-                          <Col sm={5} className={"pl-3"}>
+                          <Col sm={4} className={"pl-3"}>
                             <h5>
                               <span><strong>Food Items</strong></span>
                             </h5>
@@ -240,27 +285,27 @@ class ManufacturingOrders extends ApplicationContainer {
                           {this.state.openOrders.map((order) =>
                             <ListGroup.Item key={order.orderNumber}>
                               <Row>
-                                <Col sm={2} className={"pl-3 text-left"}>
+                                <Col sm={3} className={"pl-3 text-left"}>
                                   <h6>
                                     <span>{order.orderNumber}</span>
                                   </h6>
                                 </Col>
-                                <Col sm={5} className={"pl-3 text-left"}>
+                                <Col sm={4} className={"pl-3 text-left"}>
                                   <h6>
-                                    <span>{order.foodItems.map(foodItem => foodItem.name).join(', ')}</span>
+                                    <span>{order['food_items'].map(foodItem => foodItem.foodItemName).join(', ')}</span>
                                   </h6>
                                 </Col>
                                 <Col sm={2}>
                                   <h6>
-                                    <span>{order.price}</span>
+                                    <span>{order.totalPrice}</span>
                                   </h6>
                                 </Col>
                                 <Col sm={3}>
                                   <Button variant={"warning"} className={"mr-5"}
-                                          onClick={() => this.moveToPrepping(order)}>Prep
+                                          onClick={() => this.changeOrderStatus(order, MANUFACTURING_ORDER_STATUS.PREPPING)}>Prep
                                     Order</Button>
                                   <FontAwesomeIcon icon={faTrashAlt} color={"#BC3347CC"}
-                                                   onClick={() => this.deleteOpenManufacturingOrder(order)}/>
+                                                   onClick={() => this.openDeleteModal(order)}/>
                                 </Col>
                               </Row>
                             </ListGroup.Item>
@@ -303,12 +348,12 @@ class ManufacturingOrders extends ApplicationContainer {
                     <ListGroup className={"mt-3"}>
                       <ListGroup.Item>
                         <Row>
-                          <Col sm={2} className={"pl-3 text-left"}>
+                          <Col sm={3} className={"pl-3 text-left"}>
                             <h5>
                               <span><strong>Order Number</strong></span>
                             </h5>
                           </Col>
-                          <Col sm={5} className={"pl-3"}>
+                          <Col sm={4} className={"pl-3"}>
                             <h5>
                               <span><strong>Food Items</strong></span>
                             </h5>
@@ -330,24 +375,24 @@ class ManufacturingOrders extends ApplicationContainer {
                           {this.state.preppingOrders.map((order) =>
                             <ListGroup.Item key={order.orderNumber}>
                               <Row>
-                                <Col sm={2} className={"pl-3 text-left"}>
+                                <Col sm={3} className={"pl-3 text-left"}>
                                   <h6>
                                     <span>{order.orderNumber}</span>
                                   </h6>
                                 </Col>
-                                <Col sm={5} className={"pl-3 text-left"}>
+                                <Col sm={4} className={"pl-3 text-left"}>
                                   <h6>
-                                    <span>{order.foodItems.map(foodItem => foodItem.name).join(', ')}</span>
+                                    <span>{order['food_items'].map(foodItem => foodItem.foodItemName).join(', ')}</span>
                                   </h6>
                                 </Col>
                                 <Col sm={2}>
                                   <h6>
-                                    <span>{order.price}</span>
+                                    <span>{order.totalPrice}</span>
                                   </h6>
                                 </Col>
                                 <Col sm={3}>
                                   <Button variant={"secondary"} className={"mr-5"}
-                                          onClick={() => this.moveToPackaged(order)}>Package
+                                          onClick={() => this.changeOrderStatus(order, MANUFACTURING_ORDER_STATUS.PACKAGED)}>Package
                                     Order</Button>
                                 </Col>
                               </Row>
@@ -425,17 +470,17 @@ class ManufacturingOrders extends ApplicationContainer {
                                 </Col>
                                 <Col sm={5} className={"pl-3 text-left"}>
                                   <h6>
-                                    <span>{order.foodItems.map(foodItem => foodItem.name).join(', ')}</span>
+                                    <span>{order['food_items'].map(foodItem => foodItem.foodItemName).join(', ')}</span>
                                   </h6>
                                 </Col>
                                 <Col sm={2}>
                                   <h6>
-                                    <span>{order.price}</span>
+                                    <span>{order.totalPrice}</span>
                                   </h6>
                                 </Col>
                                 <Col sm={3}>
                                   <Button variant={"danger"} className={"mr-5"}
-                                          onClick={() => this.archiveManufacturingOrder(order)}>Archive
+                                          onClick={() => this.openArchiveModal(order)}>Archive
                                     Order</Button>
                                 </Col>
                               </Row>
@@ -451,6 +496,52 @@ class ManufacturingOrders extends ApplicationContainer {
               </Card>
             </Accordion>
           </Col>
+          <Modal show={this.state.deleteModal.show} animation={false} onHide={this.closeDeleteModal}>
+            <Modal.Header closeButton>
+              <Modal.Title>Confirmation</Modal.Title>
+            </Modal.Header>
+            <Modal.Body>
+              <Form.Group>
+                <Form.Label className={"m-0"}>
+                  Are you sure you want to delete the order with order number {this.state.deleteModal.orderNumber}?{" "}
+                </Form.Label>
+              </Form.Group>
+            </Modal.Body>
+            <Modal.Footer>
+              <Button
+                variant="primary"
+                onClick={this.deleteOpenManufacturingOrder}
+              >
+                Yes
+              </Button>
+              <Button variant="danger" onClick={this.closeDeleteModal}>
+                No
+              </Button>
+            </Modal.Footer>
+          </Modal>
+          <Modal show={this.state.archiveModal.show} animation={false} onHide={this.closeArchiveModal}>
+            <Modal.Header closeButton>
+              <Modal.Title>Confirmation</Modal.Title>
+            </Modal.Header>
+            <Modal.Body>
+              <Form.Group>
+                <Form.Label className={"m-0"}>
+                  Are you sure you want to archive the order with order number {this.state.archiveModal.orderNumber}?{" "}
+                </Form.Label>
+              </Form.Group>
+            </Modal.Body>
+            <Modal.Footer>
+              <Button
+                variant="primary"
+                onClick={this.archiveManufacturingOrder}
+              >
+                Yes
+              </Button>
+              <Button variant="danger" onClick={this.closeArchiveModal}>
+                No
+              </Button>
+            </Modal.Footer>
+          </Modal>
         </Row>
       </section>
     )

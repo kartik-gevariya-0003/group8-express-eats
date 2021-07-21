@@ -1,3 +1,6 @@
+/**
+ * Author: Mansi Gevariya
+*/
 .mo-food-items-list {
     height: auto;
     max-height: 430px;
@@ -10,4 +13,8 @@
     max-height: 330px;
     overflow-y: auto;
     border: 1px solid rgba(0, 0, 0, 0.125);
+}
+
+.is-invalid.mo-food-items-list {
+    border-color: #BC3347CC;
 }
