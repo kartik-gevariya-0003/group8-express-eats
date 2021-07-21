@@ -2,6 +2,11 @@
  * Author: Mansi Gevariya
  * Author: Kartik Gevariya
  */
+
+/**
+ * This component is responsible for showing header along with all possible navigation.
+ * This header is added to ApplicationContainer component which is root component for all pages that will be displayed after login.
+ */
 import "./header.css"
 import {Component} from "react";
 import {Image, Nav, Navbar, NavDropdown} from "react-bootstrap";

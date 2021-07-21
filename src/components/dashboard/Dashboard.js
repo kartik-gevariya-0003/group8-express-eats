@@ -1,9 +1,9 @@
 /**
  * Author: Mansi Gevariya
-*/
+ */
 import {Button, ButtonGroup, ButtonToolbar, Card, Col, Row, Table} from "react-bootstrap";
 import {
-  CartesianGrid, Cell,
+  CartesianGrid,
   Legend,
   Line,
   LineChart,
@@ -19,7 +19,9 @@ import React from "react";
 import axios from "axios";
 import {
   GET_EXPECTED_REVENUE,
-  GET_LOW_INVENTORY, GET_MOST_USED_RAW_MATERIAL, GET_PURCHASED_VS_USED_RAW_MATERIAL,
+  GET_LOW_INVENTORY,
+  GET_MOST_USED_RAW_MATERIAL,
+  GET_PURCHASED_VS_USED_RAW_MATERIAL,
   GET_TOTAL_EXPENDITURE,
   GET_TOTAL_FOOD_ITEMS_IN_INVENTORY,
   GET_TOTAL_RAW_MATERIALS_IN_INVENTORY
@@ -180,7 +182,10 @@ class Dashboard extends ApplicationContainer {
                     <section>Total Expenditure</section>
                     <section className="mt-3 text-danger">
                       <span>
-                        {new Intl.NumberFormat('en-IN', {style: 'currency', currency: 'USD'}).format(this.state.totalExpenditure)}
+                        {new Intl.NumberFormat('en-IN', {
+                          style: 'currency',
+                          currency: 'USD'
+                        }).format(this.state.totalExpenditure)}
                       </span>
                     </section>
                   </Card.Title>
@@ -192,7 +197,8 @@ class Dashboard extends ApplicationContainer {
                 <Card.Body>
                   <Card.Title>
                     <section>Raw Materials in Inventory</section>
-                    <section className="mt-3 text-secondary"><span>{this.state.totalRawMaterialsInInventory}</span></section>
+                    <section className="mt-3 text-secondary"><span>{this.state.totalRawMaterialsInInventory}</span>
+                    </section>
                   </Card.Title>
                 </Card.Body>
               </Card>
@@ -206,7 +212,10 @@ class Dashboard extends ApplicationContainer {
                     <section>Total Expected Revenue</section>
                     <section className="mt-3 text-secondary">
                       <span>
-                        {new Intl.NumberFormat('en-IN', {style: 'currency', currency: 'USD'}).format(this.state.expectedRevenue)}
+                        {new Intl.NumberFormat('en-IN', {
+                          style: 'currency',
+                          currency: 'USD'
+                        }).format(this.state.expectedRevenue)}
                       </span>
                     </section>
                   </Card.Title>
@@ -218,7 +227,8 @@ class Dashboard extends ApplicationContainer {
                 <Card.Body>
                   <Card.Title>
                     <section>Total Food Items Inventory</section>
-                    <section className="mt-3 text-secondary"><span>{this.state.totalFoodItemsInInventory}</span></section>
+                    <section className="mt-3 text-secondary"><span>{this.state.totalFoodItemsInInventory}</span>
+                    </section>
                   </Card.Title>
                 </Card.Body>
               </Card>
@@ -266,8 +276,9 @@ class Dashboard extends ApplicationContainer {
                         <ButtonToolbar aria-label="Toolbar with button groups" className="float-right">
                           <ButtonGroup className="mr-2" aria-label="First group">
                             {this.chartOptions.map(chartOption => {
-                              return <Button key={chartOption} onClick={this.refreshLineChartData.bind(this, chartOption)}
-                                variant={chartOption === this.state.selectedLineChartOption ? 'primary' : 'outline-primary'}>{chartOption}</Button>
+                              return <Button key={chartOption}
+                                             onClick={this.refreshLineChartData.bind(this, chartOption)}
+                                             variant={chartOption === this.state.selectedLineChartOption ? 'primary' : 'outline-primary'}>{chartOption}</Button>
                             })}
                           </ButtonGroup>
                         </ButtonToolbar>
@@ -304,8 +315,9 @@ class Dashboard extends ApplicationContainer {
                         <ButtonToolbar aria-label="Toolbar with button groups" className="float-right">
                           <ButtonGroup className="mr-2" aria-label="First group">
                             {this.chartOptions.map(chartOption => {
-                              return <Button key={chartOption} onClick={this.refreshPieChartData.bind(this, chartOption)}
-                                variant={chartOption === this.state.selectedPieChartOption ? 'primary' : 'outline-primary'}>{chartOption}</Button>
+                              return <Button key={chartOption}
+                                             onClick={this.refreshPieChartData.bind(this, chartOption)}
+                                             variant={chartOption === this.state.selectedPieChartOption ? 'primary' : 'outline-primary'}>{chartOption}</Button>
                             })}
                           </ButtonGroup>
                         </ButtonToolbar>

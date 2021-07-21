@@ -1,6 +1,10 @@
 /**
  * Author: Kartik Gevariya
  */
+
+/**
+ * This component is responsible for performing login functionality.
+ */
 import "./login.css"
 import PlainHeaderComponent from "../PlainHeaderComponent";
 import {Button, Card, Col, Container, Form, Image, Row} from "react-bootstrap";

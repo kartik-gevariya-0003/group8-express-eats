@@ -1,3 +1,11 @@
+/**
+ * Author: Karishma Suresh Lalwani
+ * Author: Kartik Gevariya
+ * Author: Mansi Gevariya
+ * Author: Rotesh Chhabra
+ * Author: Tasneem Yusuf Porbanderwala
+ */
+
 /* General API Constants */
 const API_URL = process.env.REACT_APP_CONTAINER_1_URL || 'http://localhost:3001';
 

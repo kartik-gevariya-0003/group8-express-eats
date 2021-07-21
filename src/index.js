@@ -1,3 +1,11 @@
+/**
+ * Author: Karishma Suresh Lalwani
+ * Author: Kartik Gevariya
+ * Author: Mansi Gevariya
+ * Author: Rotesh Chhabra
+ * Author: Tasneem Yusuf Porbanderwala
+ */
+
 import React from 'react';
 import ReactDOM from 'react-dom';
 import './custom.scss'
