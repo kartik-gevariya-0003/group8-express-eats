@@ -103,10 +103,12 @@ export default class Vendor extends ApplicationContainer {
       const headers = {
         Authorization: "Bearer " + user.token,
       };
-      axios.delete(DELETE_VENDOR + id, { headers: headers }).then((result) => {
-        this.getVendors();
-        this.closeModal();
-      });
+      axios
+        .delete(DELETE_VENDOR + this.state.deleteModal.id, { headers: headers })
+        .then((result) => {
+          this.getVendors();
+          this.closeModal();
+        });
     }
   }
 
@@ -267,9 +269,9 @@ export default class Vendor extends ApplicationContainer {
                         </Col>
                       </Row>
                     </ListGroup.Item>
-                    {this.state.vendors.length !== 0 ? (
+                    {this.state.vendorList.length !== 0 ? (
                       <section>
-                        {this.state.vendors.map((vendor) => (
+                        {this.state.vendorList.map((vendor) => (
                           <ListGroup.Item key={vendor.vendorName}>
                             <Row>
                               <Col sm={2} className={"pl-3 text-left"}>

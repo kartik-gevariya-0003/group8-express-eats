@@ -4,7 +4,10 @@ import "./create-vendor.css";
 
 import { Button, Card, Col, Form, FormControl, Row } from "react-bootstrap";
 import Header from "../headers/Header";
+import axios from "axios";
 import ApplicationContainer from "../ApplicationContainer";
+import { ADD_VENDOR } from "../../config";
+import { toast } from "react-toastify";
 
 export default class CreateVendor extends ApplicationContainer {
   constructor(props) {
@@ -18,11 +21,13 @@ export default class CreateVendor extends ApplicationContainer {
         email: "",
         contactNumber: "",
       },
-      errorVendorName: "",
-      errorAddress: "",
-      errorContactPersonName: "",
-      errorEmail: "",
-      errorContactNumber: "",
+      errors: {
+        errorVendorName: "",
+        errorAddress: "",
+        errorContactPersonName: "",
+        errorEmail: "",
+        errorContactNumber: "",
+      },
     };
   }
 
@@ -31,136 +36,225 @@ export default class CreateVendor extends ApplicationContainer {
     this.props.history.push("/vendors");
   };
 
-  onChangeHandler = (e) => {
-    // setValues((prev) => {
-    //   return {
-    //     ...values,
-    //     [e.target.name]: e.target.value,
-    //   };
-    // });
+  // onChangeHandler = (e) => {
+  //   // setValues((prev) => {
+  //   //   return {
+  //   //     ...values,
+  //   //     [e.target.name]: e.target.value,
+  //   //   };
+  //   // });
 
-    this.setState({
-      values: {
-        ...this.state.values,
-        [e.target.name]: e.target.value,
-      },
-    });
+  //   this.setState({
+  //     values: {
+  //       ...this.state.values,
+  //       [e.target.name]: e.target.value,
+  //     },
+  //   });
+  // };
+
+  setVendorName = (e) => {
+    let state = { ...this.state };
+    state.values.vendorName = e.target.value;
+    this.validator("vendorName", state.values.vendorName, state.errors);
+    this.setState(state);
   };
 
-  validator = () => {
+  setAddress = (e) => {
+    let state = { ...this.state };
+    state.values.address = e.target.value;
+    this.validator("address", state.values.address, state.errors);
+    this.setState(state);
+  };
+
+  setContactPersonName = (e) => {
+    let state = { ...this.state };
+    state.values.contactPersonName = e.target.value;
+    this.validator(
+      "contactPersonName",
+      state.values.contactPersonName,
+      state.errors
+    );
+    this.setState(state);
+  };
+
+  setEmail = (e) => {
+    let state = { ...this.state };
+    state.values.email = e.target.value;
+    this.validator("email", state.values.email, state.errors);
+    this.setState(state);
+  };
+
+  setContactNumber = (e) => {
+    let state = { ...this.state };
+    state.values.contactNumber = e.target.value;
+    this.validator("contactNumber", state.values.contactNumber, state.errors);
+    this.setState(state);
+  };
+
+  validator = (name, value, errors) => {
     let valid = true;
+    switch (name) {
+      case "vendorName":
+        if (value.trim() === "") {
+          errors.errorVendorName = "Vendor name is required";
+          // this.setState({
+          //   errorVendorName: "Vendor name is required",
+          // });
+          // valid = false;
+        } else if (
+          !/^[A-Za-z0-9 _]*[A-Za-z0-9][A-Za-z0-9 _]*$/i.test(value.trim())
+        ) {
+          errors.errorVendorName = "Only letters and numbers are allowed";
+          // this.setState({
+          //   errorVendorName: "Only letters and numbers are allowed",
+          // });
+          // valid = false;
+        } else {
+          errors.errorVendorName = "";
+          // this.setState({
+          //   errorVendorName: "",
+          // });
+        }
+        break;
+      case "address":
+        if (value.trim() === "") {
+          errors.errorAddress = "Address is required";
+          // this.setState({
+          //   errorAddress: "Address is required",
+          // });
+          // valid = false;
+        } else {
+          errors.errorAddress = "";
+          // this.setState({
+          //   errorAddress: "",
+          // });
+        }
 
-    if (this.state.values.vendorName.trim() === "") {
-      // setErrorVendorName("Vendor name is required");
-      this.setState({
-        errorVendorName: "Vendor name is required",
-      });
-      valid = false;
-    } else if (
-      !/^[A-Za-z0-9 _]*[A-Za-z0-9][A-Za-z0-9 _]*$/i.test(
-        this.state.values.vendorName.trim()
-      )
-    ) {
-      // setErrorVendorName("Only letters and numbers are allowed");
-      this.setState({
-        errorVendorName: "Only letters and numbers are allowed",
-      });
-      valid = false;
-    } else {
-      this.setState({
-        errorVendorName: "",
-      });
-    }
+        break;
+      case "contactPersonName":
+        if (value.trim() === "") {
+          errors.errorContactPersonName = "Contact person name is required";
+          // this.setState({
+          //   errorContactPersonName: "Contact person name is required",
+          // });
+          // valid = false;
+        } else if (
+          !/^[A-Za-z0-9 _]*[A-Za-z0-9][A-Za-z0-9 _]*$/i.test(value.trim())
+        ) {
+          errors.errorContactPersonName =
+            "Only letters and numbers are allowed";
+          // this.setState({
+          //   errorContactPersonName: "Only letters and numbers are allowed",
+          // });
+          // valid = false;
+        } else {
+          errors.errorContactPersonName = "";
+          // this.setState({
+          //   errorContactPersonName: "",
+          // });
+        }
 
-    if (this.state.values.address.trim() === "") {
-      // setErrorAddress("Address is required");
-      this.setState({
-        errorAddress: "Address is required",
-      });
-      valid = false;
-    } else {
-      // setErrorAddress("");
-      this.setState({
-        errorAddress: "",
-      });
-    }
+        break;
+      case "email":
+        if (value.trim() === "") {
+          errors.errorEmail = "Email is required";
+          // this.setState({
+          //   errorEmail: "Email is required",
+          // });
+          // valid = false;
+        } else if (
+          !/^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/i.test(
+            value.trim()
+          )
+        ) {
+          errors.errorEmail = "Invalid email";
+          // this.setState({
+          //   errorEmail: "Invalid email",
+          // });
+          // valid = false;
+        } else {
+          errors.errorEmail = "";
+          // this.setState({
+          //   errorEmail: "",
+          // });
+        }
 
-    if (this.state.values.contactPersonName.trim() === "") {
-      // setErrorContactPersonName("Contact person name is required");
-      this.setState({
-        errorContactPersonName: "Contact person name is required",
-      });
-      valid = false;
-    } else if (
-      !/^[A-Za-z0-9 _]*[A-Za-z0-9][A-Za-z0-9 _]*$/i.test(
-        this.state.values.contactPersonName.trim()
-      )
-    ) {
-      // setErrorContactPersonName("Only letters and numbers are allowed");
-      this.setState({
-        errorContactPersonName: "Only letters and numbers are allowed",
-      });
-      valid = false;
-    } else {
-      // setErrorContactPersonName("");
-      this.setState({
-        errorContactPersonName: "",
-      });
+        break;
+      case "contactNumber":
+        if (value.trim() === "") {
+          errors.errorContactNumber = "Contact number is required";
+          // this.setState({
+          //   errorContactNumber: "Contact number is required",
+          // });
+          // valid = false;
+        } else {
+          errors.errorContactNumber = "";
+          // this.setState({
+          //   errorContactNumber: "",
+          // });
+        }
     }
-
-    if (this.state.values.email.trim() === "") {
-      // setErrorEmail("Email is required");
-      this.setState({
-        errorEmail: "Email is required",
-      });
-      valid = false;
-    } else if (
-      !/^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/i.test(
-        this.state.values.email.trim()
-      )
-    ) {
-      // setErrorEmail("Invalid email");
-      this.setState({
-        errorEmail: "Invalid email",
-      });
-      valid = false;
-    } else {
-      // setErrorEmail("");
-      this.setState({
-        errorEmail: "",
-      });
-    }
-
-    if (this.state.values.contactNumber.trim() === "") {
-      // setErrorContactNumber("Contact number is required");
-      this.setState({
-        errorContactNumber: "Contact number is required",
-      });
-      valid = false;
-    } else {
-      // setErrorContactNumber("");
-      this.setState({
-        errorContactNumber: "",
-      });
-    }
-    return valid;
+    // return valid;
   };
 
   submitHandler = (e) => {
     e.preventDefault();
-    const isValid = this.validator();
-    // console.log(errorVendorName);
+    let errors = { ...this.state.errors };
+    this.validator("vendorName", this.state.values.vendorName, errors);
+    this.validator("address", this.state.values.address, errors);
+    this.validator(
+      "contactPersonName",
+      this.state.values.contactPersonName,
+      errors
+    );
+    this.validator("email", this.state.values.email, errors);
+    this.validator("contactNumber", this.state.values.contactNumber, errors);
+
+    let isValid = true;
+    Object.values(errors).forEach((error) => {
+      if (error.length > 0) {
+        isValid = false;
+      }
+    });
+
     if (isValid) {
-      this.props.history.push({
-        pathname: "/vendor/confirmation",
-        confirmation: {
-          message: this.state.values.vendorName + " Created Successfully",
-          redirect: "/vendors",
-          button: "Go to Vendors",
-        },
-      });
+      const postData = this.state.values;
+      const user = JSON.parse(localStorage.getItem("user"));
+      if (user && user.token) {
+        const headers = {
+          Authorization: "Bearer " + user.token,
+        };
+        axios
+          .post(ADD_VENDOR, postData, { headers: headers })
+          .then((response) => {
+            this.setState({ loading: false });
+            toast.success("Vendor created successfully.");
+            this.props.history.push({
+              pathname: "/vendors",
+            });
+          });
+      }
     }
+    this.setState({
+      errors: errors,
+    });
   };
+
+  // submitHandler = (e) => {
+  //   e.preventDefault();
+  //   const isValid = this.validator();
+  //   // console.log(errorVendorName);
+  //   if (isValid) {
+  //     this.props.history.push({
+  //       pathname: "/vendor/confirmation",
+  //       confirmation: {
+  //         message: this.state.values.vendorName + " Created Successfully",
+  //         redirect: "/vendors",
+  //         button: "Go to Vendors",
+  //       },
+  //     });
+  //   }
+  // };
   render() {
     return (
       <>
@@ -181,16 +275,16 @@ export default class CreateVendor extends ApplicationContainer {
                               type="text"
                               name="vendorName"
                               value={this.state.values.vendorName}
-                              onChange={this.onChangeHandler}
+                              onChange={this.setVendorName}
                               className={
-                                this.state.errorVendorName.length > 0
+                                this.state.errors.errorVendorName.length > 0
                                   ? "is-invalid"
                                   : ""
                               }
                             />
-                            {this.state.errorVendorName.length > 0 && (
+                            {this.state.errors.errorVendorName.length > 0 && (
                               <Form.Control.Feedback type={"invalid"}>
-                                {this.state.errorVendorName}
+                                {this.state.errors.errorVendorName}
                               </Form.Control.Feedback>
                             )}
                           </Col>
@@ -200,16 +294,18 @@ export default class CreateVendor extends ApplicationContainer {
                               type="text"
                               name="contactPersonName"
                               value={this.state.values.contactPersonName}
-                              onChange={this.onChangeHandler}
+                              onChange={this.setContactPersonName}
                               className={
-                                this.state.errorContactPersonName.length > 0
+                                this.state.errors.errorContactPersonName
+                                  .length > 0
                                   ? "is-invalid"
                                   : ""
                               }
                             />
-                            {this.state.errorContactPersonName.length > 0 && (
+                            {this.state.errors.errorContactPersonName.length >
+                              0 && (
                               <Form.Control.Feedback type={"invalid"}>
-                                {this.state.errorContactPersonName}
+                                {this.state.errors.errorContactPersonName}
                               </Form.Control.Feedback>
                             )}
                           </Col>
@@ -224,16 +320,16 @@ export default class CreateVendor extends ApplicationContainer {
                               type="text"
                               name="address"
                               value={this.state.values.address}
-                              onChange={this.onChangeHandler}
+                              onChange={this.setAddress}
                               className={
-                                this.state.errorAddress.length > 0
+                                this.state.errors.errorAddress.length > 0
                                   ? "is-invalid"
                                   : ""
                               }
                             />
-                            {this.state.errorAddress.length > 0 && (
+                            {this.state.errors.errorAddress.length > 0 && (
                               <Form.Control.Feedback type={"invalid"}>
-                                {this.state.errorAddress}
+                                {this.state.errors.errorAddress}
                               </Form.Control.Feedback>
                             )}
                           </Col>
@@ -248,15 +344,15 @@ export default class CreateVendor extends ApplicationContainer {
                               type="email"
                               name="email"
                               value={this.state.values.email}
-                              onChange={this.onChangeHandler}
+                              onChange={this.setEmail}
                               className={
-                                this.state.errorEmail.length > 0
+                                this.state.errors.errorEmail.length > 0
                                   ? "is-invalid"
                                   : ""
                               }
                             />
 
-                            {this.state.errorEmail.length > 0 && (
+                            {this.state.errors.errorEmail.length > 0 && (
                               <Form.Control.Feedback type={"invalid"}>
                                 {this.state.errorEmail}
                               </Form.Control.Feedback>
@@ -268,16 +364,17 @@ export default class CreateVendor extends ApplicationContainer {
                               type="number"
                               name="contactNumber"
                               value={this.state.values.contactNumber}
-                              onChange={this.onChangeHandler}
+                              onChange={this.setContactNumber}
                               className={
-                                this.state.errorContactNumber.length > 0
+                                this.state.errors.errorContactNumber.length > 0
                                   ? "is-invalid"
                                   : ""
                               }
                             />
-                            {this.state.errorContactNumber.length > 0 && (
+                            {this.state.errors.errorContactNumber.length >
+                              0 && (
                               <FormControl.Feedback type={"invalid"}>
-                                {this.state.errorContactNumber}
+                                {this.state.errors.errorContactNumber}
                               </FormControl.Feedback>
                             )}
                           </Col>
