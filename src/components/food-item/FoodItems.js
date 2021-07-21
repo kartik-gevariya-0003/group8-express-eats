@@ -241,7 +241,7 @@ export default class FoodItems extends ApplicationContainer {
                   </Col>
                 ))
               ) : (
-                <span>No Food Items to display</span>
+                <span>No Food Items Available</span>
               )}
             </CardDeck>
           ) : (

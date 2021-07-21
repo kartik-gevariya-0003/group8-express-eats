@@ -65,11 +65,20 @@ export default class AddFoodItem extends ApplicationContainer {
   async componentDidMount() {
     bsCustomFileInput.init();
     this.setState({ loading: true });
-    await axios.get(GET_RAW_MATERIALS).then((response) => {
-      rawMaterials = response.data.rawMaterials;
-      this.setState({ rawMaterials: rawMaterials });
-      this.setState({ loading: false });
-    });
+    const user = JSON.parse(localStorage.getItem("user"));
+    if (user && user.token) {
+      await axios
+        .get(GET_RAW_MATERIALS, {
+          headers: {
+            Authorization: "Bearer " + user.token,
+          },
+        })
+        .then((response) => {
+          rawMaterials = response.data.rawMaterials;
+          this.setState({ rawMaterials: rawMaterials });
+          this.setState({ loading: false });
+        });
+    }
   }
   filterRawMaterial = (e) => {
     e.preventDefault();
@@ -145,7 +154,6 @@ export default class AddFoodItem extends ApplicationContainer {
             });
           })
           .catch((error) => {
-            console.error(error);
             toast.error("Food Item was not added. Please try again. !");
             this.setState({ loading: false });
           });
@@ -418,7 +426,7 @@ export default class AddFoodItem extends ApplicationContainer {
                     <section className={"mt-5"}>
                       <strong>Selected Raw Materials</strong>
                       <ListGroup
-                        className={"mt-3 po-selected-raw-material-list"}
+                        className={"mt-3 fi-selected-raw-material-list"}
                       >
                         {this.state.foodItem.selectedRawMaterials.map(
                           (rawMaterial) => (
@@ -644,8 +652,8 @@ export default class AddFoodItem extends ApplicationContainer {
                       <ListGroup
                         className={
                           isError.selectedRawMaterials.length > 0
-                            ? "is-invalid mt-3 po-raw-material-list"
-                            : "mt-3 po-raw-material-list"
+                            ? "is-invalid mt-3 fi-raw-material-list"
+                            : "mt-3 fi-raw-material-list"
                         }
                       >
                         {this.state.rawMaterials.map((rawMaterial) => (

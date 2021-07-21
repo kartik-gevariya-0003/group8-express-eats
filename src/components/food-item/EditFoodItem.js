@@ -150,7 +150,6 @@ export default class EditFoodItem extends ApplicationContainer {
       isError
     );
     this.validator("profitMargin", this.state.foodItem.profitMargin, isError);
-    // this.validator("imageFile", this.state.foodItem.imageFile, isError);
     let isValid = true;
     Object.values(isError).forEach((error) => {
       if (error.length > 0) {
