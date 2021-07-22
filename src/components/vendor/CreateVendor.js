@@ -1,7 +1,10 @@
+/**
+ * Author: Rotesh Chhabra
+ */
+
 import React, { useState } from "react";
 import { useHistory } from "react-router-dom";
 import "./create-vendor.css";
-
 import { Button, Card, Col, Form, FormControl, Row } from "react-bootstrap";
 import Header from "../headers/Header";
 import axios from "axios";
@@ -354,7 +357,7 @@ export default class CreateVendor extends ApplicationContainer {
 
                             {this.state.errors.errorEmail.length > 0 && (
                               <Form.Control.Feedback type={"invalid"}>
-                                {this.state.errorEmail}
+                                {this.state.errors.errorEmail}
                               </Form.Control.Feedback>
                             )}
                           </Col>

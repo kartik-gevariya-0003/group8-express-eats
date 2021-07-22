@@ -11,6 +11,7 @@ const GET_VENDORS = API_URL + "/vendors";
 const DELETE_VENDOR = API_URL + "/vendor/";
 const UPDATE_VENDOR = API_URL + "/vendor";
 const ADD_VENDOR = API_URL + "/vendor";
+const GET_VENDOR_BY_ID = API_URL + "/vendor/";
 
 const GET_RAW_MATERIALS = API_URL + "/raw-materials";
 const CREATE_RAW_MATERIAL = API_URL + "/raw-material";
@@ -76,4 +77,5 @@ module.exports = {
   DELETE_VENDOR,
   UPDATE_VENDOR,
   ADD_VENDOR,
+  GET_VENDOR_BY_ID,
 };

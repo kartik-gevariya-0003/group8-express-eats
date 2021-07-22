@@ -1,3 +1,7 @@
+/**
+ * Author: Rotesh Chhabra
+ */
+
 import React, { useState } from "react";
 import {
   Button,
@@ -13,17 +17,20 @@ import {
 import { useHistory } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPen, faSearch, faTrashAlt } from "@fortawesome/free-solid-svg-icons";
+import { toast } from "react-toastify";
 import Header from "../headers/Header";
 import ApplicationContainer from "../ApplicationContainer";
 import axios from "axios";
 import { DELETE_VENDOR, GET_VENDORS } from "../../config";
+
+let vendorList = [];
 
 export default class Vendor extends ApplicationContainer {
   constructor(props) {
     super(props);
 
     this.state = {
-      vendorList: [],
+      vendorList: vendorList,
       deleteModal: {
         show: false,
         id: -1,
@@ -97,20 +104,41 @@ export default class Vendor extends ApplicationContainer {
   //   this.closeModal();
   // };
 
-  deleteVendor(id) {
+  deleteVendor = async (id) => {
     const user = JSON.parse(localStorage.getItem("user"));
     if (user && user.token) {
       const headers = {
         Authorization: "Bearer " + user.token,
       };
-      axios
+      await axios
         .delete(DELETE_VENDOR + this.state.deleteModal.id, { headers: headers })
         .then((result) => {
-          this.getVendors();
+          toast.success("Vendor deleted successfully.");
+          vendorList = vendorList.filter((vendor) => vendor.id !== id);
+          this.setState({
+            vendorList: this.state.vendorList.filter(
+              (vendor) => vendor.id !== id
+            ),
+          });
+          // this.getVendors();
           this.closeModal();
+        })
+        .catch((error) => {
+          this.setState({ loading: false });
+          this.closeModal();
+
+          if (error.response.status === 401) {
+            toast.error("Session is expired. Please login again.");
+            localStorage.removeItem("user");
+            this.props.history.push({
+              pathname: "/login",
+            });
+          } else {
+            toast.error(error.response.data.message);
+          }
         });
     }
-  }
+  };
 
   deleteVendorConfirmation = (deleteVendor) => {
     let state = { ...this.state.deleteModal };
