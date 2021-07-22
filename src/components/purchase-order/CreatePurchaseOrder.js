@@ -1,6 +1,11 @@
 /**
  * Author: Kartik Gevariya
  */
+
+/**
+ * This component is responsible for creating purchase order functionality.
+ * It allows user to select vendor & raw materials and shows order summary.
+ */
 import './purchase-order.css';
 import React from 'react';
 import {Button, Card, Col, Form, FormControl, InputGroup, ListGroup, Modal, Row} from "react-bootstrap";
@@ -10,7 +15,7 @@ import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import ApplicationContainer from "../ApplicationContainer";
 import {toast} from "react-toastify";
 import axios from "axios";
-import {GET_VENDORS, GET_RAW_MATERIALS, CREATE_PURCHASE_ORDER} from "../../config";
+import {CREATE_PURCHASE_ORDER, GET_RAW_MATERIALS, GET_VENDORS} from "../../config";
 
 let vendors = [];
 let rawMaterials = [];
@@ -67,14 +72,15 @@ export default class CreatePurchaseOrder extends ApplicationContainer {
         })
         .catch((error) => {
           this.setState({loading: false});
-          if (error.response.status === 401) {
+          if (error.response && error.response.status === 401) {
             toast.error('Session is expired. Please login again.');
             localStorage.removeItem('user');
             this.props.history.push({
               pathname: '/login'
             });
           } else {
-            toast.error(error.response.data.message);
+            const errorMessage = (error.response && error.response.data && error.response.data.message) || "Error occurred while getting vendors."
+            toast.error(errorMessage);
           }
         });
 
@@ -91,14 +97,15 @@ export default class CreatePurchaseOrder extends ApplicationContainer {
         })
         .catch((error) => {
           this.setState({loading: false});
-          if (error.response.status === 401) {
+          if (error.response && error.response.status === 401) {
             toast.error('Session is expired. Please login again.');
             localStorage.removeItem('user');
             this.props.history.push({
               pathname: '/login'
             });
           } else {
-            toast.error(error.response.data.message);
+            const errorMessage = (error.response && error.response.data && error.response.data.message) || "Error occurred while getting raw materials."
+            toast.error(errorMessage);
           }
         });
     }
@@ -158,14 +165,15 @@ export default class CreatePurchaseOrder extends ApplicationContainer {
         })
         .catch((error) => {
           this.setState({loading: false});
-          if (error.response.status === 401) {
+          if (error.response && error.response.status === 401) {
             toast.error('Session is expired. Please login again.');
             localStorage.removeItem('user');
             this.props.history.push({
               pathname: '/login'
             });
           } else {
-            toast.error(error.response.data.message);
+            const errorMessage = (error.response && error.response.data && error.response.data.message) || "Error occurred while creating order."
+            toast.error(errorMessage);
           }
         });
     }
@@ -301,7 +309,7 @@ export default class CreatePurchaseOrder extends ApplicationContainer {
     const {isError} = this.state;
 
     return (
-      <section>
+      <section className={"pb-5"}>
         {this.state.loading &&
         <div className="dialog-background">
           <div className="dialog-loading-wrapper">
@@ -454,7 +462,8 @@ export default class CreatePurchaseOrder extends ApplicationContainer {
                           )}
                         </ListGroup>
                         :
-                        <ListGroup className={"mt-3 po-raw-material-list"}><ListGroup.Item>No raw materials found.</ListGroup.Item></ListGroup>
+                        <ListGroup className={"mt-3 po-raw-material-list"}><ListGroup.Item>No raw materials
+                          found.</ListGroup.Item></ListGroup>
                       }
                       {isError.selectedRawMaterials.length > 0 && (
                         <Form.Control.Feedback

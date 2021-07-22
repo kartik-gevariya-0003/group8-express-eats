@@ -1,3 +1,10 @@
+/**
+ * Author: Karishma Suresh Lalwani
+ * Author: Kartik Gevariya
+ * Author: Mansi Gevariya
+ * Author: Rotesh Chhabra
+ * Author: Tasneem Yusuf Porbanderwala
+ */
 import "./App.css";
 import {Route, Switch} from "react-router-dom";
 import * as PropTypes from "prop-types";
@@ -22,6 +29,7 @@ import AddRawMaterial from "./components/raw-material/AddRawMaterial";
 import UpdateRawMaterial from "./components/raw-material/UpdateRawMaterial";
 import Register from "./components/register/Register";
 import React from "react";
+import Footer from "./components/footer/Footer";
 
 Route.propTypes = {
   component: PropTypes.any,
@@ -31,7 +39,7 @@ Route.propTypes = {
 
 function App() {
   return (
-    <div className="App">
+    <section className="App">
       <Switch>
         <Route exact path="/" component={Main}/>
         <Route exact path="/login" component={Login}/>
@@ -58,7 +66,8 @@ function App() {
         <Route exact path="/raw-material/update" component={UpdateRawMaterial}/>
         <Route exact path="/raw-material/confirmation" component={Confirmation}/>
       </Switch>
-    </div>
+      <Footer/>
+    </section>
   );
 }
 

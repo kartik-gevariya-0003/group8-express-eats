@@ -1,6 +1,11 @@
 /**
  * Author: Kartik Gevariya
  */
+
+/**
+ * This component is responsible for showing all possible actions that manufacturer can perform.
+ * This component (works as a landing page) will be loaded once user performs successful login.
+ */
 import "./home.css";
 import React from "react";
 import {Link} from "react-router-dom";
