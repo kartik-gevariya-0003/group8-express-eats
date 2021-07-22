@@ -144,14 +144,9 @@ export default class AddFoodItem extends ApplicationContainer {
           .post(POST_ADD_FOOD_ITEM, formData, config)
           .then((response) => {
             this.setState({ loading: false });
+            toast.success("Food Item created successfully.");
             this.props.history.push({
-              pathname: "/food-item/confirmation",
-              confirmation: {
-                message:
-                  this.state.foodItem.foodItemName + " Created Successfully",
-                redirect: "/food-items",
-                button: "GO TO FOOD ITEMS",
-              },
+              pathname: "/food-items",
             });
           })
           .catch((error) => {
