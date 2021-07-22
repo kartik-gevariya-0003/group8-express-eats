@@ -1,14 +1,24 @@
 // Author: Tasneem Yusuf Porbanderwala
 import "./food-item.css";
 import React from "react";
-import {Button, Card, Col, Form, FormControl, InputGroup, ListGroup, Modal, Row,} from "react-bootstrap";
+import {
+  Button,
+  Card,
+  Col,
+  Form,
+  FormControl,
+  InputGroup,
+  ListGroup,
+  Modal,
+  Row,
+} from "react-bootstrap";
 import "react-toastify/dist/ReactToastify.css";
-import {faSearch, faTrashAlt} from "@fortawesome/free-solid-svg-icons";
-import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import { faSearch, faTrashAlt } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import ApplicationContainer from "../ApplicationContainer";
 import bsCustomFileInput from "bs-custom-file-input";
 import axios from "axios";
-import {toast} from "react-toastify";
+import { toast } from "react-toastify";
 import {
   GET_FOOD_ITEM_BY_ID,
   GET_FOOD_ITEM_NAME,
@@ -172,14 +182,9 @@ export default class EditFoodItem extends ApplicationContainer {
           await axios
             .put(PUT_FOOD_ITEM_WITH_IMAGE, formData, config)
             .then((response) => {
+              toast.success("Food Item updated successfully.");
               this.props.history.push({
-                pathname: "/food-item/confirmation",
-                confirmation: {
-                  message:
-                    this.state.foodItem.foodItemName + " Updated Successfully",
-                  redirect: "/food-items",
-                  button: "GO TO FOOD ITEMS",
-                },
+                pathname: "/food-items",
               });
             })
             .catch((error) => {
@@ -208,14 +213,9 @@ export default class EditFoodItem extends ApplicationContainer {
               { headers: headers }
             )
             .then((response) => {
+              toast.success("Food Item updated successfully.");
               this.props.history.push({
-                pathname: "/food-item/confirmation",
-                confirmation: {
-                  message:
-                    this.state.foodItem.foodItemName + " Updated Successfully",
-                  redirect: "/food-items",
-                  button: "GO TO FOOD ITEMS",
-                },
+                pathname: "/food-items",
               });
             })
             .catch((error) => {
