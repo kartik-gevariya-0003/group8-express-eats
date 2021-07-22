@@ -62,6 +62,7 @@ export default class CreateVendor extends ApplicationContainer {
           contactPersonName: vendor.contactPersonName,
           email: vendor.email,
           contactNumber: vendor.contactNumber,
+          id: this.props.location.state,
         };
 
         this.setState({
@@ -208,6 +209,7 @@ export default class CreateVendor extends ApplicationContainer {
         const headers = {
           Authorization: "Bearer " + user.token,
         };
+        console.log(putData);
         axios
           .put(UPDATE_VENDOR, putData, { headers: headers })
           .then((response) => {
@@ -216,6 +218,18 @@ export default class CreateVendor extends ApplicationContainer {
             this.props.history.push({
               pathname: "/vendors",
             });
+          })
+          .catch((error) => {
+            this.setState({ loading: false });
+            if (error.response.status === 401) {
+              toast.error("Session is expired. Please login again.");
+              localStorage.removeItem("user");
+              this.props.history.push({
+                pathname: "/login",
+              });
+            } else {
+              toast.error(error.response.data.message);
+            }
           });
       }
     }
