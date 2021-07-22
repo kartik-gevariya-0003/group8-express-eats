@@ -280,14 +280,29 @@ export default class EditFoodItem extends ApplicationContainer {
         if (!value || value.length === 0) {
           isError.foodItemName = "Please enter food item name";
         } else if (value !== this.state.originalFoodItemName) {
-          await axios
-            .get(GET_FOOD_ITEM_NAME + this.state.foodItem.foodItemName)
-            .then((response) => {
-              isError.foodItemName = response.data.message;
-            })
-            .catch((error) => {
-              console.error(error);
-            });
+          const user = JSON.parse(localStorage.getItem("user"));
+          if (user && user.token) {
+            const headers = {
+              Authorization: "Bearer " + user.token,
+            };
+            await axios
+              .get(GET_FOOD_ITEM_NAME + this.state.foodItem.foodItemName, {
+                headers: headers,
+              })
+              .then((response) => {
+                isError.foodItemName = response.data.message;
+              })
+              .catch((error) => {
+                this.setState({ loading: false });
+                if (error.response.status === 401) {
+                  toast.error("Session is expired. Please login again.");
+                  localStorage.removeItem("user");
+                  this.props.history.push({
+                    pathname: "/login",
+                  });
+                }
+              });
+          }
         }
 
         break;
