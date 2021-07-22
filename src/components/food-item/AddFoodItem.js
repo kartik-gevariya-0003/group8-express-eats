@@ -1,15 +1,29 @@
 // Author: Tasneem Yusuf Porbanderwala
 import "./food-item.css";
 import React from "react";
-import {Button, Card, Col, Form, FormControl, InputGroup, ListGroup, Modal, Row,} from "react-bootstrap";
+import {
+  Button,
+  Card,
+  Col,
+  Form,
+  FormControl,
+  InputGroup,
+  ListGroup,
+  Modal,
+  Row,
+} from "react-bootstrap";
 import "react-toastify/dist/ReactToastify.css";
-import {faSearch, faTrashAlt} from "@fortawesome/free-solid-svg-icons";
-import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import { faSearch, faTrashAlt } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import ApplicationContainer from "../ApplicationContainer";
 import bsCustomFileInput from "bs-custom-file-input";
 import axios from "axios";
-import {toast} from "react-toastify";
-import {GET_FOOD_ITEM_NAME, GET_RAW_MATERIALS, POST_ADD_FOOD_ITEM,} from "../../config";
+import { toast } from "react-toastify";
+import {
+  GET_FOOD_ITEM_NAME,
+  GET_RAW_MATERIALS,
+  POST_ADD_FOOD_ITEM,
+} from "../../config";
 
 let rawMaterials = [];
 
@@ -636,48 +650,54 @@ export default class AddFoodItem extends ApplicationContainer {
                           </InputGroup>
                         </Col>
                       </Row>
-                      <ListGroup
-                        className={
-                          isError.selectedRawMaterials.length > 0
-                            ? "is-invalid mt-3 fi-raw-material-list"
-                            : "mt-3 fi-raw-material-list"
-                        }
-                      >
-                        {this.state.rawMaterials.map((rawMaterial) => (
-                          <ListGroup.Item key={rawMaterial.id}>
-                            <Row>
-                              {console.log(rawMaterial)}
-                              <Col sm={5} className={"pl-3"}>
-                                <h6>
-                                  <span>{rawMaterial.rawMaterialName}</span>
-                                  <br />
-                                  <span>
-                                    <small>{rawMaterial.unitMeasurement}</small>
-                                  </span>
-                                </h6>
-                              </Col>
-                              <Col sm={5}>
-                                <h6>
-                                  <span>
-                                    <strong>Unit Price:</strong>
-                                  </span>
-                                  <span> ${rawMaterial.unitCost}</span>
-                                </h6>
-                              </Col>
-                              <Col sm={2}>
-                                <Button
-                                  variant={"secondary"}
-                                  onClick={() =>
-                                    this.addRawMaterial(rawMaterial)
-                                  }
-                                >
-                                  Add
-                                </Button>
-                              </Col>
-                            </Row>
-                          </ListGroup.Item>
-                        ))}
-                      </ListGroup>
+                      {this.state.rawMaterials.length > 0 ? (
+                        <ListGroup
+                          className={
+                            isError.selectedRawMaterials.length > 0
+                              ? "is-invalid mt-3 fi-raw-material-list"
+                              : "mt-3 fi-raw-material-list"
+                          }
+                        >
+                          {this.state.rawMaterials.map((rawMaterial) => (
+                            <ListGroup.Item key={rawMaterial.id}>
+                              <Row>
+                                {console.log(rawMaterial)}
+                                <Col sm={5} className={"pl-3"}>
+                                  <h6>
+                                    <span>{rawMaterial.rawMaterialName}</span>
+                                    <br />
+                                    <span>
+                                      <small>
+                                        {rawMaterial.unitMeasurement}
+                                      </small>
+                                    </span>
+                                  </h6>
+                                </Col>
+                                <Col sm={5}>
+                                  <h6>
+                                    <span>
+                                      <strong>Unit Price:</strong>
+                                    </span>
+                                    <span> ${rawMaterial.unitCost}</span>
+                                  </h6>
+                                </Col>
+                                <Col sm={2}>
+                                  <Button
+                                    variant={"secondary"}
+                                    onClick={() =>
+                                      this.addRawMaterial(rawMaterial)
+                                    }
+                                  >
+                                    Add
+                                  </Button>
+                                </Col>
+                              </Row>
+                            </ListGroup.Item>
+                          ))}
+                        </ListGroup>
+                      ) : (
+                        <span>No Raw Materials available.</span>
+                      )}
                       {isError.selectedRawMaterials.length > 0 && (
                         <Form.Control.Feedback type={"invalid"}>
                           {isError.selectedRawMaterials}

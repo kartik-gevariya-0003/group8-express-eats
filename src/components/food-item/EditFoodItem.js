@@ -89,7 +89,7 @@ export default class EditFoodItem extends ApplicationContainer {
       this.setState(state);
       bsCustomFileInput.init();
       await axios
-        .get(GET_RAW_MATERIALS)
+        .get(GET_RAW_MATERIALS, { headers: headers })
         .then((response) => {
           rawMaterials = response.data.rawMaterials;
           this.setState({ rawMaterials: rawMaterials });
@@ -254,7 +254,6 @@ export default class EditFoodItem extends ApplicationContainer {
 
   onManufacturerCostChange = (cost) => {
     let state = { ...this.state };
-    console.log(cost);
     this.validator("manufacturerCost", cost, this.state.isError);
     state.foodItem.manufacturerCost = cost;
     let totalCost = 0;
