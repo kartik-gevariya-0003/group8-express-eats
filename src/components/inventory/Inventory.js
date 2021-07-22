@@ -1,10 +1,20 @@
 import React from "react";
 import ApplicationContainer from "../ApplicationContainer";
-import {Button, Card, Col, Form, FormControl, InputGroup, Modal, Row, Table,} from "react-bootstrap";
-import {toast} from "react-toastify";
+import {
+  Button,
+  Card,
+  Col,
+  Form,
+  FormControl,
+  InputGroup,
+  Modal,
+  Row,
+  Table,
+} from "react-bootstrap";
+import { toast } from "react-toastify";
 import Select from "react-select";
-import {faSearch} from "@fortawesome/free-solid-svg-icons";
-import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import { faSearch } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 import "react-toastify/dist/ReactToastify.css";
 import {
@@ -216,21 +226,24 @@ export default class Inventory extends ApplicationContainer {
           })
           .then((response) => {
             toast.success(
-              this.state.newRawMaterial.name + " added successfully!"
+              this.state.newRawMaterial.name + " updated successfully!"
             );
             this.closeRawMaterialModal();
-            axios.get(GET_ALL_INVENTORY).then((response) => {
-              rawMaterials = response.data.rawMaterialInventories;
-              this.setState({
-                rawMaterials: rawMaterials,
+            axios
+              .get(GET_ALL_INVENTORY, {
+                headers: headers,
+              })
+              .then((response) => {
+                rawMaterials = response.data.rawMaterialInventories;
+                this.setState({
+                  rawMaterials: rawMaterials,
+                });
+                this.setState({ loading: false });
               });
-              this.setState({ loading: false });
-            });
           })
           .catch((error) => {
             this.setState({ loading: false });
 
-            console.error(error);
             if (error.response.status === 401) {
               toast.error("Session is expired. Please login again.");
               localStorage.removeItem("user");
@@ -286,7 +299,9 @@ export default class Inventory extends ApplicationContainer {
             headers: headers,
           })
           .then((response) => {
-            toast.success(this.state.newFoodItem.name + " added successfully!");
+            toast.success(
+              this.state.newFoodItem.name + " updated successfully!"
+            );
             this.closeFoodItemModal();
             axios
               .get(GET_ALL_INVENTORY, {
@@ -300,7 +315,7 @@ export default class Inventory extends ApplicationContainer {
           })
           .catch((error) => {
             this.setState({ loading: false });
-            console.error(error);
+
             if (error.response.status === 401) {
               toast.error("Session is expired. Please login again.");
               localStorage.removeItem("user");
@@ -362,20 +377,11 @@ export default class Inventory extends ApplicationContainer {
         });
       this.setState({ loading: true });
       await axios
-        .get(GET_RAW_MATERIALS)
+        .get(GET_RAW_MATERIALS, { headers: headers })
         .then((response) => {
           this.setState({ loading: false });
-          let rawMaterialList = [];
-
-          response.data.rawMaterials.forEach((listItem) => {
-            if (
-              !this.state.rawMaterials.some(
-                (item) => item.raw_material.id === listItem.id
-              )
-            ) {
-              rawMaterialList.push(listItem);
-            }
-          });
+          let rawMaterialList = response.data.rawMaterials;
+          this.setState({ rawMaterialList: rawMaterialList });
         })
         .catch((error) => {
           this.setState({ loading: false });
@@ -394,16 +400,7 @@ export default class Inventory extends ApplicationContainer {
         .get(GET_FOOD_ITEMS, { headers: headers })
         .then((response) => {
           this.setState({ loading: false });
-          let foodItemList = [];
-          response.data.foodItems.forEach((listItem) => {
-            if (
-              !this.state.foodItems.some(
-                (item) => item.foodItemId === listItem.id
-              )
-            ) {
-              foodItemList.push(listItem);
-            }
-          });
+          let foodItemList = response.data.foodItems;
           this.setState({ foodItemList: foodItemList });
         })
         .catch((error) => {
