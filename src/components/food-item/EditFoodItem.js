@@ -254,7 +254,6 @@ export default class EditFoodItem extends ApplicationContainer {
 
   onManufacturerCostChange = (cost) => {
     let state = { ...this.state };
-    console.log(cost);
     this.validator("manufacturerCost", cost, this.state.isError);
     state.foodItem.manufacturerCost = cost;
     let totalCost = 0;

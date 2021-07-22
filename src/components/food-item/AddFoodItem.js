@@ -1,15 +1,29 @@
 // Author: Tasneem Yusuf Porbanderwala
 import "./food-item.css";
 import React from "react";
-import {Button, Card, Col, Form, FormControl, InputGroup, ListGroup, Modal, Row,} from "react-bootstrap";
+import {
+  Button,
+  Card,
+  Col,
+  Form,
+  FormControl,
+  InputGroup,
+  ListGroup,
+  Modal,
+  Row,
+} from "react-bootstrap";
 import "react-toastify/dist/ReactToastify.css";
-import {faSearch, faTrashAlt} from "@fortawesome/free-solid-svg-icons";
-import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import { faSearch, faTrashAlt } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import ApplicationContainer from "../ApplicationContainer";
 import bsCustomFileInput from "bs-custom-file-input";
 import axios from "axios";
-import {toast} from "react-toastify";
-import {GET_FOOD_ITEM_NAME, GET_RAW_MATERIALS, POST_ADD_FOOD_ITEM,} from "../../config";
+import { toast } from "react-toastify";
+import {
+  GET_FOOD_ITEM_NAME,
+  GET_RAW_MATERIALS,
+  POST_ADD_FOOD_ITEM,
+} from "../../config";
 
 let rawMaterials = [];
 
@@ -53,7 +67,6 @@ export default class AddFoodItem extends ApplicationContainer {
     bsCustomFileInput.init();
     this.setState({ loading: true });
     const user = JSON.parse(localStorage.getItem("user"));
-    console.log("in component did mount");
     if (user && user.token) {
       await axios
         .get(GET_RAW_MATERIALS, {
@@ -62,7 +75,6 @@ export default class AddFoodItem extends ApplicationContainer {
           },
         })
         .then((response) => {
-          console.log(response);
           rawMaterials = response.data.rawMaterials;
           this.setState({ rawMaterials: rawMaterials });
           this.setState({ loading: false });
