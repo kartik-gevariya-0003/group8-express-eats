@@ -1,5 +1,7 @@
 /**
  * Author: Rotesh Chhabra
+ 
+ * Functionality to add a new vendor
  */
 
 import React, { useState } from "react";
@@ -38,22 +40,6 @@ export default class CreateVendor extends ApplicationContainer {
     e.preventDefault();
     this.props.history.push("/vendors");
   };
-
-  // onChangeHandler = (e) => {
-  //   // setValues((prev) => {
-  //   //   return {
-  //   //     ...values,
-  //   //     [e.target.name]: e.target.value,
-  //   //   };
-  //   // });
-
-  //   this.setState({
-  //     values: {
-  //       ...this.state.values,
-  //       [e.target.name]: e.target.value,
-  //     },
-  //   });
-  // };
 
   setVendorName = (e) => {
     let state = { ...this.state };
@@ -146,55 +132,32 @@ export default class CreateVendor extends ApplicationContainer {
         ) {
           errors.errorContactPersonName =
             "Only letters and numbers are allowed";
-          // this.setState({
-          //   errorContactPersonName: "Only letters and numbers are allowed",
-          // });
-          // valid = false;
         } else {
           errors.errorContactPersonName = "";
-          // this.setState({
-          //   errorContactPersonName: "",
-          // });
         }
 
         break;
       case "email":
         if (value.trim() === "") {
           errors.errorEmail = "Email is required";
-          // this.setState({
-          //   errorEmail: "Email is required",
-          // });
-          // valid = false;
         } else if (
           !/^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/i.test(
             value.trim()
           )
         ) {
           errors.errorEmail = "Invalid email";
-          // this.setState({
-          //   errorEmail: "Invalid email",
-          // });
-          // valid = false;
         } else {
           errors.errorEmail = "";
-          // this.setState({
-          //   errorEmail: "",
-          // });
         }
 
         break;
       case "contactNumber":
         if (value.trim() === "") {
           errors.errorContactNumber = "Contact number is required";
-          // this.setState({
-          //   errorContactNumber: "Contact number is required",
-          // });
-          // valid = false;
+        } else if (value.trim().length < 10) {
+          errors.errorContactNumber = "Invalid phone number";
         } else {
           errors.errorContactNumber = "";
-          // this.setState({
-          //   errorContactNumber: "",
-          // });
         }
     }
     // return valid;

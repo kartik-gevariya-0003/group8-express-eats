@@ -1,8 +1,9 @@
 /**
  * Author: Rotesh Chhabra
+ 
+ * Functionality to Display all vendor details in the system and allow to add, edit and delete
  */
 
-import React, { useState } from "react";
 import {
   Button,
   Card,
@@ -14,7 +15,6 @@ import {
   Modal,
   Row,
 } from "react-bootstrap";
-import { useHistory } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPen, faSearch, faTrashAlt } from "@fortawesome/free-solid-svg-icons";
 import { toast } from "react-toastify";
@@ -38,12 +38,6 @@ export default class Vendor extends ApplicationContainer {
       },
     };
   }
-
-  // const [vendors, setVendor] = useState(vendorDetails);
-  // const [deleteModal, setDeleteModal] = useState({
-  //   show: false,
-  //   vendorName: "",
-  // });
 
   componentDidMount() {
     const user = JSON.parse(localStorage.getItem("user"));
@@ -80,29 +74,6 @@ export default class Vendor extends ApplicationContainer {
       ),
     });
   };
-
-  // deleteVendor = (deleteVendor) => {
-  //   vendorDetails = vendorDetails.filter(
-  //     (vendor) =>
-  //       vendor.vendorName.toLowerCase() !==
-  //       deleteVendor.vendorName.toLowerCase()
-  //   );
-  //   // setVendor(
-  //   //   vendors.filter(
-  //   //     (vendor) =>
-  //   //       vendor.vendorName.toLowerCase() !==
-  //   //       deleteVendor.vendorName.toLowerCase()
-  //   //   )
-  //   // );
-  //   this.setState({
-  //     vendors: this.state.vendors.filter(
-  //       (vendor) =>
-  //         vendor.vendorName.toLowerCase() !==
-  //         deleteVendor.vendorName.toLowerCase()
-  //     ),
-  //   });
-  //   this.closeModal();
-  // };
 
   deleteVendor = async (id) => {
     const user = JSON.parse(localStorage.getItem("user"));
@@ -144,14 +115,6 @@ export default class Vendor extends ApplicationContainer {
     let state = { ...this.state.deleteModal };
     state.vendorName = deleteVendor.vendorName;
 
-    // console.log(state);
-    // setDeleteModal((prevState) => {
-    //   return {
-    //     ...prevState,
-    //     vendorName: deleteVendor.vendorName,
-    //   };
-    // });
-
     this.setState(
       {
         deleteModal: {
@@ -163,23 +126,6 @@ export default class Vendor extends ApplicationContainer {
       }
     );
   };
-  // console.log(this.state.deleteModal);
-
-  // showModal = () => {
-  //   // setDeleteModal((prevState) => {
-  //   //   return {
-  //   //     ...prevState,
-  //   //     show: true,
-  //   //   };
-  //   // });
-
-  //   console.log(this.state.deleteModal.vendorName);
-  //   this.setState({
-  //     deleteModal: {
-  //       show: true,
-  //     },
-  //   });
-  // };
 
   showModal = (vendor) => {
     let state = { ...this.state };
@@ -188,21 +134,6 @@ export default class Vendor extends ApplicationContainer {
     state.deleteModal.name = vendor.name;
     this.setState(state);
   };
-
-  // closeModal = () => {
-  //   // setDeleteModal((prevState) => {
-  //   //   return {
-  //   //     ...prevState,
-  //   //     show: false,
-  //   //   };
-  //   // });
-
-  //   this.setState({
-  //     deleteModal: {
-  //       show: false,
-  //     },
-  //   });
-  // };
 
   closeModal = () => {
     let state = { ...this.state };

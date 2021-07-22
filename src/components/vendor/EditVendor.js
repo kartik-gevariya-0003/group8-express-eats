@@ -1,7 +1,8 @@
 // Author: Rotesh Chhabra
+/*
+ * Functionality to Edit the vendor details in the system
+ * */
 
-import React, { useState } from "react";
-import { useHistory } from "react-router-dom";
 import "./create-vendor.css";
 import { Button, Card, Col, Form, FormControl, Row } from "react-bootstrap";
 import { toast } from "react-toastify";
@@ -49,9 +50,7 @@ export default class CreateVendor extends ApplicationContainer {
 
   getVendor(headers) {
     this.setState({ loading: true });
-    console.log(this.state.values.id);
     const url = GET_VENDOR_BY_ID + this.state.values.id;
-    console.log(url);
     axios
       .get(url, { headers: headers })
       .then((result) => {
@@ -64,15 +63,7 @@ export default class CreateVendor extends ApplicationContainer {
           email: vendor.email,
           contactNumber: vendor.contactNumber,
         };
-        // const selectedVendors = this.state.vendorOptions.filter((vendor) =>
-        //   rawMaterialData.vendorIds.some((vendorId) => vendor.id === vendorId)
-        // );
-        // const selectedUnitMeasurementCode =
-        //   this.state.unitMeasurementOptions.filter(
-        //     (unitMeasurementOption) =>
-        //       unitMeasurementOption.value ===
-        //       rawMaterialData.unitMeasurementCode
-        //   )[0];
+
         this.setState({
           values: vendorData,
         });
@@ -124,13 +115,6 @@ export default class CreateVendor extends ApplicationContainer {
   };
 
   onChangeHandler = (e) => {
-    // setValues((prev) => {
-    //   return {
-    //     ...values,
-    //     [e.target.name]: e.target.value,
-    //   };
-    // });
-
     this.setState({
       values: {
         ...this.state.values,
@@ -139,228 +123,62 @@ export default class CreateVendor extends ApplicationContainer {
     });
   };
 
-  // validator = () => {
-  //   let valid = true;
-
-  //   if (this.state.values.vendorName.trim() === "") {
-  //     //   setErrorVendorName("Vendor name is required");
-  //     this.setState({
-  //       errorVendorName: "Vendor name is required",
-  //     });
-  //     valid = false;
-  //   } else if (
-  //     !/^[A-Za-z0-9 _]*[A-Za-z0-9][A-Za-z0-9 _]*$/i.test(
-  //       this.state.values.vendorName.trim()
-  //     )
-  //   ) {
-  //     //   setErrorVendorName("Only letters and numbers are allowed");
-  //     this.setState({
-  //       errorVendorName: "Only letters and numbers are allowed",
-  //     });
-  //     valid = false;
-  //   } else {
-  //     //   setErrorVendorName("");
-  //     this.setState({
-  //       errorVendorName: "",
-  //     });
-  //   }
-
-  //   if (this.state.values.address.trim() === "") {
-  //     //   setErrorAddress("Address is required");
-
-  //     this.setState({
-  //       errorAddress: "Address is required",
-  //     });
-  //     valid = false;
-  //   } else {
-  //     //   setErrorAddress("");
-  //     this.setState({
-  //       errorAddress: "",
-  //     });
-  //   }
-
-  //   if (this.state.values.contactPersonName.trim() === "") {
-  //     //   setErrorContactPersonName("Contact person name is required");
-  //     this.setState({
-  //       errorContactNumber: "Contact person name is required",
-  //     });
-  //     valid = false;
-  //   } else if (
-  //     !/^[A-Za-z0-9 _]*[A-Za-z0-9][A-Za-z0-9 _]*$/i.test(
-  //       this.state.values.contactPersonName.trim()
-  //     )
-  //   ) {
-  //     //   setErrorContactPersonName("Only letters and numbers are allowed");
-  //     this.setState({
-  //       errorContactNumber: "Only letters and numbers are allowed",
-  //     });
-  //     valid = false;
-  //   } else {
-  //     //   setErrorContactPersonName("");
-  //     this.setState({
-  //       errorContactNumber: "",
-  //     });
-  //   }
-
-  //   if (this.state.values.email.trim() === "") {
-  //     //   setErrorEmail("Email is required");
-  //     this.setState({
-  //       errorEmail: "Email is required",
-  //     });
-  //     valid = false;
-  //   } else if (
-  //     !/^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/i.test(
-  //       this.state.values.email.trim()
-  //     )
-  //   ) {
-  //     //   setErrorEmail("Invalid email");
-  //     this.setState({
-  //       errorEmail: "Invalid email",
-  //     });
-  //     valid = false;
-  //   } else {
-  //     //   setErrorEmail("");
-  //     this.setState({
-  //       errorEmail: "",
-  //     });
-  //   }
-
-  //   if (this.state.values.contactNumber.trim() === "") {
-  //     //   setErrorContactNumber("Contact number is required");
-  //     this.setState({
-  //       errorContactNumber: "Contact number is required",
-  //     });
-  //     valid = false;
-  //   } else {
-  //     //   setErrorContactNumber("");
-
-  //     this.setState({
-  //       errorContactNumber: "",
-  //     });
-  //   }
-  //   return valid;
-  // };
-
-  // submitHandler = (e) => {
-  //   e.preventDefault();
-  //   const isValid = this.validator();
-  //   console.log(this.state.errorVendorName);
-  //   if (isValid) {
-  //     this.props.history.push({
-  //       pathname: "/vendor/confirmation",
-  //       confirmation: {
-  //         message: this.state.values.vendorName + " Created Successfully",
-  //         redirect: "/vendors",
-  //         button: "Go to Vendors",
-  //       },
-  //     });
-  //   }
-  // };
-
   validator = (name, value, errors) => {
     let valid = true;
     switch (name) {
       case "vendorName":
         if (value.trim() === "") {
           errors.errorVendorName = "Vendor name is required";
-          // this.setState({
-          //   errorVendorName: "Vendor name is required",
-          // });
-          // valid = false;
         } else if (
           !/^[A-Za-z0-9 _]*[A-Za-z0-9][A-Za-z0-9 _]*$/i.test(value.trim())
         ) {
           errors.errorVendorName = "Only letters and numbers are allowed";
-          // this.setState({
-          //   errorVendorName: "Only letters and numbers are allowed",
-          // });
-          // valid = false;
         } else {
           errors.errorVendorName = "";
-          // this.setState({
-          //   errorVendorName: "",
-          // });
         }
         break;
       case "address":
         if (value.trim() === "") {
           errors.errorAddress = "Address is required";
-          // this.setState({
-          //   errorAddress: "Address is required",
-          // });
-          // valid = false;
         } else {
           errors.errorAddress = "";
-          // this.setState({
-          //   errorAddress: "",
-          // });
         }
 
         break;
       case "contactPersonName":
         if (value.trim() === "") {
           errors.errorContactPersonName = "Contact person name is required";
-          // this.setState({
-          //   errorContactPersonName: "Contact person name is required",
-          // });
-          // valid = false;
         } else if (
           !/^[A-Za-z0-9 _]*[A-Za-z0-9][A-Za-z0-9 _]*$/i.test(value.trim())
         ) {
           errors.errorContactPersonName =
             "Only letters and numbers are allowed";
-          // this.setState({
-          //   errorContactPersonName: "Only letters and numbers are allowed",
-          // });
-          // valid = false;
         } else {
           errors.errorContactPersonName = "";
-          // this.setState({
-          //   errorContactPersonName: "",
-          // });
         }
 
         break;
       case "email":
         if (value.trim() === "") {
           errors.errorEmail = "Email is required";
-          // this.setState({
-          //   errorEmail: "Email is required",
-          // });
-          // valid = false;
         } else if (
           !/^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/i.test(
             value.trim()
           )
         ) {
           errors.errorEmail = "Invalid email";
-          // this.setState({
-          //   errorEmail: "Invalid email",
-          // });
-          // valid = false;
         } else {
           errors.errorEmail = "";
-          // this.setState({
-          //   errorEmail: "",
-          // });
         }
 
         break;
       case "contactNumber":
         if (value.trim() === "") {
           errors.errorContactNumber = "Contact number is required";
-          // this.setState({
-          //   errorContactNumber: "Contact number is required",
-          // });
-          // valid = false;
         } else {
           errors.errorContactNumber = "";
-          // this.setState({
-          //   errorContactNumber: "",
-          // });
         }
     }
-    // return valid;
   };
 
   handleSubmit = (e) => {
