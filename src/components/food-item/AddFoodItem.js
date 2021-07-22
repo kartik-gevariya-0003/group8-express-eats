@@ -66,6 +66,7 @@ export default class AddFoodItem extends ApplicationContainer {
     bsCustomFileInput.init();
     this.setState({ loading: true });
     const user = JSON.parse(localStorage.getItem("user"));
+    console.log("in component did mount");
     if (user && user.token) {
       await axios
         .get(GET_RAW_MATERIALS, {
@@ -74,6 +75,7 @@ export default class AddFoodItem extends ApplicationContainer {
           },
         })
         .then((response) => {
+          console.log(response);
           rawMaterials = response.data.rawMaterials;
           this.setState({ rawMaterials: rawMaterials });
           this.setState({ loading: false });
@@ -649,48 +651,54 @@ export default class AddFoodItem extends ApplicationContainer {
                           </InputGroup>
                         </Col>
                       </Row>
-                      <ListGroup
-                        className={
-                          isError.selectedRawMaterials.length > 0
-                            ? "is-invalid mt-3 fi-raw-material-list"
-                            : "mt-3 fi-raw-material-list"
-                        }
-                      >
-                        {this.state.rawMaterials.map((rawMaterial) => (
-                          <ListGroup.Item key={rawMaterial.id}>
-                            <Row>
-                              {console.log(rawMaterial)}
-                              <Col sm={5} className={"pl-3"}>
-                                <h6>
-                                  <span>{rawMaterial.rawMaterialName}</span>
-                                  <br />
-                                  <span>
-                                    <small>{rawMaterial.unitMeasurement}</small>
-                                  </span>
-                                </h6>
-                              </Col>
-                              <Col sm={5}>
-                                <h6>
-                                  <span>
-                                    <strong>Unit Price:</strong>
-                                  </span>
-                                  <span> ${rawMaterial.unitCost}</span>
-                                </h6>
-                              </Col>
-                              <Col sm={2}>
-                                <Button
-                                  variant={"secondary"}
-                                  onClick={() =>
-                                    this.addRawMaterial(rawMaterial)
-                                  }
-                                >
-                                  Add
-                                </Button>
-                              </Col>
-                            </Row>
-                          </ListGroup.Item>
-                        ))}
-                      </ListGroup>
+                      {this.state.rawMaterials.length > 0 ? (
+                        <ListGroup
+                          className={
+                            isError.selectedRawMaterials.length > 0
+                              ? "is-invalid mt-3 fi-raw-material-list"
+                              : "mt-3 fi-raw-material-list"
+                          }
+                        >
+                          {this.state.rawMaterials.map((rawMaterial) => (
+                            <ListGroup.Item key={rawMaterial.id}>
+                              <Row>
+                                {console.log(rawMaterial)}
+                                <Col sm={5} className={"pl-3"}>
+                                  <h6>
+                                    <span>{rawMaterial.rawMaterialName}</span>
+                                    <br />
+                                    <span>
+                                      <small>
+                                        {rawMaterial.unitMeasurement}
+                                      </small>
+                                    </span>
+                                  </h6>
+                                </Col>
+                                <Col sm={5}>
+                                  <h6>
+                                    <span>
+                                      <strong>Unit Price:</strong>
+                                    </span>
+                                    <span> ${rawMaterial.unitCost}</span>
+                                  </h6>
+                                </Col>
+                                <Col sm={2}>
+                                  <Button
+                                    variant={"secondary"}
+                                    onClick={() =>
+                                      this.addRawMaterial(rawMaterial)
+                                    }
+                                  >
+                                    Add
+                                  </Button>
+                                </Col>
+                              </Row>
+                            </ListGroup.Item>
+                          ))}
+                        </ListGroup>
+                      ) : (
+                        <span>No Raw Materials available.</span>
+                      )}
                       {isError.selectedRawMaterials.length > 0 && (
                         <Form.Control.Feedback type={"invalid"}>
                           {isError.selectedRawMaterials}
