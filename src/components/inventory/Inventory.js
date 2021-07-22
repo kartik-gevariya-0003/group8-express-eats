@@ -1,20 +1,10 @@
 import React from "react";
 import ApplicationContainer from "../ApplicationContainer";
-import {
-  Button,
-  Card,
-  Col,
-  FormControl,
-  InputGroup,
-  Row,
-  Table,
-  Modal,
-  Form,
-} from "react-bootstrap";
-import { toast } from "react-toastify";
+import {Button, Card, Col, Form, FormControl, InputGroup, Modal, Row, Table,} from "react-bootstrap";
+import {toast} from "react-toastify";
 import Select from "react-select";
-import { faSearch } from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import {faSearch} from "@fortawesome/free-solid-svg-icons";
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 
 import "react-toastify/dist/ReactToastify.css";
 import {
@@ -25,6 +15,7 @@ import {
   POST_ADD_RAW_MATERIAL_INVENTORY,
 } from "../../config";
 import axios from "axios";
+
 let rawMaterials = [];
 let foodItems = [];
 export default class Inventory extends ApplicationContainer {
@@ -431,7 +422,7 @@ export default class Inventory extends ApplicationContainer {
   };
   render() {
     return (
-      <section>
+      <section className={"pb-5"}>
         {super.render()}
         {this.state.loading && (
           <div className="dialog-background">

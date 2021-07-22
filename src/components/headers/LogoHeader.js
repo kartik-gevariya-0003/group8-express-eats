@@ -2,6 +2,11 @@
  * Author: Mansi Gevariya
  * Author: Kartik Gevariya
  */
+
+/**
+ * This component is responsible for showing plain header along with logo.
+ * This header is added to PlainHeader component which is root component for all pages that do not need standard header.
+ */
 import "./header.css"
 import {Component} from "react";
 import {Button, Col, Image, Nav, NavDropdown, Row} from "react-bootstrap";

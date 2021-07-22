@@ -1,6 +1,6 @@
-/*
-Author: Mansi Gevariya
-* */
+/**
+ * Author: Mansi Gevariya
+ */
 import {Button, ButtonGroup, ButtonToolbar, Card, Col, Row, Table} from "react-bootstrap";
 import {
   CartesianGrid,
@@ -16,39 +16,156 @@ import {
 } from "recharts";
 import ApplicationContainer from "../ApplicationContainer";
 import React from "react";
+import axios from "axios";
+import {
+  GET_EXPECTED_REVENUE,
+  GET_LOW_INVENTORY,
+  GET_MOST_USED_RAW_MATERIAL,
+  GET_PURCHASED_VS_USED_RAW_MATERIAL,
+  GET_TOTAL_EXPENDITURE,
+  GET_TOTAL_FOOD_ITEMS_IN_INVENTORY,
+  GET_TOTAL_RAW_MATERIALS_IN_INVENTORY
+} from "../../config";
 
 class Dashboard extends ApplicationContainer {
 
   constructor(props) {
     super(props);
     this.state = {
-      lowInventoryItems: [
-        {item: 'Eggs', quantity: 12},
-        {item: 'Bread', quantity: 25}
-      ],
-      selectedLineChartOption: '1d',
-      lineChartData: [
-        {name: "12:00 AM", uv: 4000, pv: 2400, amt: 2400},
-        {name: "04:00 AM", uv: 3000, pv: 1398, amt: 2210},
-        {name: "08:00 AM", uv: 2000, pv: 9800, amt: 2290},
-        {name: "12:00 PM", uv: 2780, pv: 3908, amt: 2000},
-        {name: "04:00 PM", uv: 1890, pv: 4800, amt: 2181},
-        {name: "08:00 PM", uv: 2390, pv: 3800, amt: 2500}
-      ],
+      loading: false,
+      lowInventoryItems: [],
+      totalRawMaterialsInInventory: 0,
+      totalFoodItemsInInventory: 0,
+      totalExpenditure: 0,
+      expectedRevenue: 0,
+      selectedLineChartOption: '1w',
+      lineChartData: [],
       selectedPieChartOption: '1w',
-      pieChartData: [
-        {name: "Cheese", value: 200, fill: '#035384AA'},
-        {name: "Black Beans", value: 120, fill: '#4EA1D3'},
-        {name: "Bell Peppers", value: 80, fill: '#BC3347CC'}
+      pieChartData: [],
+      pieChartColors: [
+        '#035384AA',
+        '#4EA1D3',
+        '#BC3347AA',
+        '#119696AA',
+        '#32499EAA',
+        '#931CA0AA',
+        '#DD9A05AA',
+        '#6919A3AA'
       ]
     }
-    this.chartOptions = ['1d', '1w', '1m', '6m', '1y']
+    this.chartOptions = ['1w', '1m', '6m', '1y']
   }
 
+  componentDidMount() {
+    const user = JSON.parse(localStorage.getItem('user'));
+    if (user && user.token) {
+      const headers = {
+        'Authorization': 'Bearer ' + user.token
+      }
+      this.getLowInventoryItems(headers);
+      this.getTotalRawMaterialsInInventoryItems(headers);
+      this.getTotalFoodItemsInInventoryItems(headers);
+      this.getTotalExpenditure(headers);
+      this.getExpectedRevenue(headers);
+      this.getMostUsedRawMaterials(headers, "1w");
+      this.getPurchasedVsUsedRawMaterials(headers, "1w");
+    }
+  }
+
+  refreshPieChartData = (chartOption, event) => {
+    this.setState({selectedPieChartOption: chartOption});
+    const user = JSON.parse(localStorage.getItem('user'));
+    if (user && user.token) {
+      const headers = {
+        'Authorization': 'Bearer ' + user.token
+      }
+      this.getMostUsedRawMaterials(headers, chartOption);
+    }
+  }
+
+  refreshLineChartData = (chartOption, event) => {
+    this.setState({selectedLineChartOption: chartOption});
+    const user = JSON.parse(localStorage.getItem('user'));
+    if (user && user.token) {
+      const headers = {
+        'Authorization': 'Bearer ' + user.token
+      }
+      this.getPurchasedVsUsedRawMaterials(headers, chartOption);
+    }
+  }
+
+  getPurchasedVsUsedRawMaterials = (headers, range) => {
+    this.setState({loading: true});
+    axios.get(GET_PURCHASED_VS_USED_RAW_MATERIAL + range, {headers: headers}).then(result => {
+      let purchasedVsUsedMaterials = result.data['purchasedVsUsedMaterials'];
+      purchasedVsUsedMaterials.forEach(purchasedVsUsedMaterial => {
+        let date = new Date(purchasedVsUsedMaterial.name)
+        purchasedVsUsedMaterial.name = date.getDate() + '/' + date.getMonth() + '/' + date.getFullYear();
+      })
+      this.setState({lineChartData: purchasedVsUsedMaterials, loading: false});
+    })
+  }
+
+  getMostUsedRawMaterials = (headers, range) => {
+    this.setState({loading: true});
+    axios.get(GET_MOST_USED_RAW_MATERIAL + range, {headers: headers}).then(result => {
+      let mostUsedRawMaterials = result.data['rawMaterialsUsed'];
+      mostUsedRawMaterials.forEach((mostUsedRawMaterial, index) => {
+        mostUsedRawMaterial.fill = this.state.pieChartColors[index]
+      })
+      this.setState({pieChartData: mostUsedRawMaterials, loading: false});
+    })
+  }
+
+  getExpectedRevenue = (headers) => {
+    axios.get(GET_EXPECTED_REVENUE, {headers: headers}).then(result => {
+      let expectedRevenue = result.data['expectedRevenue'];
+      this.setState({expectedRevenue: expectedRevenue});
+    })
+  }
+
+  getTotalExpenditure = (headers) => {
+    axios.get(GET_TOTAL_EXPENDITURE, {headers: headers}).then(result => {
+      let totalExpenditure = result.data['totalExpenditure'];
+      this.setState({totalExpenditure: totalExpenditure});
+    })
+  }
+
+  getTotalRawMaterialsInInventoryItems = (headers) => {
+    axios.get(GET_TOTAL_RAW_MATERIALS_IN_INVENTORY, {headers: headers}).then(result => {
+      let totalRawMaterialsInInventory = result.data['totalRawMaterialsInInventory'];
+      this.setState({totalRawMaterialsInInventory: totalRawMaterialsInInventory});
+    })
+  }
+
+  getTotalFoodItemsInInventoryItems = (headers) => {
+    axios.get(GET_TOTAL_FOOD_ITEMS_IN_INVENTORY, {headers: headers}).then(result => {
+      let totalFoodItemsInInventory = result.data['totalFoodItemsInInventory'];
+      this.setState({totalFoodItemsInInventory: totalFoodItemsInInventory});
+    })
+  }
+
+  getLowInventoryItems = (headers) => {
+    axios.get(GET_LOW_INVENTORY, {headers: headers}).then(result => {
+      let lowInventoryItems = result.data['lowInventory'];
+      this.setState({lowInventoryItems: lowInventoryItems});
+    })
+  }
 
   render() {
     return (
-      <section>
+      <section className={"pb-5"}>
+        {this.state.loading && (
+          <div className="dialog-background">
+            <div className="dialog-loading-wrapper">
+              <img
+                src={"/confirmation.gif"}
+                alt={"Loading..."}
+                className={"loading-img"}
+              />
+            </div>
+          </div>
+        )}
         {super.render()}
         <Row className="m-3">
           <Col className={"text-left"}>
@@ -63,7 +180,14 @@ class Dashboard extends ApplicationContainer {
                 <Card.Body>
                   <Card.Title>
                     <section>Total Expenditure</section>
-                    <section className="mt-3 text-danger"><span>$33,534.34</span></section>
+                    <section className="mt-3 text-danger">
+                      <span>
+                        {new Intl.NumberFormat('en-IN', {
+                          style: 'currency',
+                          currency: 'USD'
+                        }).format(this.state.totalExpenditure)}
+                      </span>
+                    </section>
                   </Card.Title>
                 </Card.Body>
               </Card>
@@ -73,7 +197,8 @@ class Dashboard extends ApplicationContainer {
                 <Card.Body>
                   <Card.Title>
                     <section>Raw Materials in Inventory</section>
-                    <section className="mt-3 text-secondary"><span>1,932</span></section>
+                    <section className="mt-3 text-secondary"><span>{this.state.totalRawMaterialsInInventory}</span>
+                    </section>
                   </Card.Title>
                 </Card.Body>
               </Card>
@@ -85,7 +210,14 @@ class Dashboard extends ApplicationContainer {
                 <Card.Body>
                   <Card.Title>
                     <section>Total Expected Revenue</section>
-                    <section className="mt-3 text-secondary"><span>$54,323.77</span></section>
+                    <section className="mt-3 text-secondary">
+                      <span>
+                        {new Intl.NumberFormat('en-IN', {
+                          style: 'currency',
+                          currency: 'USD'
+                        }).format(this.state.expectedRevenue)}
+                      </span>
+                    </section>
                   </Card.Title>
                 </Card.Body>
               </Card>
@@ -95,7 +227,8 @@ class Dashboard extends ApplicationContainer {
                 <Card.Body>
                   <Card.Title>
                     <section>Total Food Items Inventory</section>
-                    <section className="mt-3 text-secondary"><span>7,214</span></section>
+                    <section className="mt-3 text-secondary"><span>{this.state.totalFoodItemsInInventory}</span>
+                    </section>
                   </Card.Title>
                 </Card.Body>
               </Card>
@@ -117,8 +250,8 @@ class Dashboard extends ApplicationContainer {
                   <tbody>
                   {
                     this.state.lowInventoryItems.map(lowInventoryItem => {
-                      return <tr key={lowInventoryItem.item}>
-                        <td>{lowInventoryItem.item}</td>
+                      return <tr key={lowInventoryItem.id}>
+                        <td>{lowInventoryItem['raw_material'].rawMaterialName}</td>
                         <td>{lowInventoryItem.quantity}</td>
                       </tr>
                     })
@@ -144,7 +277,8 @@ class Dashboard extends ApplicationContainer {
                           <ButtonGroup className="mr-2" aria-label="First group">
                             {this.chartOptions.map(chartOption => {
                               return <Button key={chartOption}
-                                variant={chartOption === this.state.selectedLineChartOption ? 'primary' : 'outline-primary'}>{chartOption}</Button>
+                                             onClick={this.refreshLineChartData.bind(this, chartOption)}
+                                             variant={chartOption === this.state.selectedLineChartOption ? 'primary' : 'outline-primary'}>{chartOption}</Button>
                             })}
                           </ButtonGroup>
                         </ButtonToolbar>
@@ -159,8 +293,8 @@ class Dashboard extends ApplicationContainer {
                         <YAxis/>
                         <Tooltip/>
                         <Legend/>
-                        <Line name="Purchased" type="monotone" dataKey="pv" stroke="#035384AA"/>
-                        <Line name="Used" type="monotone" dataKey="uv" stroke="#BC3347CC"/>
+                        <Line name="Purchased" type="monotone" dataKey="purchasedMaterials" stroke="#035384AA"/>
+                        <Line name="Used" type="monotone" dataKey="usedMaterials" stroke="#BC3347CC"/>
                       </LineChart>
                     </ResponsiveContainer>
                   </section>
@@ -182,7 +316,8 @@ class Dashboard extends ApplicationContainer {
                           <ButtonGroup className="mr-2" aria-label="First group">
                             {this.chartOptions.map(chartOption => {
                               return <Button key={chartOption}
-                                variant={chartOption === this.state.selectedPieChartOption ? 'primary' : 'outline-primary'}>{chartOption}</Button>
+                                             onClick={this.refreshPieChartData.bind(this, chartOption)}
+                                             variant={chartOption === this.state.selectedPieChartOption ? 'primary' : 'outline-primary'}>{chartOption}</Button>
                             })}
                           </ButtonGroup>
                         </ButtonToolbar>
@@ -193,6 +328,8 @@ class Dashboard extends ApplicationContainer {
                     <ResponsiveContainer width="100%" height={300}>
                       <PieChart>
                         <Pie data={this.state.pieChartData} dataKey={"value"} nameKey={"name"} innerRadius={70} label/>
+                        <Legend layout="vertical" verticalAlign="middle" align="right"/>
+                        <Tooltip/>
                       </PieChart>
                     </ResponsiveContainer>
                   </section>

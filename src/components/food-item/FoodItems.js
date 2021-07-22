@@ -1,27 +1,13 @@
 // Author: Tasneem Yusuf Porbanderwala
-import {
-  Button,
-  Card,
-  CardDeck,
-  Col,
-  Form,
-  FormControl,
-  InputGroup,
-  Modal,
-  Row,
-} from "react-bootstrap";
+import {Button, Card, CardDeck, Col, Form, FormControl, InputGroup, Modal, Row,} from "react-bootstrap";
 import React from "react";
-import {
-  faPencilAlt,
-  faSearch,
-  faTrashAlt,
-} from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import {faPencilAlt, faSearch, faTrashAlt,} from "@fortawesome/free-solid-svg-icons";
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import axios from "axios";
-import { toast } from "react-toastify";
+import {toast} from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import ApplicationContainer from "../ApplicationContainer";
-import { DELETE_FOOD_ITEM, GET_FOOD_ITEMS } from "../../config";
+import {DELETE_FOOD_ITEM, GET_FOOD_ITEMS} from "../../config";
 
 export default class FoodItems extends ApplicationContainer {
   constructor(props) {
@@ -155,7 +141,7 @@ export default class FoodItems extends ApplicationContainer {
 
   render() {
     return (
-      <section>
+      <section className={"pb-5"}>
         {super.render()}
         {this.state.loading && (
           <div className="dialog-background">
@@ -241,7 +227,7 @@ export default class FoodItems extends ApplicationContainer {
                   </Col>
                 ))
               ) : (
-                <span>No Food Items to display</span>
+                <span>No Food Items Available</span>
               )}
             </CardDeck>
           ) : (

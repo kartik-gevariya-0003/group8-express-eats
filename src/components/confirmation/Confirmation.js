@@ -1,6 +1,11 @@
 /**
  * Author: Kartik Gevariya
  */
+
+/**
+ * This component is responsible for showing confirmation message.
+ * It will accept confirmation page details such as message to show, Button label, Redirect URL for button click.
+ */
 import React from "react";
 import {Link} from "react-router-dom";
 import {Button, Image} from "react-bootstrap";

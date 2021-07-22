@@ -1,3 +1,11 @@
+/**
+ * Author: Karishma Suresh Lalwani
+ * Author: Kartik Gevariya
+ * Author: Mansi Gevariya
+ * Author: Rotesh Chhabra
+ * Author: Tasneem Yusuf Porbanderwala
+ */
+
 /* General API Constants */
 const API_URL =
   process.env.REACT_APP_CONTAINER_1_URL || "http://localhost:3001";
@@ -6,6 +14,17 @@ const API_URL =
 
 const LOGIN = API_URL + "/login";
 const REGISTER = API_URL + "/register";
+
+const GET_LOW_INVENTORY = API_URL + "/low-inventory";
+const GET_TOTAL_RAW_MATERIALS_IN_INVENTORY =
+  API_URL + "/total-raw-materials-in-inventory";
+const GET_TOTAL_FOOD_ITEMS_IN_INVENTORY =
+  API_URL + "/total-food-items-in-inventory";
+const GET_TOTAL_EXPENDITURE = API_URL + "/total-expenditure";
+const GET_EXPECTED_REVENUE = API_URL + "/expected-revenue";
+const GET_MOST_USED_RAW_MATERIAL = API_URL + "/most-used-raw-materials/";
+const GET_PURCHASED_VS_USED_RAW_MATERIAL =
+  API_URL + "/purchased-vs-used-raw-materials/";
 
 const GET_VENDORS = API_URL + "/vendors";
 const DELETE_VENDOR = API_URL + "/vendor/";
@@ -48,6 +67,13 @@ module.exports = {
   API_URL,
   LOGIN,
   REGISTER,
+  GET_LOW_INVENTORY,
+  GET_TOTAL_RAW_MATERIALS_IN_INVENTORY,
+  GET_TOTAL_FOOD_ITEMS_IN_INVENTORY,
+  GET_TOTAL_EXPENDITURE,
+  GET_EXPECTED_REVENUE,
+  GET_MOST_USED_RAW_MATERIAL,
+  GET_PURCHASED_VS_USED_RAW_MATERIAL,
   GET_VENDORS,
   GET_RAW_MATERIALS,
   CREATE_RAW_MATERIAL,

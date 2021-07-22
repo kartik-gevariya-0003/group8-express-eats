@@ -2,12 +2,18 @@
  * Author: Mansi Gevariya
  * Author: Kartik Gevariya
  */
+
+/**
+ * This component is responsible for showing header along with all possible navigation.
+ * This header is added to ApplicationContainer component which is root component for all pages that will be displayed after login.
+ */
 import "./header.css"
 import {Component} from "react";
 import {Image, Nav, Navbar, NavDropdown} from "react-bootstrap";
 import {faUserCircle} from "@fortawesome/free-solid-svg-icons";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {toast} from "react-toastify";
+import {withRouter} from "react-router-dom";
 
 class Header extends Component {
   constructor(props) {
@@ -90,4 +96,4 @@ class Header extends Component {
   }
 }
 
-export default Header;
+export default withRouter(Header) ;

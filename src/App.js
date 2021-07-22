@@ -1,5 +1,12 @@
+/**
+ * Author: Karishma Suresh Lalwani
+ * Author: Kartik Gevariya
+ * Author: Mansi Gevariya
+ * Author: Rotesh Chhabra
+ * Author: Tasneem Yusuf Porbanderwala
+ */
 import "./App.css";
-import { Route, Switch } from "react-router-dom";
+import {Route, Switch} from "react-router-dom";
 import * as PropTypes from "prop-types";
 import FoodItems from "./components/food-item/FoodItems";
 import AddFoodItem from "./components/food-item/AddFoodItem";
@@ -32,60 +39,35 @@ Route.propTypes = {
 
 function App() {
   return (
-    <div className="App">
+    <section className="App">
       <Switch>
-        <Route exact path="/" component={Main} />
-        <Route exact path="/login" component={Login} />
-        <Route exact path="/register" component={Register} />
-        <Route exact path="/home" component={Home} />
-        <Route exact path="/dashboard" component={Dashboard} />
-        <Route
-          exact
-          path="/manufacturing-orders"
-          component={ManufacturingOrders}
-        />
-        <Route
-          exact
-          path="/manufacturing-order/create"
-          component={CreateManufacturingOrder}
-        />
-        <Route exact path="/purchase-orders" component={PurchaseOrders} />
-        <Route
-          exact
-          path="/purchase-order/create"
-          component={CreatePurchaseOrder}
-        />
-        <Route
-          exact
-          path="/purchase-order/confirmation"
-          component={Confirmation}
-        />
-        <Route exact path="/food-item/confirmation" component={Confirmation} />
-        <Route exact path="/food-items" component={FoodItems} />
-        <Route exact path="/food-items/create" component={AddFoodItem} />
-
-        <Route exact path="/inventory/confirmation" component={Confirmation} />
-        <Route exact path="/inventory" component={Inventory} />
-
-        <Route exact path="/edit-food-item" component={EditFoodItem} />
-        <Route exact path="/vendors" component={Vendor} />
-        <Route exact path="/vendors/create" component={CreateVendor} />
-        <Route exact path="/vendor/confirmation" component={Confirmation} />
-        <Route exact path="/vendor/edit" component={EditVendor} />
-        <Route exact path="/raw-materials" component={RawMaterials} />
-        <Route exact path="/raw-material/add" component={AddRawMaterial} />
-        <Route
-          exact
-          path="/raw-material/update"
-          component={UpdateRawMaterial}
-        />
-        <Route
-          exact
-          path="/raw-material/confirmation"
-          component={Confirmation}
-        />
+        <Route exact path="/" component={Main}/>
+        <Route exact path="/login" component={Login}/>
+        <Route exact path="/register" component={Register}/>
+        <Route exact path="/home" component={Home}/>
+        <Route exact path="/dashboard" component={Dashboard}/>
+        <Route exact path="/manufacturing-orders" component={ManufacturingOrders}/>
+        <Route exact path="/manufacturing-order/create" component={CreateManufacturingOrder}/>
+        <Route exact path="/purchase-orders" component={PurchaseOrders}/>
+        <Route exact path="/purchase-order/create" component={CreatePurchaseOrder}/>
+        <Route exact path="/purchase-order/confirmation" component={Confirmation}/>
+        <Route exact path="/food-item/confirmation" component={Confirmation}/>
+        <Route exact path="/food-items" component={FoodItems}/>
+        <Route exact path="/food-items/create" component={AddFoodItem}/>
+        <Route exact path="/inventory/confirmation" component={Confirmation}/>
+        <Route exact path="/inventory" component={Inventory}/>
+        <Route exact path="/edit-food-item" component={EditFoodItem}/>
+        <Route exact path="/vendors" component={Vendor}/>
+        <Route exact path="/vendors/create" component={CreateVendor}/>
+        <Route exact path="/vendor/confirmation" component={Confirmation}/>
+        <Route exact path="/vendor/edit" component={EditVendor}/>
+        <Route exact path="/raw-materials" component={RawMaterials}/>
+        <Route exact path="/raw-material/add" component={AddRawMaterial}/>
+        <Route exact path="/raw-material/update" component={UpdateRawMaterial}/>
+        <Route exact path="/raw-material/confirmation" component={Confirmation}/>
       </Switch>
-    </div>
+      <Footer/>
+    </section>
   );
 }
 

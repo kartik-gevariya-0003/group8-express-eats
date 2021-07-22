@@ -1,6 +1,7 @@
-/*
-Author: Mansi Gevariya
-* */
+/**
+ * Author: Mansi Gevariya
+ */
+
 //Background color for the body tag
 $body-bg: rgba(4, 75, 91, 0.1);
 
@@ -28,4 +29,4 @@ $input-group-addon-bg: $primary;
 $input-group-addon-color: #FFFFFF;
 
 
-@import "../node_modules/bootstrap/scss/bootstrap";
+@import "node_modules/bootstrap/scss/bootstrap";

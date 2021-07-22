@@ -1,29 +1,16 @@
 // Author: Tasneem Yusuf Porbanderwala
 import "./food-item.css";
 import React from "react";
-import {
-  Button,
-  Card,
-  Col,
-  Form,
-  FormControl,
-  InputGroup,
-  ListGroup,
-  Modal,
-  Row,
-} from "react-bootstrap";
+import {Button, Card, Col, Form, FormControl, InputGroup, ListGroup, Modal, Row,} from "react-bootstrap";
 import "react-toastify/dist/ReactToastify.css";
-import { faSearch, faTrashAlt } from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import {faSearch, faTrashAlt} from "@fortawesome/free-solid-svg-icons";
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import ApplicationContainer from "../ApplicationContainer";
 import bsCustomFileInput from "bs-custom-file-input";
 import axios from "axios";
-import { toast } from "react-toastify";
-import {
-  GET_FOOD_ITEM_NAME,
-  GET_RAW_MATERIALS,
-  POST_ADD_FOOD_ITEM,
-} from "../../config";
+import {toast} from "react-toastify";
+import {GET_FOOD_ITEM_NAME, GET_RAW_MATERIALS, POST_ADD_FOOD_ITEM,} from "../../config";
+
 let rawMaterials = [];
 
 export default class AddFoodItem extends ApplicationContainer {
@@ -65,11 +52,20 @@ export default class AddFoodItem extends ApplicationContainer {
   async componentDidMount() {
     bsCustomFileInput.init();
     this.setState({ loading: true });
-    await axios.get(GET_RAW_MATERIALS).then((response) => {
-      rawMaterials = response.data.rawMaterials;
-      this.setState({ rawMaterials: rawMaterials });
-      this.setState({ loading: false });
-    });
+    const user = JSON.parse(localStorage.getItem("user"));
+    if (user && user.token) {
+      await axios
+        .get(GET_RAW_MATERIALS, {
+          headers: {
+            Authorization: "Bearer " + user.token,
+          },
+        })
+        .then((response) => {
+          rawMaterials = response.data.rawMaterials;
+          this.setState({ rawMaterials: rawMaterials });
+          this.setState({ loading: false });
+        });
+    }
   }
   filterRawMaterial = (e) => {
     e.preventDefault();
@@ -145,7 +141,6 @@ export default class AddFoodItem extends ApplicationContainer {
             });
           })
           .catch((error) => {
-            console.error(error);
             toast.error("Food Item was not added. Please try again. !");
             this.setState({ loading: false });
           });
@@ -391,7 +386,7 @@ export default class AddFoodItem extends ApplicationContainer {
     const { isError } = this.state;
 
     return (
-      <section>
+      <section className={"pb-5"}>
         {super.render()}
         {this.state.loading && (
           <div className="dialog-background">
@@ -418,7 +413,7 @@ export default class AddFoodItem extends ApplicationContainer {
                     <section className={"mt-5"}>
                       <strong>Selected Raw Materials</strong>
                       <ListGroup
-                        className={"mt-3 po-selected-raw-material-list"}
+                        className={"mt-3 fi-selected-raw-material-list"}
                       >
                         {this.state.foodItem.selectedRawMaterials.map(
                           (rawMaterial) => (
@@ -644,8 +639,8 @@ export default class AddFoodItem extends ApplicationContainer {
                       <ListGroup
                         className={
                           isError.selectedRawMaterials.length > 0
-                            ? "is-invalid mt-3 po-raw-material-list"
-                            : "mt-3 po-raw-material-list"
+                            ? "is-invalid mt-3 fi-raw-material-list"
+                            : "mt-3 fi-raw-material-list"
                         }
                       >
                         {this.state.rawMaterials.map((rawMaterial) => (

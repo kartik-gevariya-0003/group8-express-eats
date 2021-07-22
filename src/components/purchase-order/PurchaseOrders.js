@@ -1,6 +1,11 @@
 /**
  * Author: Kartik Gevariya
  */
+
+/**
+ * This component is responsible for showing purchase order in various statues.
+ * It also allows user to search order, delete any open order and change order status.
+ */
 import './purchase-order.css';
 import React from 'react';
 import {Accordion, Button, Card, Col, Form, FormControl, InputGroup, ListGroup, Modal, Row} from "react-bootstrap";
@@ -79,14 +84,15 @@ export default class PurchaseOrders extends ApplicationContainer {
         })
         .catch((error) => {
           this.setState({loading: false});
-          if (error.response.status === 401) {
+          if (error.response && error.response.status === 401) {
             toast.error('Session is expired. Please login again.');
             localStorage.removeItem('user');
             this.props.history.push({
               pathname: '/login'
             });
           } else {
-            toast.error(error.response.data.message);
+            const errorMessage = (error.response && error.response.data && error.response.data.message) || "Error occurred while fetching orders."
+            toast.error(errorMessage);
           }
         });
     }
@@ -143,14 +149,15 @@ export default class PurchaseOrders extends ApplicationContainer {
         this.setState({loading: false});
         this.closeModal();
 
-        if (error.response.status === 401) {
+        if (error.response && error.response.status === 401) {
           toast.error('Session is expired. Please login again.');
           localStorage.removeItem('user');
           this.props.history.push({
             pathname: '/login'
           });
         } else {
-          toast.error(error.response.data.message);
+          const errorMessage = (error.response && error.response.data && error.response.data.message) || "Error occurred while deleting order."
+          toast.error(errorMessage);
         }
       });
   }
@@ -177,14 +184,15 @@ export default class PurchaseOrders extends ApplicationContainer {
         this.setState({loading: false});
         this.closeModal();
 
-        if (error.response.status === 401) {
+        if (error.response && error.response.status === 401) {
           toast.error('Session is expired. Please login again.');
           localStorage.removeItem('user');
           this.props.history.push({
             pathname: '/login'
           });
         } else {
-          toast.error(error.response.data.message);
+          const errorMessage = (error.response && error.response.data && error.response.data.message) || "Error occurred while archiving order."
+          toast.error(errorMessage);
         }
       });
   }
@@ -220,14 +228,15 @@ export default class PurchaseOrders extends ApplicationContainer {
         this.setState({loading: false});
         this.closeModal();
 
-        if (error.response.status === 401) {
+        if (error.response && error.response.status === 401) {
           toast.error('Session is expired. Please login again.');
           localStorage.removeItem('user');
           this.props.history.push({
             pathname: '/login'
           });
         } else {
-          toast.error(error.response.data.message);
+          const errorMessage = (error.response && error.response.data && error.response.data.message) || "Error occurred while placing order."
+          toast.error(errorMessage);
         }
       });
   }
@@ -262,14 +271,15 @@ export default class PurchaseOrders extends ApplicationContainer {
         this.setState({loading: false});
         this.closeModal();
 
-        if (error.response.status === 401) {
+        if (error.response && error.response.status === 401) {
           toast.error('Session is expired. Please login again.');
           localStorage.removeItem('user');
           this.props.history.push({
             pathname: '/login'
           });
         } else {
-          toast.error(error.response.data.message);
+          const errorMessage = (error.response && error.response.data && error.response.data.message) || "Error occurred while receiving order."
+          toast.error(errorMessage);
         }
       });
   }
@@ -310,7 +320,7 @@ export default class PurchaseOrders extends ApplicationContainer {
 
   render() {
     return (
-      <section>
+      <section className={"pb-5"}>
         {this.state.loading &&
         <div className="dialog-background">
           <div className="dialog-loading-wrapper">
