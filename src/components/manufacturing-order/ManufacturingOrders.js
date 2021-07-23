@@ -36,7 +36,7 @@ class ManufacturingOrders extends ApplicationContainer {
       },
       archiveModal: {
         show: false,
-        orderNumber: null
+        order: {}
       }
     }
   }
@@ -135,7 +135,7 @@ class ManufacturingOrders extends ApplicationContainer {
   openArchiveModal = (item) => {
     let state = this.state;
     state.archiveModal.show = true;
-    state.archiveModal.orderNumber = item.orderNumber
+    state.archiveModal.order = item
     this.setState(state)
   }
 
@@ -160,7 +160,7 @@ class ManufacturingOrders extends ApplicationContainer {
       const deleteUrl = DELETE_MANUFACTURING_ORDER + "/" + state.deleteModal.orderNumber;
       axios.delete(deleteUrl, {headers: headers}).then(() => {
         this.closeDeleteModal();
-        this.getManufacturingOrders();
+        this.getManufacturingOrders(headers);
         this.setState({loading: false});
       }).catch(error => {
         this.setState({loading: false});
@@ -557,7 +557,7 @@ class ManufacturingOrders extends ApplicationContainer {
               <Form.Group>
                 <Form.Label className={"m-0"}>
                   Are you sure you want to archive the order with order
-                  number {this.state.archiveModal.orderNumber}?{" "}
+                  number {this.state.archiveModal.order.orderNumber}?{" "}
                 </Form.Label>
               </Form.Group>
             </Modal.Body>
