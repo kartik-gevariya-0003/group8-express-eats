@@ -87,7 +87,7 @@ class CreateManufacturingOrder extends ApplicationContainer {
 
   addFoodItem = (foodItem) => {
     let state = {...this.state};
-    state.foodItemQuantityModal.selectedFoodItem = foodItem;
+    state.foodItemQuantityModal.selectedFoodItem = {...foodItem};
     this.setState(state);
     this.showModal();
   };
@@ -142,19 +142,26 @@ class CreateManufacturingOrder extends ApplicationContainer {
     let state = {...this.state};
     if (state.foodItemQuantityModal.selectedFoodItemQuantity > 0) {
       delete state.foodItemQuantityModal.selectedFoodItem.imageFile;
-      state.foodItemQuantityModal.selectedFoodItem["quantity"] =
-        state.foodItemQuantityModal.selectedFoodItemQuantity;
-      state.order.selectedFoodItems.push(
-        state.foodItemQuantityModal.selectedFoodItem
-      );
-      state.foodItemQuantityModal.selectedFoodItem = "";
+      state.foodItemQuantityModal.selectedFoodItem["quantity"] = parseFloat(state.foodItemQuantityModal.selectedFoodItemQuantity);
+      let foodItemPresent = false;
+      state.order.selectedFoodItems.forEach(foodItem => {
+        if (foodItem.id === state.foodItemQuantityModal.selectedFoodItem.id) {
+          foodItem.quantity += parseFloat(state.foodItemQuantityModal.selectedFoodItemQuantity);
+          state.order.totalCost += (state.foodItemQuantityModal.selectedFoodItem.totalCost * state.foodItemQuantityModal.selectedFoodItemQuantity);
+          foodItemPresent = true;
+        }
+      });
+
+      if (!foodItemPresent) {
+        state.order.selectedFoodItems.push(state.foodItemQuantityModal.selectedFoodItem);
+        state.order.totalCost += (state.foodItemQuantityModal.selectedFoodItem.totalCost * state.foodItemQuantityModal.selectedFoodItemQuantity);
+      }
+
+      state.foodItemQuantityModal.selectedFoodItem = '';
       state.foodItemQuantityModal.selectedFoodItemQuantity = 0;
       state.foodItemQuantityModal.show = false;
-      this.validator(
-        "foodItems",
-        this.state.order.selectedFoodItems,
-        state.isError
-      );
+
+      this.validator('foodItems', this.state.order.selectedFoodItems, state.isError);
     } else {
       this.validator("modalFoodItemQuantity", 0, state.isError);
     }
@@ -292,7 +299,10 @@ class CreateManufacturingOrder extends ApplicationContainer {
                                     <strong>Unit Price</strong>
                                   </span>
                                 <br/>
-                                <span>${foodItem.totalCost}</span>
+                                <span>{new Intl.NumberFormat('en-US', {
+                                  style: 'currency',
+                                  currency: 'USD'
+                                }).format(foodItem.totalCost)}</span>
                               </h6>
                             </Col>
                             <Col sm={1}>

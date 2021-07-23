@@ -434,7 +434,10 @@ export default class PurchaseOrders extends ApplicationContainer {
                                 </Col>
                                 <Col sm={2}>
                                   <h6>
-                                    <span>{order.totalCost}</span>
+                                    <span>{new Intl.NumberFormat('en-US', {
+                                      style: 'currency',
+                                      currency: 'USD'
+                                    }).format(order.totalCost)}</span>
                                   </h6>
                                 </Col>
                                 <Col sm={3}>
@@ -535,7 +538,10 @@ export default class PurchaseOrders extends ApplicationContainer {
                                 </Col>
                                 <Col sm={2}>
                                   <h6>
-                                    <span>{order.totalCost}</span>
+                                    <span>{new Intl.NumberFormat('en-US', {
+                                      style: 'currency',
+                                      currency: 'USD'
+                                    }).format(order.totalCost)}</span>
                                   </h6>
                                 </Col>
                                 <Col sm={3}>
@@ -634,7 +640,10 @@ export default class PurchaseOrders extends ApplicationContainer {
                                 </Col>
                                 <Col sm={2}>
                                   <h6>
-                                    <span>{order.totalCost}</span>
+                                    <span>{new Intl.NumberFormat('en-US', {
+                                      style: 'currency',
+                                      currency: 'USD'
+                                    }).format(order.totalCost)}</span>
                                   </h6>
                                 </Col>
                                 <Col sm={3}>

@@ -366,7 +366,10 @@ export default class CreatePurchaseOrder extends ApplicationContainer {
                               <h6>
                                 <span><strong>Unit Price</strong></span>
                                 <br/>
-                                <span>${rawMaterial.unitCost}</span>
+                                <span>{new Intl.NumberFormat('en-US', {
+                                  style: 'currency',
+                                  currency: 'USD'
+                                }).format(rawMaterial.unitCost)}</span>
                               </h6>
                             </Col>
                             <Col sm={1}>
@@ -450,7 +453,10 @@ export default class CreatePurchaseOrder extends ApplicationContainer {
                                 <Col sm={5}>
                                   <h6>
                                     <span><strong>Unit Price:</strong></span>
-                                    <span> ${rawMaterial.unitCost}</span>
+                                    <span> {new Intl.NumberFormat('en-US', {
+                                      style: 'currency',
+                                      currency: 'USD'
+                                    }).format(rawMaterial.unitCost)}</span>
                                   </h6>
                                 </Col>
                                 <Col sm={2}>
