@@ -327,7 +327,10 @@ class ManufacturingOrders extends ApplicationContainer {
                                 </Col>
                                 <Col sm={2}>
                                   <h6>
-                                    <span>{order.totalPrice}</span>
+                                    <span>{new Intl.NumberFormat('en-US', {
+                                      style: 'currency',
+                                      currency: 'USD'
+                                    }).format(order.totalPrice)}</span>
                                   </h6>
                                 </Col>
                                 <Col sm={3}>
@@ -417,7 +420,10 @@ class ManufacturingOrders extends ApplicationContainer {
                                 </Col>
                                 <Col sm={2}>
                                   <h6>
-                                    <span>{order.totalPrice}</span>
+                                    <span>{new Intl.NumberFormat('en-US', {
+                                      style: 'currency',
+                                      currency: 'USD'
+                                    }).format(order.totalPrice)}</span>
                                   </h6>
                                 </Col>
                                 <Col sm={3}>
@@ -505,7 +511,10 @@ class ManufacturingOrders extends ApplicationContainer {
                                 </Col>
                                 <Col sm={2}>
                                   <h6>
-                                    <span>{order.totalPrice}</span>
+                                    <span>{new Intl.NumberFormat('en-US', {
+                                      style: 'currency',
+                                      currency: 'USD'
+                                    }).format(order.totalPrice)}</span>
                                   </h6>
                                 </Col>
                                 <Col sm={3}>

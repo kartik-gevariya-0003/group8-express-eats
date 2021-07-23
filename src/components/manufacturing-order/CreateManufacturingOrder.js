@@ -299,7 +299,10 @@ class CreateManufacturingOrder extends ApplicationContainer {
                                     <strong>Unit Price</strong>
                                   </span>
                                 <br/>
-                                <span>${foodItem.totalCost}</span>
+                                <span>{new Intl.NumberFormat('en-US', {
+                                  style: 'currency',
+                                  currency: 'USD'
+                                }).format(foodItem.totalCost)}</span>
                               </h6>
                             </Col>
                             <Col sm={1}>
