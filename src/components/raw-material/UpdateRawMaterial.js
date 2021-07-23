@@ -4,7 +4,7 @@
 * */
 
 import React from "react";
-import {Button, Card, Col, Form, Row} from "react-bootstrap";
+import {Button, Card, Col, Form, InputGroup, Row} from "react-bootstrap";
 import axios from "axios";
 import {GET_RAW_MATERIAL_BY_ID, GET_VENDORS, UPDATE_RAW_MATERIAL} from "../../config";
 import {toast} from "react-toastify";
@@ -174,13 +174,13 @@ class UpdateRawMaterial extends ApplicationContainer {
   onMeasurementSelect = (selectedMeasurement) => {
     let state = {...this.state};
     state.selectedUnitMeasurementCode = selectedMeasurement
-    state.rawMaterial.unitMeasurementCode = selectedMeasurement.value;
+    state.rawMaterial.unitMeasurementCode = selectedMeasurement ? selectedMeasurement.value : null;
     this.validator('unitMeasurementCode', this.state.rawMaterial.unitMeasurementCode, state.errors);
     this.setState(state);
   }
 
   // Cancel-button handler
-  cancelHandler = (e) => {
+  cancelHandler = () => {
     this.props.history.push("/raw-materials");
   };
 
@@ -210,12 +210,17 @@ class UpdateRawMaterial extends ApplicationContainer {
         const headers = {
           'Authorization': 'Bearer ' + user.token
         }
-        axios.put(UPDATE_RAW_MATERIAL, putData, {headers: headers}).then((response) => {
+        this.setState({loading: true})
+        axios.put(UPDATE_RAW_MATERIAL, putData, {headers: headers}).then(() => {
           this.setState({loading: false});
           toast.success("Raw Material updated successfully.");
           this.props.history.push({
             pathname: '/raw-materials',
           });
+        }).catch(error => {
+          console.log(error)
+          toast.success("Error while updating the raw material.");
+          this.setState({loading: false})
         });
       }
     }
@@ -237,7 +242,7 @@ class UpdateRawMaterial extends ApplicationContainer {
         {super.render()}
         <Row className="m-3">
           <Col className={"text-left"}>
-            <h2>Update Raw Material</h2>
+            <h2>Edit Raw Material</h2>
             <hr/>
           </Col>
         </Row>
@@ -251,7 +256,7 @@ class UpdateRawMaterial extends ApplicationContainer {
                       <Form.Group className="mb-3">
                         <Row>
                           <Col sm={6}>
-                            <Form.Label>Name *</Form.Label>
+                            <Form.Label>Name <sup className={"text-danger"}>*</sup></Form.Label>
                             <Form.Control type="text" name="rawMaterialName"
                                           value={this.state.rawMaterial.rawMaterialName}
                                           onChange={this.setRawMaterialName}
@@ -263,7 +268,7 @@ class UpdateRawMaterial extends ApplicationContainer {
                             )}
                           </Col>
                           <Col sm={6}>
-                            <Form.Label>Vendor Name *</Form.Label>
+                            <Form.Label>Vendor Name <sup className={"text-danger"}>*</sup></Form.Label>
                             <Select
                               isClearable
                               isMulti
@@ -285,19 +290,24 @@ class UpdateRawMaterial extends ApplicationContainer {
                       <Form.Group className="mb-3">
                         <Row>
                           <Col sm={6}>
-                            <Form.Label>Unit Cost *</Form.Label>
-                            <Form.Control type="float" name="unitCost"
-                                          onChange={this.setUnitCost}
-                                          value={this.state.rawMaterial.unitCost}
-                                          className={this.state.errors.unitCost ? "is-invalid" : ""}/>
-                            {this.state.errors.unitCost.length > 0 && (
-                              <Form.Control.Feedback type={"invalid"}>
-                                {this.state.errors.unitCost}
-                              </Form.Control.Feedback>
-                            )}
+                            <Form.Label>Unit Cost <sup className={"text-danger"}>*</sup></Form.Label>
+                            <InputGroup className="mb-3" hasValidation>
+                              <InputGroup.Prepend>
+                                <InputGroup.Text id="basic-addon1">$</InputGroup.Text>
+                              </InputGroup.Prepend>
+                              <Form.Control type="float" name="unitCost"
+                                            onChange={this.setUnitCost}
+                                            value={this.state.rawMaterial.unitCost}
+                                            className={this.state.errors.unitCost ? "is-invalid" : ""}/>
+                              {this.state.errors.unitCost.length > 0 && (
+                                <Form.Control.Feedback type={"invalid"}>
+                                  {this.state.errors.unitCost}
+                                </Form.Control.Feedback>
+                              )}
+                            </InputGroup>
                           </Col>
                           <Col sm={3}>
-                            <Form.Label>Unit Measurement *</Form.Label>
+                            <Form.Label>Unit Measurement <sup className={"text-danger"}>*</sup></Form.Label>
                             <Form.Control type="number" name="unitMeasurement"
                                           step="0.01"
                                           value={this.state.rawMaterial.unitMeasurementValue}
@@ -332,7 +342,7 @@ class UpdateRawMaterial extends ApplicationContainer {
                         <Row>
                           <Col sm={6} className={"text-right"}>
                             <Button className={"submit-btn"} variant="primary" type="submit">
-                              Submit
+                              Update Raw Material
                             </Button>
                           </Col>
                           <Col sm={6} className={"submit-btn"}>

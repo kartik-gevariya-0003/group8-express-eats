@@ -1,7 +1,7 @@
 // Author: Tasneem Yusuf Porbanderwala
 import {Button, Card, CardDeck, Col, Form, FormControl, InputGroup, Modal, Row,} from "react-bootstrap";
 import React from "react";
-import {faPencilAlt, faSearch, faTrashAlt,} from "@fortawesome/free-solid-svg-icons";
+import {faPen, faPencilAlt, faSearch, faTrashAlt,} from "@fortawesome/free-solid-svg-icons";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import axios from "axios";
 import {toast} from "react-toastify";
@@ -163,7 +163,7 @@ export default class FoodItems extends ApplicationContainer {
         <Row className="m-3">
           <Col sm={8} className={"text-left"}>
             <Button variant={"primary"} onClick={this.goToCreateFoodItem}>
-              Create Food Item
+              Add Food Item
             </Button>
           </Col>
           <Col sm={4}>
@@ -206,7 +206,7 @@ export default class FoodItems extends ApplicationContainer {
                         <Card.Title>{foodItem.foodItemName}</Card.Title>
 
                         <FontAwesomeIcon
-                          icon={faPencilAlt}
+                          icon={faPen}
                           color={"#035384AA"}
                           className="float-left"
                           onClick={() => {
@@ -258,14 +258,14 @@ export default class FoodItems extends ApplicationContainer {
           </Modal.Body>
           <Modal.Footer>
             <Button
-              variant="success"
+              variant="primary"
               onClick={() =>
                 this.deleteFoodItem(this.state.deleteFoodItemModal.id)
               }
             >
               Yes
             </Button>
-            <Button variant="secondary" onClick={this.closeModal}>
+            <Button variant="danger" onClick={this.closeModal}>
               No
             </Button>
           </Modal.Footer>

@@ -12,7 +12,7 @@ class Footer extends Component {
   render() {
     return (
       <Navbar bg="dark" expand="lg" variant={"dark"} fixed={"bottom"}>
-        <span>© 2019 Copyright: ExpressEats</span>
+        <span>© 2021 Copyright: ExpressEats</span>
       </Navbar>
     );
   }
