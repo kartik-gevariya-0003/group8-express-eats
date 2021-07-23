@@ -66,14 +66,15 @@ export default class Vendor extends ApplicationContainer {
   };
 
   filterVendors = (e) => {
-    e.preventDefault();
-    const { value } = e.target;
+    let searchText = e.target.value;
+    let vendors = vendorList;
 
-    this.setState({
-      vendorList: this.state.vendorList.filter((vendor) =>
-        vendor.vendorName.toLowerCase().includes(value.toLowerCase())
-      ),
-    });
+    if (searchText) {
+      vendors = vendors.filter((item) =>
+        item.vendorName.toLowerCase().includes(searchText.toLowerCase())
+      );
+    }
+    this.setState({ vendorList: vendors });
   };
 
   deleteVendor = async (deleteModal) => {
@@ -115,21 +116,21 @@ export default class Vendor extends ApplicationContainer {
     }
   };
 
-  // deleteVendorConfirmation = (deleteVendor) => {
-  //   let state = { ...this.state.deleteModal };
-  //   state.vendorName = deleteVendor.vendorName;
+  deleteVendorConfirmation = (deleteVendor) => {
+    let state = { ...this.state.deleteModal };
+    state.vendorName = deleteVendor.vendorName;
 
-  //   this.setState(
-  //     {
-  //       deleteModal: {
-  //         vendorName: state.vendorName,
-  //       },
-  //     },
-  //     () => {
-  //       this.showModal();
-  //     }
-  //   );
-  // };
+    this.setState(
+      {
+        deleteModal: {
+          vendorName: state.vendorName,
+        },
+      },
+      () => {
+        this.showModal();
+      }
+    );
+  };
 
   showModal = (vendor) => {
     let state = { ...this.state };
