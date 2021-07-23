@@ -7,17 +7,18 @@
 import React from "react";
 import {Button, Card, Col, Form, FormControl, InputGroup, ListGroup, Modal, Row} from "react-bootstrap";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faPen, faSearch, faTrash} from "@fortawesome/free-solid-svg-icons";
-import Header from "../headers/Header";
+import {faPen, faSearch, faTrashAlt} from "@fortawesome/free-solid-svg-icons";
 import ApplicationContainer from "../ApplicationContainer";
 import axios from "axios";
 import {DELETE_RAW_MATERIAL, GET_RAW_MATERIALS} from "../../config";
+import {toast} from "react-toastify";
 
 export default class RawMaterials extends ApplicationContainer {
   constructor(props) {
     super(props);
     this.originalRawMaterialsList = [];
     this.state = {
+      loading: false,
       rawMaterialList: [],
       deleteRawMaterialModal: {
         show: false,
@@ -39,10 +40,16 @@ export default class RawMaterials extends ApplicationContainer {
 
   // GET API call to fetch all the raw material details in the system
   getRawMaterials = (headers) => {
+    this.setState({loading: true})
     axios.get(GET_RAW_MATERIALS, {headers: headers}).then(result => {
       let rawMaterials = result.data['rawMaterials']
       this.originalRawMaterialsList = rawMaterials;
       this.setState({rawMaterialList: rawMaterials})
+      this.setState({loading: false})
+    }).catch(error => {
+      console.log(error)
+      toast.error("Error while fetching raw materials");
+      this.setState({loading: false})
     })
   }
 
@@ -64,9 +71,15 @@ export default class RawMaterials extends ApplicationContainer {
       const headers = {
         'Authorization': 'Bearer ' + user.token
       }
-      axios.delete(DELETE_RAW_MATERIAL + id, {headers: headers}).then(result => {
-        this.getRawMaterials()
+      this.setState({loading: false})
+      axios.delete(DELETE_RAW_MATERIAL + id, {headers: headers}).then(() => {
+        this.getRawMaterials(headers)
+        toast.success("Raw material deleted successfully.")
         this.closeModal();
+      }).catch(error => {
+        this.setState({loading: false});
+        console.log(error);
+        toast.error("Error while deleting the raw material");
       })
     }
   }
@@ -101,7 +114,18 @@ export default class RawMaterials extends ApplicationContainer {
   render() {
     return (
       <section className={"pb-5"}>
-        <Header/>
+        {super.render()}
+        {this.state.loading && (
+          <div className="dialog-background">
+            <div className="dialog-loading-wrapper">
+              <img
+                src={"/confirmation.gif"}
+                alt={"Loading..."}
+                className={"loading-img"}
+              />
+            </div>
+          </div>
+        )}
         <Row className="m-3">
           <Col className={"text-left"}>
             <h2>Raw Materials</h2>
@@ -182,14 +206,17 @@ export default class RawMaterials extends ApplicationContainer {
                             </Col>
                             <Col sm={2} className={"pl-3 text-left"}>
                               <h6>
-                                <span>{item.unitCost}</span>
+                                {new Intl.NumberFormat("en-US", {
+                                  style: "currency",
+                                  currency: "USD",
+                                }).format(item.unitCost)}
                               </h6>
                             </Col>
                             <Col sm={2}>
                               <FontAwesomeIcon icon={faPen} className={"mr-5"}
                                                color={"#035384AA"}
                                                onClick={() => this.goToEditRawMaterial(item)}/>
-                              <FontAwesomeIcon icon={faTrash} color={"#BC3347CC"}
+                              <FontAwesomeIcon icon={faTrashAlt} color={"#BC3347CC"}
                                                onClick={() => {
                                                  this.showModal(item);
                                                }}/>
@@ -207,25 +234,22 @@ export default class RawMaterials extends ApplicationContainer {
                         <Modal.Body>
                           <Form.Group>
                             <Form.Label className={"m-0"}>
+                              Are you sure you want to delete{" "}
                               <strong>
-                                Are you sure you want to delete{" "}
-                                {this.state.deleteRawMaterialModal.name}?{" "}
-                              </strong>
-                            </Form.Label>
-                            <Form.Label className={"m-0"}>
-                              All the raw material details will be deleted.
+                                {this.state.deleteRawMaterialModal.rawMaterialName}
+                              </strong>?
                             </Form.Label>
                           </Form.Group>
                         </Modal.Body>
                         <Modal.Footer>
                           <Button
-                            variant="success"
+                            variant="primary"
                             onClick={() =>
                               this.deleteRawMaterial(this.state.deleteRawMaterialModal.id)
                             }>
                             Yes
                           </Button>
-                          <Button variant="secondary" onClick={this.closeModal}>
+                          <Button variant="danger" onClick={this.closeModal}>
                             No
                           </Button>
                         </Modal.Footer>
