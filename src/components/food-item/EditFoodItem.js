@@ -487,6 +487,7 @@ export default class EditFoodItem extends ApplicationContainer {
             <Card>
               <Card.Body>
                 <Card.Title>Food Item Details</Card.Title>
+                <hr/>
                 <Card.Text>
                   <strong>Name :</strong>{" "}
                   {this.state.foodItem.foodItemName}

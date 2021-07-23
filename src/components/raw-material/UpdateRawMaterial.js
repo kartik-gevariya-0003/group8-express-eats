@@ -174,7 +174,7 @@ class UpdateRawMaterial extends ApplicationContainer {
   onMeasurementSelect = (selectedMeasurement) => {
     let state = {...this.state};
     state.selectedUnitMeasurementCode = selectedMeasurement
-    state.rawMaterial.unitMeasurementCode = selectedMeasurement.value;
+    state.rawMaterial.unitMeasurementCode = selectedMeasurement ? selectedMeasurement.value : null;
     this.validator('unitMeasurementCode', this.state.rawMaterial.unitMeasurementCode, state.errors);
     this.setState(state);
   }

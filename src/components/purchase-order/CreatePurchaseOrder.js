@@ -393,10 +393,10 @@ export default class CreatePurchaseOrder extends ApplicationContainer {
           <Col sm={7}>
             <Card>
               <Card.Body className={"text-left"}>
-                <Row className={"mt-3"}>
+                <Row>
                   <Col sm={12}>
                     <Form.Group controlId="vendor">
-                      <Form.Label><Card.Title>Vendor</Card.Title></Form.Label>
+                      <Form.Label><Card.Title>Vendor <sup className={"text-danger"}>*</sup></Card.Title></Form.Label>
                       <Select
                         isClearable
                         className={isError.selectedVendor ? "is-invalid" : ""}
@@ -418,7 +418,7 @@ export default class CreatePurchaseOrder extends ApplicationContainer {
                     <Form.Group controlId="rawMaterials">
                       <Row>
                         <Col sm={7} className={"pt-2"}>
-                          <Form.Label><Card.Title>Raw Materials</Card.Title></Form.Label>
+                          <Form.Label><Card.Title>Raw Materials <sup className={"text-danger"}>*</sup></Card.Title></Form.Label>
                         </Col>
                         <Col sm={5}>
                           <InputGroup>
