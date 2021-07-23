@@ -96,7 +96,7 @@ class ManufacturingOrders extends ApplicationContainer {
         'Authorization': 'Bearer ' + user.token
       }
       axios.put(CHANGE_MANUFACTURING_ORDER_STATUS, putData, {headers: headers}).then(() => {
-        this.getManufacturingOrders();
+        this.getManufacturingOrders(headers);
         this.setState({loading: false});
       }).catch(error => {
         this.setState({loading: false});
