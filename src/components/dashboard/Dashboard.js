@@ -100,7 +100,7 @@ class Dashboard extends ApplicationContainer {
       let purchasedVsUsedMaterials = result.data['purchasedVsUsedMaterials'];
       purchasedVsUsedMaterials.forEach(purchasedVsUsedMaterial => {
         let date = new Date(purchasedVsUsedMaterial.name)
-        purchasedVsUsedMaterial.name = date.getDate() + '/' + date.getMonth() + '/' + date.getFullYear();
+        purchasedVsUsedMaterial.name = date.getDate() + '/' + (date.getMonth() + 1) + '/' + date.getFullYear();
       })
       this.setState({lineChartData: purchasedVsUsedMaterials, loading: false});
     })

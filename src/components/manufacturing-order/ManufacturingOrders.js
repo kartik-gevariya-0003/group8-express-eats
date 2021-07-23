@@ -97,6 +97,7 @@ class ManufacturingOrders extends ApplicationContainer {
       }
       axios.put(CHANGE_MANUFACTURING_ORDER_STATUS, putData, {headers: headers}).then(() => {
         this.getManufacturingOrders(headers);
+        toast.success("Manufacturing Order " + item.orderNumber + " moved to " + status);
         this.setState({loading: false});
       }).catch(error => {
         this.setState({loading: false});
@@ -160,6 +161,7 @@ class ManufacturingOrders extends ApplicationContainer {
       const deleteUrl = DELETE_MANUFACTURING_ORDER + "/" + state.deleteModal.orderNumber;
       axios.delete(deleteUrl, {headers: headers}).then(() => {
         this.closeDeleteModal();
+        toast.success("Manufacturing Order " + state.deleteModal.orderNumber + " deleted successfully.");
         this.getManufacturingOrders(headers);
         this.setState({loading: false});
       }).catch(error => {
