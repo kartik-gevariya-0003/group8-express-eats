@@ -52,7 +52,8 @@ export default class Vendor extends ApplicationContainer {
   getVendors = (headers) => {
     axios.get(GET_VENDORS, { headers: headers }).then((result) => {
       let vendors = result.data["vendors"];
-      this.setState({ vendorList: vendors });
+      vendorList = vendors;
+      this.setState({ vendorList: vendorList });
     });
   };
 
@@ -75,7 +76,7 @@ export default class Vendor extends ApplicationContainer {
     });
   };
 
-  deleteVendor = async (id) => {
+  deleteVendor = async (deleteModal) => {
     const user = JSON.parse(localStorage.getItem("user"));
     if (user && user.token) {
       const headers = {
@@ -85,10 +86,13 @@ export default class Vendor extends ApplicationContainer {
         .delete(DELETE_VENDOR + this.state.deleteModal.id, { headers: headers })
         .then((result) => {
           toast.success("Vendor deleted successfully.");
-          vendorList = vendorList.filter((vendor) => vendor.id !== id);
+          console.log(deleteModal.id);
+          vendorList = vendorList.filter(
+            (vendor) => vendor.id !== deleteModal.id
+          );
           this.setState({
             vendorList: this.state.vendorList.filter(
-              (vendor) => vendor.id !== id
+              (vendor) => vendor.id !== deleteModal.id
             ),
           });
           // this.getVendors();
@@ -111,28 +115,29 @@ export default class Vendor extends ApplicationContainer {
     }
   };
 
-  deleteVendorConfirmation = (deleteVendor) => {
-    let state = { ...this.state.deleteModal };
-    state.vendorName = deleteVendor.vendorName;
+  // deleteVendorConfirmation = (deleteVendor) => {
+  //   let state = { ...this.state.deleteModal };
+  //   state.vendorName = deleteVendor.vendorName;
 
-    this.setState(
-      {
-        deleteModal: {
-          vendorName: state.vendorName,
-        },
-      },
-      () => {
-        this.showModal();
-      }
-    );
-  };
+  //   this.setState(
+  //     {
+  //       deleteModal: {
+  //         vendorName: state.vendorName,
+  //       },
+  //     },
+  //     () => {
+  //       this.showModal();
+  //     }
+  //   );
+  // };
 
   showModal = (vendor) => {
     let state = { ...this.state };
     state.deleteModal.show = true;
     state.deleteModal.id = vendor.id;
-    state.deleteModal.name = vendor.name;
+    state.deleteModal.vendorName = vendor.vendorName;
     this.setState(state);
+    console.log(this.state.deleteModal);
   };
 
   closeModal = () => {
