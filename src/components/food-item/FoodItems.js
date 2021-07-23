@@ -1,7 +1,7 @@
 // Author: Tasneem Yusuf Porbanderwala
 import {Button, Card, CardDeck, Col, Form, FormControl, InputGroup, Modal, Row,} from "react-bootstrap";
 import React from "react";
-import {faPencilAlt, faSearch, faTrashAlt,} from "@fortawesome/free-solid-svg-icons";
+import {faPen, faPencilAlt, faSearch, faTrashAlt,} from "@fortawesome/free-solid-svg-icons";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import axios from "axios";
 import {toast} from "react-toastify";
@@ -206,7 +206,7 @@ export default class FoodItems extends ApplicationContainer {
                         <Card.Title>{foodItem.foodItemName}</Card.Title>
 
                         <FontAwesomeIcon
-                          icon={faPencilAlt}
+                          icon={faPen}
                           color={"#035384AA"}
                           className="float-left"
                           onClick={() => {

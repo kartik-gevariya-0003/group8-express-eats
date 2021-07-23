@@ -240,6 +240,7 @@ export default class AddFoodItem extends ApplicationContainer {
         } else if (value.type !== "image/jpeg" && value.type !== "image/png") {
           isError.imageFile = "Please upload only jpg or png format image.";
         }
+        break;
       default:
         break;
     }
@@ -405,6 +406,7 @@ export default class AddFoodItem extends ApplicationContainer {
             <Card>
               <Card.Body>
                 <Card.Title>Food Item Details</Card.Title>
+                <hr/>
                 <Card.Text>
                   <strong>Name :</strong>{" "}
                   {this.state.foodItem.foodItemName}
@@ -540,9 +542,9 @@ export default class AddFoodItem extends ApplicationContainer {
                 <Row>
                   <Col sm={12}>
                     <Form.Group controlId="fooditemname">
-                      <Form.Label>
+                      <Card.Title>
                         <span>Food Item Name <sup className={"text-danger"}>*</sup></span>
-                      </Form.Label>
+                      </Card.Title>
                       <Form.Control
                         type="text"
                         className={isError.foodItemName ? "is-invalid" : ""}
@@ -563,9 +565,9 @@ export default class AddFoodItem extends ApplicationContainer {
                   <Col>
                     <Row>
                       <Col sm={5} className={"pt-2"}>
-                        <Form.Label>
+                        <Card.Title>
                           <span>Upload Food Item Image <sup className={"text-danger"}>*</sup></span>
-                        </Form.Label>
+                        </Card.Title>
                       </Col>
                       <Col sm={7}>
                         <Form.File id="custom-file" custom>
@@ -596,9 +598,9 @@ export default class AddFoodItem extends ApplicationContainer {
                     <Form.Group controlId="rawMaterials">
                       <Row>
                         <Col sm={7} className={"pt-2"}>
-                          <Form.Label>
+                          <Card.Title>
                             <span>Raw Materials <sup className={"text-danger"}>*</sup></span>
-                          </Form.Label>
+                          </Card.Title>
                         </Col>
                         <Col sm={5}>
                           <InputGroup>

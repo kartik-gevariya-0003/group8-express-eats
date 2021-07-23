@@ -334,7 +334,7 @@ class CreateManufacturingOrder extends ApplicationContainer {
                     <Form.Group controlId="foodItems">
                       <Row>
                         <Col sm={7} className={"pt-2"}>
-                          <Card.Title>Food Items</Card.Title>
+                          <Card.Title>Food Items <sup className={"text-danger"}>*</sup></Card.Title>
                         </Col>
                         <Col sm={5}>
                           <InputGroup>

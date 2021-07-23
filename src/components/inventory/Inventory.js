@@ -1,20 +1,10 @@
 import React from "react";
 import ApplicationContainer from "../ApplicationContainer";
-import {
-  Button,
-  Card,
-  Col,
-  Form,
-  FormControl,
-  InputGroup,
-  Modal,
-  Row,
-  Table,
-} from "react-bootstrap";
-import { toast } from "react-toastify";
+import {Button, Card, Col, Form, FormControl, InputGroup, Modal, Row, Table,} from "react-bootstrap";
+import {toast} from "react-toastify";
 import Select from "react-select";
-import { faSearch } from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import {faSearch} from "@fortawesome/free-solid-svg-icons";
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 
 import "react-toastify/dist/ReactToastify.css";
 import {
@@ -37,8 +27,8 @@ export default class Inventory extends ApplicationContainer {
       rawMaterialList: [], // in the db
       foodItemList: [], // in the db
       foodItems: foodItems, // with inventory
-      addRawMaterialModal: { show: false },
-      addFoodItemModal: { show: false },
+      addRawMaterialModal: {show: false},
+      addFoodItemModal: {show: false},
       errors: {
         rawMaterialName: "",
         rawMaterialQuantity: "",
@@ -55,6 +45,32 @@ export default class Inventory extends ApplicationContainer {
         quantity: 0,
       },
     };
+  }
+
+  getAllInventory = (headers) => {
+    axios
+      .get(GET_ALL_INVENTORY, {headers: headers})
+      .then((response) => {
+        this.setState({loading: false});
+        rawMaterials = response.data.rawMaterialInventories;
+        foodItems = response.data.foodItemInventories;
+        this.setState({
+          foodItems: foodItems,
+          rawMaterials: rawMaterials,
+        });
+      })
+      .catch((error) => {
+        this.setState({loading: false});
+        if (error.response.status === 401) {
+          toast.error("Session is expired. Please login again.");
+          localStorage.removeItem("user");
+          this.props.history.push({
+            pathname: "/login",
+          });
+        } else {
+          toast.error(error.response.data.message);
+        }
+      });
   }
 
   searchRawMaterial = (value) => {
@@ -77,61 +93,49 @@ export default class Inventory extends ApplicationContainer {
   };
 
   showRawMaterialModal = () => {
-    let state = { ...this.state };
-
+    let state = {...this.state};
     state.addRawMaterialModal.show = true;
-
     this.setState(state);
   };
 
   closeRawMaterialModal = () => {
-    let state = { ...this.state };
+    let state = {...this.state};
     state.errors.rawMaterialName = "";
     state.errors.rawMaterialQuantity = "";
     state.addRawMaterialModal.show = false;
-
     this.setState(state);
   };
 
   showFoodItemModal = () => {
-    let state = { ...this.state };
-
+    let state = {...this.state};
     state.addFoodItemModal.show = true;
-
     this.setState(state);
   };
 
   closeFoodItemModal = () => {
-    let state = { ...this.state };
-
+    let state = {...this.state};
     state.addFoodItemModal.show = false;
-
     this.setState(state);
   };
 
   setFoodItemName = (value) => {
-    let state = { ...this.state };
+    let state = {...this.state};
     if (value) {
       state.newFoodItem.name = value.foodItemName;
       state.newFoodItem.id = value.id;
       this.validator("foodItemName", value.foodItemName, state.errors);
-
       this.setState(state);
     } else {
       state.newFoodItem.name = null;
       this.validator("foodItemName", value, state.errors);
-
       this.setState(state);
     }
   };
 
   setFoodItemQuantity = (value) => {
-    let state = { ...this.state };
-
+    let state = {...this.state};
     state.newFoodItem.quantity = value;
-
     this.validator("foodItemQuantity", value, state.errors);
-
     this.setState(state);
   };
 
@@ -169,7 +173,7 @@ export default class Inventory extends ApplicationContainer {
   };
 
   setRawMaterialName = (value) => {
-    let state = { ...this.state };
+    let state = {...this.state};
 
     if (value) {
       state.newRawMaterial.name = value.rawMaterialName;
@@ -185,7 +189,7 @@ export default class Inventory extends ApplicationContainer {
   };
 
   setRawMaterialQuantity = (value) => {
-    let state = { ...this.state };
+    let state = {...this.state};
 
     state.newRawMaterial.quantity = value;
 
@@ -196,7 +200,7 @@ export default class Inventory extends ApplicationContainer {
 
   handleRawMaterialModalSubmit = async (e) => {
     e.preventDefault();
-    let errors = { ...this.state.errors };
+    let errors = {...this.state.errors};
 
     this.validator("rawMaterialName", this.state.newRawMaterial.name, errors);
 
@@ -219,7 +223,7 @@ export default class Inventory extends ApplicationContainer {
         const headers = {
           Authorization: "Bearer " + user.token,
         };
-        this.setState({ loading: true });
+        this.setState({loading: true});
         await axios
           .post(POST_ADD_RAW_MATERIAL_INVENTORY, this.state.newRawMaterial, {
             headers: headers,
@@ -229,20 +233,10 @@ export default class Inventory extends ApplicationContainer {
               this.state.newRawMaterial.name + " updated successfully!"
             );
             this.closeRawMaterialModal();
-            axios
-              .get(GET_ALL_INVENTORY, {
-                headers: headers,
-              })
-              .then((response) => {
-                rawMaterials = response.data.rawMaterialInventories;
-                this.setState({
-                  rawMaterials: rawMaterials,
-                });
-                this.setState({ loading: false });
-              });
+            this.getAllInventory(headers)
           })
           .catch((error) => {
-            this.setState({ loading: false });
+            this.setState({loading: false});
 
             if (error.response.status === 401) {
               toast.error("Session is expired. Please login again.");
@@ -255,7 +249,6 @@ export default class Inventory extends ApplicationContainer {
                 "Raw Material not added to inventory. Please try again later!"
               );
             }
-
             this.closeRawMaterialModal();
           });
       }
@@ -265,7 +258,7 @@ export default class Inventory extends ApplicationContainer {
     });
   };
 
-  formatRawMaterial = ({ rawMaterialName }) => (
+  formatRawMaterial = ({rawMaterialName}) => (
     <>
       <Row>
         <Col>{rawMaterialName}</Col>
@@ -275,7 +268,7 @@ export default class Inventory extends ApplicationContainer {
 
   handleFoodItemModalSubmit = async (e) => {
     e.preventDefault();
-    let errors = { ...this.state.errors };
+    let errors = {...this.state.errors};
 
     this.validator("foodItemName", this.state.newFoodItem.name, errors);
     this.validator("foodItemQuantity", this.state.newFoodItem.quantity, errors);
@@ -293,7 +286,7 @@ export default class Inventory extends ApplicationContainer {
         const headers = {
           Authorization: "Bearer " + user.token,
         };
-        this.setState({ loading: true });
+        this.setState({loading: true});
         axios
           .post(POST_ADD_FOOD_ITEM_INVENTORY, this.state.newFoodItem, {
             headers: headers,
@@ -303,18 +296,10 @@ export default class Inventory extends ApplicationContainer {
               this.state.newFoodItem.name + " updated successfully!"
             );
             this.closeFoodItemModal();
-            axios
-              .get(GET_ALL_INVENTORY, {
-                headers: headers,
-              })
-              .then((response) => {
-                foodItems = response.data.foodItemInventories;
-                this.setState({ foodItems: foodItems });
-              });
-            this.setState({ loading: false });
+            this.getAllInventory(headers);
           })
           .catch((error) => {
-            this.setState({ loading: false });
+            this.setState({loading: false});
 
             if (error.response.status === 401) {
               toast.error("Session is expired. Please login again.");
@@ -327,7 +312,6 @@ export default class Inventory extends ApplicationContainer {
                 "Food Item not added to inventory. Please try again later!"
               );
             }
-
             this.closeFoodItemModal();
           });
       }
@@ -337,7 +321,7 @@ export default class Inventory extends ApplicationContainer {
     });
   };
 
-  formatFoodItem = ({ foodItemName }) => (
+  formatFoodItem = ({foodItemName}) => (
     <>
       <Row>
         <Col>{foodItemName}</Col>
@@ -351,40 +335,18 @@ export default class Inventory extends ApplicationContainer {
       const headers = {
         Authorization: "Bearer " + user.token,
       };
-      this.setState({ loading: true });
+      this.setState({loading: true});
+      this.getAllInventory(headers)
+      this.setState({loading: true});
       await axios
-        .get(GET_ALL_INVENTORY, { headers: headers })
+        .get(GET_RAW_MATERIALS, {headers: headers})
         .then((response) => {
-          this.setState({ loading: false });
-          rawMaterials = response.data.rawMaterialInventories;
-          foodItems = response.data.foodItemInventories;
-          this.setState({
-            foodItems: foodItems,
-            rawMaterials: rawMaterials,
-          });
-        })
-        .catch((error) => {
-          this.setState({ loading: false });
-          if (error.response.status === 401) {
-            toast.error("Session is expired. Please login again.");
-            localStorage.removeItem("user");
-            this.props.history.push({
-              pathname: "/login",
-            });
-          } else {
-            toast.error(error.response.data.message);
-          }
-        });
-      this.setState({ loading: true });
-      await axios
-        .get(GET_RAW_MATERIALS, { headers: headers })
-        .then((response) => {
-          this.setState({ loading: false });
+          this.setState({loading: false});
           let rawMaterialList = response.data.rawMaterials;
-          this.setState({ rawMaterialList: rawMaterialList });
+          this.setState({rawMaterialList: rawMaterialList});
         })
         .catch((error) => {
-          this.setState({ loading: false });
+          this.setState({loading: false});
           if (error.response.status === 401) {
             toast.error("Session is expired. Please login again.");
             localStorage.removeItem("user");
@@ -395,16 +357,16 @@ export default class Inventory extends ApplicationContainer {
             toast.error(error.response.data.message);
           }
         });
-      this.setState({ loading: true });
+      this.setState({loading: true});
       await axios
-        .get(GET_FOOD_ITEMS, { headers: headers })
+        .get(GET_FOOD_ITEMS, {headers: headers})
         .then((response) => {
-          this.setState({ loading: false });
+          this.setState({loading: false});
           let foodItemList = response.data.foodItems;
-          this.setState({ foodItemList: foodItemList });
+          this.setState({foodItemList: foodItemList});
         })
         .catch((error) => {
-          this.setState({ loading: false });
+          this.setState({loading: false});
           if (error.response.status === 401) {
             toast.error("Session is expired. Please login again.");
             localStorage.removeItem("user");
@@ -417,6 +379,7 @@ export default class Inventory extends ApplicationContainer {
         });
     }
   };
+
   render() {
     return (
       <section className={"pb-5"}>
@@ -435,7 +398,7 @@ export default class Inventory extends ApplicationContainer {
         <Row className="m-3">
           <Col className={"text-left"}>
             <h2>Inventory</h2>
-            <hr />
+            <hr/>
           </Col>
         </Row>
         <Row className="m-3">
@@ -463,7 +426,7 @@ export default class Inventory extends ApplicationContainer {
               />
               <InputGroup.Append>
                 <InputGroup.Text>
-                  <FontAwesomeIcon icon={faSearch} />
+                  <FontAwesomeIcon icon={faSearch}/>
                 </InputGroup.Text>
               </InputGroup.Append>
             </InputGroup>
@@ -490,7 +453,7 @@ export default class Inventory extends ApplicationContainer {
               />
               <InputGroup.Append>
                 <InputGroup.Text>
-                  <FontAwesomeIcon icon={faSearch} />
+                  <FontAwesomeIcon icon={faSearch}/>
                 </InputGroup.Text>
               </InputGroup.Append>
             </InputGroup>
@@ -504,20 +467,20 @@ export default class Inventory extends ApplicationContainer {
                 {this.state.rawMaterials.length > 0 ? (
                   <Table hover responsive="sm">
                     <thead>
-                      <tr>
-                        <th className="text-left">Raw Material</th>
-                        <th>Quantity</th>
-                      </tr>
+                    <tr>
+                      <th className="text-left">Raw Material</th>
+                      <th>Quantity</th>
+                    </tr>
                     </thead>
                     <tbody>
-                      {this.state.rawMaterials.map((item) => (
-                        <tr key={item.id}>
-                          <td className="text-left">
-                            {item.raw_material.rawMaterialName}
-                          </td>
-                          <td>{item.quantity}</td>
-                        </tr>
-                      ))}
+                    {this.state.rawMaterials.map((item) => (
+                      <tr key={item.id}>
+                        <td className="text-left">
+                          {item.raw_material.rawMaterialName}
+                        </td>
+                        <td>{item.quantity}</td>
+                      </tr>
+                    ))}
                     </tbody>
                   </Table>
                 ) : (
@@ -535,20 +498,20 @@ export default class Inventory extends ApplicationContainer {
                 {this.state.foodItems.length > 0 ? (
                   <Table hover responsive="sm">
                     <thead>
-                      <tr>
-                        <th className="text-left">Food Items</th>
-                        <th>Quantity</th>
-                      </tr>
+                    <tr>
+                      <th className="text-left">Food Items</th>
+                      <th>Quantity</th>
+                    </tr>
                     </thead>
                     <tbody>
-                      {this.state.foodItems.map((item) => (
-                        <tr key={item.id}>
-                          <td className="text-left">
-                            {item.food_item.foodItemName}
-                          </td>
-                          <td>{item.quantity}</td>
-                        </tr>
-                      ))}
+                    {this.state.foodItems.map((item) => (
+                      <tr key={item.id}>
+                        <td className="text-left">
+                          {item.food_item.foodItemName}
+                        </td>
+                        <td>{item.quantity}</td>
+                      </tr>
+                    ))}
                     </tbody>
                   </Table>
                 ) : (
@@ -604,7 +567,7 @@ export default class Inventory extends ApplicationContainer {
                   this.state.errors.rawMaterialQuantity ? "is-invalid" : ""
                 }
                 type="number"
-              ></Form.Control>
+              />
               {this.state.errors.rawMaterialQuantity.length > 0 && (
                 <Form.Control.Feedback type={"invalid"}>
                   {this.state.errors.rawMaterialQuantity}
@@ -614,7 +577,7 @@ export default class Inventory extends ApplicationContainer {
 
             <Modal.Footer>
               <Button
-                variant="secondary"
+                variant="primary"
                 onClick={this.handleRawMaterialModalSubmit}
               >
                 Submit
@@ -668,7 +631,7 @@ export default class Inventory extends ApplicationContainer {
                 className={
                   this.state.errors.foodItemQuantity ? "is-invalid" : ""
                 }
-              ></Form.Control>
+              />
               {this.state.errors.foodItemQuantity.length > 0 && (
                 <Form.Control.Feedback type={"invalid"}>
                   {this.state.errors.foodItemQuantity}
@@ -677,7 +640,7 @@ export default class Inventory extends ApplicationContainer {
             </Form.Group>
             <Modal.Footer>
               <Button
-                variant="secondary"
+                variant="primary"
                 onClick={this.handleFoodItemModalSubmit}
               >
                 Submit
