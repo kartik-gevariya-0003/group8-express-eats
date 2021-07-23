@@ -52,8 +52,6 @@ export default class AddFoodItem extends ApplicationContainer {
         foodItemName: "",
         selectedRawMaterials: "",
         selectedRawMaterialQuantity: "",
-        manufacturerCost: "",
-        profitMargin: "",
         imageFile: "",
       },
       deleteRawMaterialModal: {
@@ -235,18 +233,6 @@ export default class AddFoodItem extends ApplicationContainer {
             "Please select one or more raw materials";
         }
         break;
-      case "manufacturerCost":
-        isError.manufacturerCost = "";
-        if (!value || value.length === 0) {
-          isError.manufacturerCost = "Required Field.";
-        }
-        break;
-      case "profitMargin":
-        isError.profitMargin = "";
-        if (!value || value.length === 0) {
-          isError.profitMargin = "Required Field.";
-        }
-        break;
       case "imageFile":
         isError.imageFile = "";
         if (!value) {
@@ -408,13 +394,19 @@ export default class AddFoodItem extends ApplicationContainer {
             </div>
           </div>
         )}
+        <Row className="m-3">
+          <Col className={"text-left"}>
+            <h2>Add Food Item</h2>
+            <hr/>
+          </Col>
+        </Row>
         <Row className={"m-3"}>
           <Col sm={5}>
             <Card>
               <Card.Body>
-                <Card.Title>Food Item</Card.Title>
+                <Card.Title>Food Item Details</Card.Title>
                 <Card.Text>
-                  <strong>Food Item Name :</strong>{" "}
+                  <strong>Name :</strong>{" "}
                   {this.state.foodItem.foodItemName}
                 </Card.Text>
                 {this.state.foodItem.selectedRawMaterials &&
@@ -477,11 +469,11 @@ export default class AddFoodItem extends ApplicationContainer {
                   <Row className="text-right mt-3">
                     <Col sm={8}>
                       <Form.Label>
-                        <strong>Manufacturing Cost*</strong>
+                        <strong>Manufacturing Cost</strong>
                       </Form.Label>
                     </Col>
                     <Col sm={4}>
-                      <InputGroup className="mb-3" hasValidation>
+                      <InputGroup className="mb-3">
                         <InputGroup.Prepend>
                           <InputGroup.Text id="basic-addon1">$</InputGroup.Text>
                         </InputGroup.Prepend>
@@ -491,31 +483,21 @@ export default class AddFoodItem extends ApplicationContainer {
                           onBlur={(e) => {
                             this.calculateTotalCost(e);
                           }}
-                          className={
-                            this.state.isError.manufacturerCost.length > 0
-                              ? "is-invalid"
-                              : ""
-                          }
                           onChange={(e) => {
                             this.onManufacturerCostChange(e.target.value);
                           }}
                         />
-                        {this.state.isError.manufacturerCost.length > 0 && (
-                          <Form.Control.Feedback type={"invalid"}>
-                            {this.state.isError.manufacturerCost}
-                          </Form.Control.Feedback>
-                        )}
                       </InputGroup>
                     </Col>
                   </Row>
                   <Row className="text-right">
                     <Col sm={8}>
                       <Form.Label>
-                        <strong>Profit Margin*</strong>
+                        <strong>Profit Margin</strong>
                       </Form.Label>
                     </Col>
                     <Col sm={4}>
-                      <InputGroup className="mb-3" hasValidation>
+                      <InputGroup className="mb-3">
                         <Form.Control
                           name={"profitMargin"}
                           ariadescribedby="profitMargin"
@@ -523,11 +505,6 @@ export default class AddFoodItem extends ApplicationContainer {
                           onBlur={(e) => {
                             this.calculateTotalCost(e);
                           }}
-                          className={
-                            this.state.isError.profitMargin.length > 0
-                              ? "is-invalid"
-                              : "border-radius"
-                          }
                           onChange={(e) => {
                             this.profitMarginChangeListener(e.target.value);
                           }}
@@ -535,11 +512,6 @@ export default class AddFoodItem extends ApplicationContainer {
                         <InputGroup.Append>
                           <InputGroup.Text id="profitMargin">%</InputGroup.Text>
                         </InputGroup.Append>
-                        {this.state.isError.profitMargin.length > 0 && (
-                          <Form.Control.Feedback type={"invalid"}>
-                            {this.state.isError.profitMargin}
-                          </Form.Control.Feedback>
-                        )}
                       </InputGroup>
                     </Col>
                   </Row>
@@ -565,12 +537,11 @@ export default class AddFoodItem extends ApplicationContainer {
           <Col sm={7}>
             <Card>
               <Card.Body className={"text-left"}>
-                <Card.Title>New Food Item</Card.Title>
-                <Row className={"mt-3"}>
+                <Row>
                   <Col sm={12}>
                     <Form.Group controlId="fooditemname">
                       <Form.Label>
-                        <strong>Food Item Name*</strong>
+                        <span>Food Item Name <sup className={"text-danger"}>*</sup></span>
                       </Form.Label>
                       <Form.Control
                         type="text"
@@ -593,7 +564,7 @@ export default class AddFoodItem extends ApplicationContainer {
                     <Row>
                       <Col sm={5} className={"pt-2"}>
                         <Form.Label>
-                          <strong>Upload Food Item Image*</strong>
+                          <span>Upload Food Item Image <sup className={"text-danger"}>*</sup></span>
                         </Form.Label>
                       </Col>
                       <Col sm={7}>
@@ -626,7 +597,7 @@ export default class AddFoodItem extends ApplicationContainer {
                       <Row>
                         <Col sm={7} className={"pt-2"}>
                           <Form.Label>
-                            <strong>Raw Materials*</strong>
+                            <span>Raw Materials <sup className={"text-danger"}>*</sup></span>
                           </Form.Label>
                         </Col>
                         <Col sm={5}>
@@ -656,7 +627,6 @@ export default class AddFoodItem extends ApplicationContainer {
                           {this.state.rawMaterials.map((rawMaterial) => (
                             <ListGroup.Item key={rawMaterial.id}>
                               <Row>
-                                {console.log(rawMaterial)}
                                 <Col sm={5} className={"pl-3"}>
                                   <h6>
                                     <span>{rawMaterial.rawMaterialName}</span>
@@ -774,7 +744,7 @@ export default class AddFoodItem extends ApplicationContainer {
               <Form.Label className={"m-0"}>
                 <strong>
                   Are you sure you want to delete{" "}
-                  {this.state.deleteRawMaterialModal.rawMaterial.name}?{" "}
+                  {this.state.deleteRawMaterialModal.rawMaterial.rawMaterialName}?{" "}
                 </strong>
               </Form.Label>
             </Form.Group>

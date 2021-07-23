@@ -4,7 +4,7 @@
 * */
 
 import React from "react";
-import {Button, Card, Col, Form, Row,} from "react-bootstrap";
+import {Button, Card, Col, Form, InputGroup, Row,} from "react-bootstrap";
 import ApplicationContainer from "../ApplicationContainer";
 import axios from 'axios';
 import Select from "react-select";
@@ -180,6 +180,7 @@ export class AddRawMaterial extends ApplicationContainer {
         const headers = {
           'Authorization': 'Bearer ' + user.token
         }
+        this.setState({loading: true});
         //POST API call for adding new raw material details in the system
         axios.post(CREATE_RAW_MATERIAL, postData, {headers: headers}).then((response) => {
           this.setState({loading: false});
@@ -220,7 +221,7 @@ export class AddRawMaterial extends ApplicationContainer {
         {super.render()}
         <Row className="m-3">
           <Col className={"text-left"}>
-            <h2>New Raw Material</h2>
+            <h2>Add Raw Material</h2>
             <hr/>
           </Col>
         </Row>
@@ -234,7 +235,7 @@ export class AddRawMaterial extends ApplicationContainer {
                       <Form.Group className="mb-3">
                         <Row>
                           <Col sm={6}>
-                            <Form.Label>Name *</Form.Label>
+                            <Form.Label>Name <sup className={"text-danger"}>*</sup></Form.Label>
                             <Form.Control type="text" name="rawMaterialName"
                                           onChange={this.setRawMaterialName}
                                           className={this.state.errors.rawMaterialName ? "is-invalid" : ""}/>
@@ -245,7 +246,7 @@ export class AddRawMaterial extends ApplicationContainer {
                             )}
                           </Col>
                           <Col sm={6}>
-                            <Form.Label>Vendor Name *</Form.Label>
+                            <Form.Label>Vendor Name <sup className={"text-danger"}>*</sup></Form.Label>
                             <Select
                               isClearable
                               isMulti
@@ -266,18 +267,23 @@ export class AddRawMaterial extends ApplicationContainer {
                       <Form.Group className="mb-3">
                         <Row>
                           <Col sm={6}>
-                            <Form.Label>Unit Cost *</Form.Label>
-                            <Form.Control type="float" name="unitCost"
-                                          onChange={this.setUnitCost}
-                                          className={this.state.errors.unitCost ? "is-invalid" : ""}/>
-                            {this.state.errors.unitCost.length > 0 && (
-                              <Form.Control.Feedback type={"invalid"}>
-                                {this.state.errors.unitCost}
-                              </Form.Control.Feedback>
-                            )}
+                            <Form.Label>Unit Cost <sup className={"text-danger"}>*</sup></Form.Label>
+                            <InputGroup className="mb-3" hasValidation>
+                              <InputGroup.Prepend>
+                                <InputGroup.Text id="basic-addon1">$</InputGroup.Text>
+                              </InputGroup.Prepend>
+                              <Form.Control type="text" name="unitCost"
+                                            onChange={this.setUnitCost}
+                                            className={this.state.errors.unitCost ? "is-invalid" : ""}/>
+                              {this.state.errors.unitCost.length > 0 && (
+                                <Form.Control.Feedback type={"invalid"}>
+                                  {this.state.errors.unitCost}
+                                </Form.Control.Feedback>
+                              )}
+                            </InputGroup>
                           </Col>
                           <Col sm={3}>
-                            <Form.Label>Unit Measurement *</Form.Label>
+                            <Form.Label>Unit Measurement <sup className={"text-danger"}>*</sup></Form.Label>
                             <Form.Control type="number" name="unitMeasurement"
                                           step=".01"
                                           onChange={this.setUnitMeasurement}
