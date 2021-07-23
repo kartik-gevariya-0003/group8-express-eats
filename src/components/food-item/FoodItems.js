@@ -163,7 +163,7 @@ export default class FoodItems extends ApplicationContainer {
         <Row className="m-3">
           <Col sm={8} className={"text-left"}>
             <Button variant={"primary"} onClick={this.goToCreateFoodItem}>
-              Create Food Item
+              Add Food Item
             </Button>
           </Col>
           <Col sm={4}>
@@ -258,14 +258,14 @@ export default class FoodItems extends ApplicationContainer {
           </Modal.Body>
           <Modal.Footer>
             <Button
-              variant="success"
+              variant="primary"
               onClick={() =>
                 this.deleteFoodItem(this.state.deleteFoodItemModal.id)
               }
             >
               Yes
             </Button>
-            <Button variant="secondary" onClick={this.closeModal}>
+            <Button variant="danger" onClick={this.closeModal}>
               No
             </Button>
           </Modal.Footer>

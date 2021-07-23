@@ -4,18 +4,19 @@
  * */
 
 import "./create-vendor.css";
-import { Button, Card, Col, Form, FormControl, Row } from "react-bootstrap";
-import { toast } from "react-toastify";
+import {Button, Card, Col, Form, FormControl, Row} from "react-bootstrap";
+import {toast} from "react-toastify";
 import axios from "axios";
-import { GET_VENDOR_BY_ID, UPDATE_VENDOR } from "../../config";
-import Header from "../headers/Header";
+import {GET_VENDOR_BY_ID, UPDATE_VENDOR} from "../../config";
 import ApplicationContainer from "../ApplicationContainer";
+import React from "react";
 
 export default class CreateVendor extends ApplicationContainer {
   constructor(props) {
     super(props);
 
     this.state = {
+      loading: false,
       values: {
         id: this.props.location.state,
         vendorName: "",
@@ -43,18 +44,19 @@ export default class CreateVendor extends ApplicationContainer {
       this.getVendor(headers);
     }
   }
+
   cancelHandler = (e) => {
     e.preventDefault();
     this.props.history.push("/vendors");
   };
 
   getVendor(headers) {
-    this.setState({ loading: true });
+    this.setState({loading: true});
     const url = GET_VENDOR_BY_ID + this.state.values.id;
     axios
-      .get(url, { headers: headers })
+      .get(url, {headers: headers})
       .then((result) => {
-        this.setState({ loading: false });
+        this.setState({loading: false});
         let vendor = result.data.vendor;
         let vendorData = {
           vendorName: vendor.vendorName,
@@ -64,34 +66,33 @@ export default class CreateVendor extends ApplicationContainer {
           contactNumber: vendor.contactNumber,
           id: this.props.location.state,
         };
-
         this.setState({
           values: vendorData,
         });
       })
       .catch((error) => {
-        this.setState({ loading: false });
+        this.setState({loading: false});
         console.log(error);
         toast.error("Error occurred while fetching vendor.");
       });
   }
 
   setVendorName = (e) => {
-    let state = { ...this.state };
+    let state = {...this.state};
     state.values.vendorName = e.target.value;
     this.validator("vendorName", state.values.vendorName, state.errors);
     this.setState(state);
   };
 
   setAddress = (e) => {
-    let state = { ...this.state };
+    let state = {...this.state};
     state.values.address = e.target.value;
     this.validator("address", state.values.address, state.errors);
     this.setState(state);
   };
 
   setContactPersonName = (e) => {
-    let state = { ...this.state };
+    let state = {...this.state};
     state.values.contactPersonName = e.target.value;
     this.validator(
       "contactPersonName",
@@ -102,14 +103,14 @@ export default class CreateVendor extends ApplicationContainer {
   };
 
   setEmail = (e) => {
-    let state = { ...this.state };
+    let state = {...this.state};
     state.values.email = e.target.value;
     this.validator("email", state.values.email, state.errors);
     this.setState(state);
   };
 
   setContactNumber = (e) => {
-    let state = { ...this.state };
+    let state = {...this.state};
     state.values.contactNumber = e.target.value;
     this.validator("contactNumber", state.values.contactNumber, state.errors);
     this.setState(state);
@@ -125,7 +126,6 @@ export default class CreateVendor extends ApplicationContainer {
   };
 
   validator = (name, value, errors) => {
-    let valid = true;
     switch (name) {
       case "vendorName":
         if (value.trim() === "") {
@@ -163,7 +163,7 @@ export default class CreateVendor extends ApplicationContainer {
         if (value.trim() === "") {
           errors.errorEmail = "Email is required";
         } else if (
-          !/^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/i.test(
+          !/^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/i.test(
             value.trim()
           )
         ) {
@@ -184,7 +184,7 @@ export default class CreateVendor extends ApplicationContainer {
 
   handleSubmit = (e) => {
     e.preventDefault();
-    let errors = { ...this.state.errors };
+    let errors = {...this.state.errors};
     this.validator("vendorName", this.state.values.vendorName, errors);
     this.validator("address", this.state.values.address, errors);
     this.validator(
@@ -209,18 +209,18 @@ export default class CreateVendor extends ApplicationContainer {
         const headers = {
           Authorization: "Bearer " + user.token,
         };
-        console.log(putData);
+        this.setState({loading: true});
         axios
-          .put(UPDATE_VENDOR, putData, { headers: headers })
-          .then((response) => {
-            this.setState({ loading: false });
+          .put(UPDATE_VENDOR, putData, {headers: headers})
+          .then(() => {
+            this.setState({loading: false});
             toast.success("Vendor updated successfully.");
             this.props.history.push({
               pathname: "/vendors",
             });
           })
           .catch((error) => {
-            this.setState({ loading: false });
+            this.setState({loading: false});
             if (error.response.status === 401) {
               toast.error("Session is expired. Please login again.");
               localStorage.removeItem("user");
@@ -240,20 +240,36 @@ export default class CreateVendor extends ApplicationContainer {
 
   render() {
     return (
-      <>
-        <Header />
-        <Row className={"mt-3 justify-content-center"}>
+      <section>
+        {super.render()}
+        {this.state.loading && (
+          <div className="dialog-background">
+            <div className="dialog-loading-wrapper">
+              <img
+                src={"/confirmation.gif"}
+                alt={"Loading..."}
+                className={"loading-img"}
+              />
+            </div>
+          </div>
+        )}
+        <Row className="m-3">
+          <Col className={"text-left"}>
+            <h2>Edit Vendor</h2>
+            <hr/>
+          </Col>
+        </Row>
+        <Row className={"m-3 justify-content-center"}>
           <Col sm={8}>
             <Card>
               <Card.Body className={"text-left"}>
-                <Card.Title className={"text-left"}>Edit Vendor</Card.Title>
-                <Row className={"mt-5"}>
+                <Row className={"mt-3"}>
                   <Col sm={12}>
                     <Form onSubmit={this.handleSubmit}>
                       <Form.Group className="mb-3">
                         <Row>
                           <Col sm={6}>
-                            <Form.Label>Vendor Name</Form.Label>
+                            <Form.Label>Vendor Name <sup className={"text-danger"}>*</sup></Form.Label>
                             <Form.Control
                               type="text"
                               name="vendorName"
@@ -272,7 +288,7 @@ export default class CreateVendor extends ApplicationContainer {
                             )}
                           </Col>
                           <Col sm={6}>
-                            <Form.Label>Contact Person Name</Form.Label>
+                            <Form.Label>Contact Person Name <sup className={"text-danger"}>*</sup></Form.Label>
                             <Form.Control
                               type="text"
                               name="contactPersonName"
@@ -286,7 +302,7 @@ export default class CreateVendor extends ApplicationContainer {
                               }
                             />
                             {this.state.errors.errorContactPersonName.length >
-                              0 && (
+                            0 && (
                               <Form.Control.Feedback type={"invalid"}>
                                 {this.state.errors.errorContactPersonName}
                               </Form.Control.Feedback>
@@ -298,7 +314,7 @@ export default class CreateVendor extends ApplicationContainer {
                       <Form.Group className="mb-3">
                         <Row>
                           <Col sm={12}>
-                            <Form.Label>Address</Form.Label>
+                            <Form.Label>Address <sup className={"text-danger"}>*</sup></Form.Label>
                             <Form.Control
                               type="text"
                               name="address"
@@ -322,7 +338,7 @@ export default class CreateVendor extends ApplicationContainer {
                       <Form.Group className="mb-3">
                         <Row>
                           <Col sm={6}>
-                            <Form.Label>Email</Form.Label>
+                            <Form.Label>Email <sup className={"text-danger"}>*</sup></Form.Label>
                             <Form.Control
                               type="email"
                               name="email"
@@ -342,9 +358,9 @@ export default class CreateVendor extends ApplicationContainer {
                             )}
                           </Col>
                           <Col sm={6}>
-                            <Form.Label>Contact Number</Form.Label>
+                            <Form.Label>Contact Number <sup className={"text-danger"}>*</sup></Form.Label>
                             <Form.Control
-                              type="number"
+                              type="text"
                               name="contactNumber"
                               value={this.state.values.contactNumber}
                               onChange={this.setContactNumber}
@@ -354,8 +370,7 @@ export default class CreateVendor extends ApplicationContainer {
                                   : ""
                               }
                             />
-                            {this.state.errors.errorContactNumber.length >
-                              0 && (
+                            {this.state.errors.errorContactNumber.length > 0 && (
                               <FormControl.Feedback type={"invalid"}>
                                 {this.state.errors.errorContactNumber}
                               </FormControl.Feedback>
@@ -371,7 +386,7 @@ export default class CreateVendor extends ApplicationContainer {
                               variant="primary"
                               type="submit"
                             >
-                              Submit
+                              Update Vendor
                             </Button>
                           </Col>
                           <Col sm={6} className={"submit-btn"}>
@@ -391,7 +406,7 @@ export default class CreateVendor extends ApplicationContainer {
             </Card>
           </Col>
         </Row>
-      </>
+      </section>
     );
   }
 }

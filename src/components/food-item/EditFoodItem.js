@@ -32,6 +32,7 @@ let rawMaterials = [];
 export default class EditFoodItem extends ApplicationContainer {
   constructor(props) {
     super(props);
+
     this.state = {
       loading: false,
       rawMaterials: rawMaterials,
@@ -48,8 +49,6 @@ export default class EditFoodItem extends ApplicationContainer {
         foodItemName: "",
         selectedRawMaterials: "",
         selectedRawMaterialQuantity: "",
-        manufacturerCost: "",
-        profitMargin: "",
         imageFile: "",
       },
       deleteRawMaterialModal: {
@@ -313,20 +312,6 @@ export default class EditFoodItem extends ApplicationContainer {
             "Please select one or more raw materials";
         }
         break;
-      case "manufacturerCost":
-        isError.manufacturerCost = "";
-        value = value.toString();
-        if (!value || value.length === 0) {
-          isError.manufacturerCost = "Required Field.";
-        }
-        break;
-      case "profitMargin":
-        isError.profitMargin = "";
-        value = value.toString();
-        if (!value || value.length === 0) {
-          isError.profitMargin = "Required Field.";
-        }
-        break;
       case "imageFile":
         isError.imageFile = "";
         if (!value) {
@@ -491,13 +476,19 @@ export default class EditFoodItem extends ApplicationContainer {
             </div>
           </div>
         )}
+        <Row className="m-3">
+          <Col className={"text-left"}>
+            <h2>Edit Food Item</h2>
+            <hr/>
+          </Col>
+        </Row>
         <Row className={"m-3"}>
           <Col sm={5}>
             <Card>
               <Card.Body>
-                <Card.Title>Food Item</Card.Title>
+                <Card.Title>Food Item Details</Card.Title>
                 <Card.Text>
-                  <strong>Food Item Name :</strong>{" "}
+                  <strong>Name :</strong>{" "}
                   {this.state.foodItem.foodItemName}
                 </Card.Text>
                 {this.state.foodItem.selectedRawMaterials &&
@@ -505,7 +496,7 @@ export default class EditFoodItem extends ApplicationContainer {
                     <section className={"mt-5"}>
                       <strong>Selected Raw Materials</strong>
                       <ListGroup
-                        className={"mt-3 po-selected-raw-material-list"}
+                        className={"mt-3 fi-selected-raw-material-list"}
                       >
                         {this.state.foodItem.selectedRawMaterials.map(
                           (rawMaterial) => (
@@ -560,11 +551,11 @@ export default class EditFoodItem extends ApplicationContainer {
                   <Row className="text-right mt-3">
                     <Col sm={8}>
                       <Form.Label>
-                        <strong>Manufacturing Cost*</strong>
+                        <strong>Manufacturing Cost</strong>
                       </Form.Label>
                     </Col>
                     <Col sm={4}>
-                      <InputGroup className="mb-3" hasValidation>
+                      <InputGroup className="mb-3">
                         <InputGroup.Prepend>
                           <InputGroup.Text id="basic-addon1">$</InputGroup.Text>
                         </InputGroup.Prepend>
@@ -574,32 +565,22 @@ export default class EditFoodItem extends ApplicationContainer {
                           onBlur={(e) => {
                             this.calculateTotalCost(e);
                           }}
-                          className={
-                            this.state.isError.manufacturerCost.length > 0
-                              ? "is-invalid"
-                              : ""
-                          }
                           onChange={(e) => {
                             this.onManufacturerCostChange(e.target.value);
                           }}
                           defaultValue={this.state.foodItem.manufacturerCost}
                         />
-                        {this.state.isError.manufacturerCost.length > 0 && (
-                          <Form.Control.Feedback type={"invalid"}>
-                            {this.state.isError.manufacturerCost}
-                          </Form.Control.Feedback>
-                        )}
                       </InputGroup>
                     </Col>
                   </Row>
                   <Row className="text-right">
                     <Col sm={8}>
                       <Form.Label>
-                        <strong>Profit Margin*</strong>
+                        <strong>Profit Margin</strong>
                       </Form.Label>
                     </Col>
                     <Col sm={4}>
-                      <InputGroup className="mb-3" hasValidation>
+                      <InputGroup className="mb-3">
                         <Form.Control
                           name={"profitMargin"}
                           ariadescribedby="profitMargin"
@@ -607,25 +588,14 @@ export default class EditFoodItem extends ApplicationContainer {
                           onBlur={(e) => {
                             this.calculateTotalCost(e);
                           }}
-                          className={
-                            this.state.isError.profitMargin.length > 0
-                              ? "is-invalid"
-                              : "border-radius"
-                          }
                           onChange={(e) => {
                             this.profitMarginChangeListener(e.target.value);
                           }}
                           defaultValue={this.state.foodItem.profitMargin}
                         />
-
                         <InputGroup.Append>
                           <InputGroup.Text id="profitMargin">%</InputGroup.Text>
                         </InputGroup.Append>
-                        {this.state.isError.profitMargin.length > 0 && (
-                          <Form.Control.Feedback type={"invalid"}>
-                            {this.state.isError.profitMargin}
-                          </Form.Control.Feedback>
-                        )}
                       </InputGroup>
                     </Col>
                   </Row>
@@ -651,12 +621,11 @@ export default class EditFoodItem extends ApplicationContainer {
           <Col sm={7}>
             <Card>
               <Card.Body className={"text-left"}>
-                <Card.Title>Update Food Item</Card.Title>
-                <Row className={"mt-3"}>
+                <Row>
                   <Col sm={12}>
                     <Form.Group controlId="fooditemname">
                       <Form.Label>
-                        <strong>Food Item Name*</strong>
+                        <span>Food Item Name <sup className={"text-danger"}>*</sup></span>
                       </Form.Label>
                       <Form.Control
                         type="text"
@@ -680,7 +649,7 @@ export default class EditFoodItem extends ApplicationContainer {
                     <Row>
                       <Col sm={5} className={"pt-2"}>
                         <Form.Label>
-                          <strong>Upload Food Item Image*</strong>
+                          <span>Upload Food Item Image <sup className={"text-danger"}>*</sup></span>
                         </Form.Label>
                       </Col>
                       <Col sm={7}>
@@ -713,7 +682,7 @@ export default class EditFoodItem extends ApplicationContainer {
                       <Row>
                         <Col sm={7} className={"pt-2"}>
                           <Form.Label>
-                            <strong>Raw Materials*</strong>
+                            <span>Raw Materials <sup className={"text-danger"}>*</sup></span>
                           </Form.Label>
                         </Col>
                         <Col sm={5}>
@@ -732,47 +701,53 @@ export default class EditFoodItem extends ApplicationContainer {
                           </InputGroup>
                         </Col>
                       </Row>
-                      <ListGroup
-                        className={
-                          isError.selectedRawMaterials.length > 0
-                            ? "is-invalid mt-3 po-raw-material-list"
-                            : "mt-3 po-raw-material-list"
-                        }
-                      >
-                        {this.state.rawMaterials.map((rawMaterial) => (
-                          <ListGroup.Item key={rawMaterial.id}>
-                            <Row>
-                              <Col sm={5} className={"pl-3"}>
-                                <h6>
-                                  <span>{rawMaterial.rawMaterialName}</span>
-                                  <br />
-                                  <span>
-                                    <small>{rawMaterial.unitMeasurement}</small>
-                                  </span>
-                                </h6>
-                              </Col>
-                              <Col sm={5}>
-                                <h6>
-                                  <span>
-                                    <strong>Unit Price:</strong>
-                                  </span>
-                                  <span> ${rawMaterial.unitCost}</span>
-                                </h6>
-                              </Col>
-                              <Col sm={2}>
-                                <Button
-                                  variant={"secondary"}
-                                  onClick={() =>
-                                    this.addRawMaterial(rawMaterial)
-                                  }
-                                >
-                                  Add
-                                </Button>
-                              </Col>
-                            </Row>
-                          </ListGroup.Item>
-                        ))}
-                      </ListGroup>
+                      {this.state.rawMaterials.length > 0 ? (
+                        <ListGroup
+                          className={
+                            isError.selectedRawMaterials.length > 0
+                              ? "is-invalid mt-3 fi-raw-material-list"
+                              : "mt-3 fi-raw-material-list"
+                          }
+                        >
+                          {this.state.rawMaterials.map((rawMaterial) => (
+                            <ListGroup.Item key={rawMaterial.id}>
+                              <Row>
+                                <Col sm={5} className={"pl-3"}>
+                                  <h6>
+                                    <span>{rawMaterial.rawMaterialName}</span>
+                                    <br />
+                                    <span>
+                                      <small>
+                                        {rawMaterial.unitMeasurement}
+                                      </small>
+                                    </span>
+                                  </h6>
+                                </Col>
+                                <Col sm={5}>
+                                  <h6>
+                                    <span>
+                                      <strong>Unit Price:</strong>
+                                    </span>
+                                    <span> ${rawMaterial.unitCost}</span>
+                                  </h6>
+                                </Col>
+                                <Col sm={2}>
+                                  <Button
+                                    variant={"secondary"}
+                                    onClick={() =>
+                                      this.addRawMaterial(rawMaterial)
+                                    }
+                                  >
+                                    Add
+                                  </Button>
+                                </Col>
+                              </Row>
+                            </ListGroup.Item>
+                          ))}
+                        </ListGroup>
+                      ) : (
+                        <span>No Raw Materials available.</span>
+                      )}
                       {isError.selectedRawMaterials.length > 0 && (
                         <Form.Control.Feedback type={"invalid"}>
                           {isError.selectedRawMaterials}
@@ -854,11 +829,7 @@ export default class EditFoodItem extends ApplicationContainer {
               <Form.Label className={"m-0"}>
                 <strong>
                   Are you sure you want to delete{" "}
-                  {
-                    this.state.deleteRawMaterialModal.rawMaterial
-                      .rawMaterialName
-                  }
-                  ?{" "}
+                  {this.state.deleteRawMaterialModal.rawMaterial.rawMaterialName}?{" "}
                 </strong>
               </Form.Label>
             </Form.Group>

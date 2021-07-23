@@ -4,21 +4,20 @@
  * Functionality to add a new vendor
  */
 
-import React, { useState } from "react";
-import { useHistory } from "react-router-dom";
+import React from "react";
 import "./create-vendor.css";
-import { Button, Card, Col, Form, FormControl, Row } from "react-bootstrap";
-import Header from "../headers/Header";
+import {Button, Card, Col, Form, FormControl, Row} from "react-bootstrap";
 import axios from "axios";
 import ApplicationContainer from "../ApplicationContainer";
-import { ADD_VENDOR } from "../../config";
-import { toast } from "react-toastify";
+import {ADD_VENDOR} from "../../config";
+import {toast} from "react-toastify";
 
 export default class CreateVendor extends ApplicationContainer {
   constructor(props) {
     super(props);
 
     this.state = {
+      loading: false,
       values: {
         vendorName: "",
         address: "",
@@ -81,52 +80,28 @@ export default class CreateVendor extends ApplicationContainer {
   };
 
   validator = (name, value, errors) => {
-    let valid = true;
     switch (name) {
       case "vendorName":
         if (value.trim() === "") {
           errors.errorVendorName = "Vendor name is required";
-          // this.setState({
-          //   errorVendorName: "Vendor name is required",
-          // });
-          // valid = false;
         } else if (
           !/^[A-Za-z0-9 _]*[A-Za-z0-9][A-Za-z0-9 _]*$/i.test(value.trim())
         ) {
           errors.errorVendorName = "Only letters and numbers are allowed";
-          // this.setState({
-          //   errorVendorName: "Only letters and numbers are allowed",
-          // });
-          // valid = false;
         } else {
           errors.errorVendorName = "";
-          // this.setState({
-          //   errorVendorName: "",
-          // });
         }
         break;
       case "address":
         if (value.trim() === "") {
           errors.errorAddress = "Address is required";
-          // this.setState({
-          //   errorAddress: "Address is required",
-          // });
-          // valid = false;
         } else {
           errors.errorAddress = "";
-          // this.setState({
-          //   errorAddress: "",
-          // });
         }
-
         break;
       case "contactPersonName":
         if (value.trim() === "") {
           errors.errorContactPersonName = "Contact person name is required";
-          // this.setState({
-          //   errorContactPersonName: "Contact person name is required",
-          // });
-          // valid = false;
         } else if (
           !/^[A-Za-z0-9 _]*[A-Za-z0-9][A-Za-z0-9 _]*$/i.test(value.trim())
         ) {
@@ -135,13 +110,12 @@ export default class CreateVendor extends ApplicationContainer {
         } else {
           errors.errorContactPersonName = "";
         }
-
         break;
       case "email":
         if (value.trim() === "") {
           errors.errorEmail = "Email is required";
         } else if (
-          !/^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/i.test(
+          !/^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/i.test(
             value.trim()
           )
         ) {
@@ -149,7 +123,6 @@ export default class CreateVendor extends ApplicationContainer {
         } else {
           errors.errorEmail = "";
         }
-
         break;
       case "contactNumber":
         if (value.trim() === "") {
@@ -160,7 +133,6 @@ export default class CreateVendor extends ApplicationContainer {
           errors.errorContactNumber = "";
         }
     }
-    // return valid;
   };
 
   submitHandler = (e) => {
@@ -190,9 +162,10 @@ export default class CreateVendor extends ApplicationContainer {
         const headers = {
           Authorization: "Bearer " + user.token,
         };
+        this.setState({loading: true});
         axios
           .post(ADD_VENDOR, postData, { headers: headers })
-          .then((response) => {
+          .then(() => {
             this.setState({ loading: false });
             toast.success("Vendor created successfully.");
             this.props.history.push({
@@ -206,37 +179,38 @@ export default class CreateVendor extends ApplicationContainer {
     });
   };
 
-  // submitHandler = (e) => {
-  //   e.preventDefault();
-  //   const isValid = this.validator();
-  //   // console.log(errorVendorName);
-  //   if (isValid) {
-  //     this.props.history.push({
-  //       pathname: "/vendor/confirmation",
-  //       confirmation: {
-  //         message: this.state.values.vendorName + " Created Successfully",
-  //         redirect: "/vendors",
-  //         button: "Go to Vendors",
-  //       },
-  //     });
-  //   }
-  // };
   render() {
     return (
-      <>
-        <Header />
-        <Row className={"mt-3 justify-content-center"}>
+      <section className={"pb-5"}>
+        {super.render()}
+        {this.state.loading && (
+          <div className="dialog-background">
+            <div className="dialog-loading-wrapper">
+              <img
+                src={"/confirmation.gif"}
+                alt={"Loading..."}
+                className={"loading-img"}
+              />
+            </div>
+          </div>
+        )}
+        <Row className="m-3">
+          <Col className={"text-left"}>
+            <h2>Add Vendor</h2>
+            <hr/>
+          </Col>
+        </Row>
+        <Row className={"m-3 justify-content-center"}>
           <Col sm={8}>
             <Card>
               <Card.Body className={"text-left"}>
-                <Card.Title className={"text-left"}>Add New Vendor</Card.Title>
-                <Row className={"mt-5"}>
+                <Row className={"mt-3"}>
                   <Col sm={12}>
                     <Form onSubmit={this.submitHandler}>
                       <Form.Group className="mb-3">
                         <Row>
                           <Col sm={6}>
-                            <Form.Label>Vendor Name</Form.Label>
+                            <Form.Label>Vendor Name <sup className={"text-danger"}>*</sup></Form.Label>
                             <Form.Control
                               type="text"
                               name="vendorName"
@@ -255,7 +229,7 @@ export default class CreateVendor extends ApplicationContainer {
                             )}
                           </Col>
                           <Col sm={6}>
-                            <Form.Label>Contact Person Name</Form.Label>
+                            <Form.Label>Contact Person Name <sup className={"text-danger"}>*</sup></Form.Label>
                             <Form.Control
                               type="text"
                               name="contactPersonName"
@@ -281,7 +255,7 @@ export default class CreateVendor extends ApplicationContainer {
                       <Form.Group className="mb-3">
                         <Row>
                           <Col sm={12}>
-                            <Form.Label>Address</Form.Label>
+                            <Form.Label>Address <sup className={"text-danger"}>*</sup></Form.Label>
                             <Form.Control
                               type="text"
                               name="address"
@@ -301,11 +275,10 @@ export default class CreateVendor extends ApplicationContainer {
                           </Col>
                         </Row>
                       </Form.Group>
-
                       <Form.Group className="mb-3">
                         <Row>
                           <Col sm={6}>
-                            <Form.Label>Email</Form.Label>
+                            <Form.Label>Email <sup className={"text-danger"}>*</sup></Form.Label>
                             <Form.Control
                               type="email"
                               name="email"
@@ -325,9 +298,8 @@ export default class CreateVendor extends ApplicationContainer {
                             )}
                           </Col>
                           <Col sm={6}>
-                            <Form.Label>Contact Number</Form.Label>
+                            <Form.Label>Contact Number <sup className={"text-danger"}>*</sup></Form.Label>
                             <Form.Control
-                              type="number"
                               name="contactNumber"
                               value={this.state.values.contactNumber}
                               onChange={this.setContactNumber}
@@ -374,7 +346,7 @@ export default class CreateVendor extends ApplicationContainer {
             </Card>
           </Col>
         </Row>
-      </>
+      </section>
     );
   }
 }
