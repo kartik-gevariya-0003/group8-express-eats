@@ -143,7 +143,7 @@ class ManufacturingOrders extends ApplicationContainer {
   closeArchiveModal = () => {
     let state = this.state;
     state.archiveModal.show = false;
-    state.archiveModal.orderNumber = null;
+    state.archiveModal.order = {};
     this.setState(state)
   }
 
@@ -180,10 +180,7 @@ class ManufacturingOrders extends ApplicationContainer {
   }
 
   archiveManufacturingOrder = () => {
-    const archivedOrder = {
-      orderNumber: this.state.archiveModal.orderNumber
-    }
-    this.changeOrderStatus(archivedOrder, MANUFACTURING_ORDER_STATUS.ARCHIVED)
+    this.changeOrderStatus(this.state.archiveModal.order, MANUFACTURING_ORDER_STATUS.ARCHIVED)
     this.closeArchiveModal();
   }
 
