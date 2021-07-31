@@ -160,8 +160,8 @@ class ManufacturingOrders extends ApplicationContainer {
       this.setState({loading: true});
       const deleteUrl = DELETE_MANUFACTURING_ORDER + "/" + state.deleteModal.orderNumber;
       axios.delete(deleteUrl, {headers: headers}).then(() => {
-        this.closeDeleteModal();
         toast.success("Manufacturing Order " + state.deleteModal.orderNumber + " deleted successfully.");
+        this.closeDeleteModal();
         this.getManufacturingOrders(headers);
         this.setState({loading: false});
       }).catch(error => {
