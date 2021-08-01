@@ -565,7 +565,7 @@ class ManufacturingOrders extends ApplicationContainer {
               <Form.Group>
                 <Form.Label className={"m-0"}>
                   Are you sure you want to archive the order with order
-                  number {this.state.archiveModal.order.orderNumber}?{" "}
+                  number <strong>{this.state.archiveModal.order.orderNumber}?{" "}</strong>
                 </Form.Label>
               </Form.Group>
             </Modal.Body>

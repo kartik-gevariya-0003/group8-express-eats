@@ -671,23 +671,18 @@ export default class PurchaseOrders extends ApplicationContainer {
           <Modal.Body>
             <Form.Group>
               <Form.Label className={"m-0"}>
-                <strong>
-                  Are you sure you want to delete {this.state.deleteModal.order.orderNumber}?{" "}
-                </strong>
-              </Form.Label>
-              <Form.Label className={"m-0"}>
-                All related raw materials will be deleted too.
+                Are you sure you want to delete <strong>{this.state.deleteModal.order.orderNumber}?{" "}</strong>
               </Form.Label>
             </Form.Group>
           </Modal.Body>
           <Modal.Footer>
             <Button
-              variant="success"
+              variant="primary"
               onClick={() => this.deletePurchaseOrder(this.state.deleteModal.order)}
             >
               Yes
             </Button>
-            <Button variant="secondary" onClick={this.closeModal}>
+            <Button variant="danger" onClick={this.closeModal}>
               No
             </Button>
           </Modal.Footer>

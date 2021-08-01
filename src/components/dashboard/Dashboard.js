@@ -226,7 +226,7 @@ class Dashboard extends ApplicationContainer {
               <Card>
                 <Card.Body>
                   <Card.Title>
-                    <section>Total Food Items Inventory</section>
+                    <section>Food Items in Inventory</section>
                     <section className="mt-3 text-secondary"><span>{this.state.totalFoodItemsInInventory}</span>
                     </section>
                   </Card.Title>
