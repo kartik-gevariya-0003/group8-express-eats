@@ -27,6 +27,7 @@ import EditFoodItem from "./components/food-item/EditFoodItem";
 import RawMaterials from "./components/raw-material/RawMaterials";
 import AddRawMaterial from "./components/raw-material/AddRawMaterial";
 import UpdateRawMaterial from "./components/raw-material/UpdateRawMaterial";
+import Profile from "./components/profile/Profile";
 import Register from "./components/register/Register";
 import React from "react";
 import Footer from "./components/footer/Footer";
@@ -65,6 +66,7 @@ function App() {
         <Route exact path="/raw-material/add" component={AddRawMaterial}/>
         <Route exact path="/raw-material/update" component={UpdateRawMaterial}/>
         <Route exact path="/raw-material/confirmation" component={Confirmation}/>
+        <Route exact path="/profile" component={Profile}/>
       </Switch>
       <Footer/>
     </section>

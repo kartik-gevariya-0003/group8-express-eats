@@ -63,6 +63,10 @@ const POST_ADD_RAW_MATERIAL_INVENTORY = API_URL + "/add-raw-material-inventory";
 const POST_ADD_FOOD_ITEM_INVENTORY = API_URL + "/add-food-item-inventory";
 const GET_ALL_INVENTORY = API_URL + "/get-all-inventory-items";
 
+const GET_USER = API_URL + "/profile";
+const DELETE_USER = API_URL + "/delete-user";
+
+
 module.exports = {
   API_URL,
   LOGIN,
@@ -104,4 +108,6 @@ module.exports = {
   UPDATE_VENDOR,
   ADD_VENDOR,
   GET_VENDOR_BY_ID,
+  GET_USER,
+  DELETE_USER
 };
