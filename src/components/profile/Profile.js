@@ -280,6 +280,7 @@ export default class Profile extends ApplicationContainer {
                               name="firstName"
                               value={this.state.values.firstName}
                               onChange={this.setFirstName}
+                              placeholder={"Enter First Name"}
                               className={
                                 this.state.errors.errorFirstName
                                   .length > 0
@@ -305,6 +306,7 @@ export default class Profile extends ApplicationContainer {
                             <Form.Control
                               type="text"
                               name="lastName"
+                              placeholder={"Enter Last Name"}
                               value={this.state.values.lastName}
                               onChange={this.setLastName}
                               className={
@@ -334,6 +336,7 @@ export default class Profile extends ApplicationContainer {
                               type="text"
                               name="email"
                               value={this.state.values.email}
+                              placeholder={"Enter Email"}
                               onChange={this.setEmail}
                               className={
                                 this.state.errors.errorEmail
