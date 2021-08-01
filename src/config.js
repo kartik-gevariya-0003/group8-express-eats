@@ -65,6 +65,7 @@ const GET_ALL_INVENTORY = API_URL + "/get-all-inventory-items";
 
 const GET_USER = API_URL + "/profile";
 const DELETE_USER = API_URL + "/delete-user";
+const UPDATE_USER = API_URL + "/user";
 
 
 module.exports = {
@@ -109,5 +110,6 @@ module.exports = {
   ADD_VENDOR,
   GET_VENDOR_BY_ID,
   GET_USER,
-  DELETE_USER
+  DELETE_USER,
+  UPDATE_USER
 };
