@@ -33,6 +33,11 @@ class LogoHeader extends Component {
       this.logoImageClasses = "logo-image center main-position";
     }
   }
+  showProfile= ()=>{
+    this.props.history.push({
+      pathname: 'profile'
+    })
+  }
 
   invalidateSession = () => {
     localStorage.removeItem('user');
@@ -53,7 +58,7 @@ class LogoHeader extends Component {
               {this.showUserIcon && (
                 <Nav className={"justify-content-end"}>
                   <NavDropdown title={navDropDownTitle} id="navbarScrollingDropdown" className="dropdown-toggle-custom">
-                    <NavDropdown.Item>Profile</NavDropdown.Item>
+                    <NavDropdown.Item onClick={this.showProfile}>Profile</NavDropdown.Item>
                     <NavDropdown.Divider/>
                     <NavDropdown.Item onClick={this.invalidateSession}>Log out</NavDropdown.Item>
                   </NavDropdown>

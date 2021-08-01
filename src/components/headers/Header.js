@@ -36,6 +36,14 @@ class Header extends Component {
     this.setState({activeLink: item.id});
   }
 
+  showProfile= ()=>{
+    this.props.history.push({
+      pathname: 'profile'
+    })
+
+  }
+
+
   invalidateSession = () => {
     localStorage.removeItem('user');
     toast.success('User logged out successfully.');
@@ -85,7 +93,7 @@ class Header extends Component {
               id="navbarScrollingDropdown"
               alignRight
             >
-              <NavDropdown.Item>Profile</NavDropdown.Item>
+              <NavDropdown.Item onClick={this.showProfile}>Profile</NavDropdown.Item>
               <NavDropdown.Divider/>
               <NavDropdown.Item onClick={this.invalidateSession}>Log out</NavDropdown.Item>
             </NavDropdown>
