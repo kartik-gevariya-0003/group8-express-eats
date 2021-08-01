@@ -214,6 +214,7 @@ export default class CreateVendor extends ApplicationContainer {
                             <Form.Control
                               type="text"
                               name="vendorName"
+                              placeholder={"Enter Vendor Name"}
                               value={this.state.values.vendorName}
                               onChange={this.setVendorName}
                               className={
@@ -232,6 +233,7 @@ export default class CreateVendor extends ApplicationContainer {
                             <Form.Label>Contact Person Name <sup className={"text-danger"}>*</sup></Form.Label>
                             <Form.Control
                               type="text"
+                              placeholder={"Enter Contact Person Name"}
                               name="contactPersonName"
                               value={this.state.values.contactPersonName}
                               onChange={this.setContactPersonName}
@@ -259,6 +261,7 @@ export default class CreateVendor extends ApplicationContainer {
                             <Form.Control
                               type="text"
                               name="address"
+                              placeholder={"Enter Address"}
                               value={this.state.values.address}
                               onChange={this.setAddress}
                               className={
@@ -282,6 +285,7 @@ export default class CreateVendor extends ApplicationContainer {
                             <Form.Control
                               type="email"
                               name="email"
+                              placeholder={"Enter Address"}
                               value={this.state.values.email}
                               onChange={this.setEmail}
                               className={
@@ -301,6 +305,7 @@ export default class CreateVendor extends ApplicationContainer {
                             <Form.Label>Contact Number <sup className={"text-danger"}>*</sup></Form.Label>
                             <Form.Control
                               name="contactNumber"
+                              placeholder={"Enter Contact Number"}
                               value={this.state.values.contactNumber}
                               onChange={this.setContactNumber}
                               className={

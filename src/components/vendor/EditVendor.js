@@ -273,6 +273,7 @@ export default class CreateVendor extends ApplicationContainer {
                             <Form.Control
                               type="text"
                               name="vendorName"
+                              placeholder={"Enter Vendor Name"}
                               value={this.state.values.vendorName}
                               onChange={this.setVendorName}
                               className={
@@ -292,6 +293,7 @@ export default class CreateVendor extends ApplicationContainer {
                             <Form.Control
                               type="text"
                               name="contactPersonName"
+                              placeholder={"Enter Contact Person Name"}
                               value={this.state.values.contactPersonName}
                               onChange={this.setContactPersonName}
                               className={
@@ -318,6 +320,7 @@ export default class CreateVendor extends ApplicationContainer {
                             <Form.Control
                               type="text"
                               name="address"
+                              placeholder={"Enter Address"}
                               value={this.state.values.address}
                               onChange={this.setAddress}
                               className={
@@ -342,6 +345,7 @@ export default class CreateVendor extends ApplicationContainer {
                             <Form.Control
                               type="email"
                               name="email"
+                              placeholder={"Enter Email Address"}
                               value={this.state.values.email}
                               onChange={this.setEmail}
                               className={
@@ -362,6 +366,7 @@ export default class CreateVendor extends ApplicationContainer {
                             <Form.Control
                               type="text"
                               name="contactNumber"
+                              placeholder={"Enter Contact Number"}
                               value={this.state.values.contactNumber}
                               onChange={this.setContactNumber}
                               className={

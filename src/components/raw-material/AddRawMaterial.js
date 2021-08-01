@@ -237,6 +237,7 @@ export class AddRawMaterial extends ApplicationContainer {
                           <Col sm={6}>
                             <Form.Label>Name <sup className={"text-danger"}>*</sup></Form.Label>
                             <Form.Control type="text" name="rawMaterialName"
+                                          placeholder={"Enter Raw Material Name"}
                                           onChange={this.setRawMaterialName}
                                           className={this.state.errors.rawMaterialName ? "is-invalid" : ""}/>
                             {this.state.errors.rawMaterialName.length > 0 && (
@@ -273,6 +274,7 @@ export class AddRawMaterial extends ApplicationContainer {
                                 <InputGroup.Text id="basic-addon1">$</InputGroup.Text>
                               </InputGroup.Prepend>
                               <Form.Control type="text" name="unitCost"
+                                            placeholder={"Enter Unit Cost"}
                                             onChange={this.setUnitCost}
                                             className={this.state.errors.unitCost ? "is-invalid" : ""}/>
                               {this.state.errors.unitCost.length > 0 && (
@@ -286,6 +288,7 @@ export class AddRawMaterial extends ApplicationContainer {
                             <Form.Label>Unit Measurement <sup className={"text-danger"}>*</sup></Form.Label>
                             <Form.Control type="number" name="unitMeasurement"
                                           step=".01"
+                                          placeholder={"Enter Unit"}
                                           onChange={this.setUnitMeasurement}
                                           className={this.state.errors.unitMeasurementValue ? "is-invalid" : ""}/>
                             {this.state.errors.unitMeasurementValue.length > 0 && (
