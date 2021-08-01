@@ -74,15 +74,17 @@ export default class Vendor extends ApplicationContainer {
   };
 
   filterVendors = (e) => {
-    let searchText = e.target.value;
-    let vendors = vendorList;
-
-    if (searchText) {
-      vendors = vendors.filter((item) =>
-        item.vendorName.toLowerCase().includes(searchText.toLowerCase())
-      );
+    e.preventDefault();
+    const { value } = e.target;
+    if (value) {
+      this.setState({
+        vendorList: this.originalVendors.filter((vendor) =>
+          vendor.vendorName.toLowerCase().includes(value.toLowerCase())
+        ),
+      });
+    } else {
+      this.setState({ vendorList: this.originalVendors });
     }
-    this.setState({ vendorList: vendors });
   };
 
   deleteVendor = async (id) => {
