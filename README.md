@@ -1,13 +1,8 @@
 # Express Eats
- CSCI 5709 - Group 8
 
 ## Authors
 
-* [Karishma Suresh Lalwani](kr811542@dal.ca)
 * [Kartik Gevariya](kr210190@dal.ca)
-* [Mansi Gevariya](mn612207@dal.ca)
-* [Rotesh Chhabra](rt553741@dal.ca)
-* [Tasneem Yusuf Porbanderwala](ts288850@dal.ca@dal.ca)
 
 ## Getting Started
 
